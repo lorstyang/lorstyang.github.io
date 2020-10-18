@@ -21,12 +21,12 @@
   <entry>
     <title>第一篇</title>
     <url>/2020/10/18/%E7%AC%AC%E4%B8%80%E7%AF%87/</url>
-    <content><![CDATA[<a id="more"></a>
-
-<h1 id="Q＆A"><a href="#Q＆A" class="headerlink" title="Q＆A"></a>Q＆A</h1><p>1.COM对象（接口）为什么不能new？</p>
+    <content><![CDATA[<h1 id="Q＆A"><a href="#Q＆A" class="headerlink" title="Q＆A"></a>Q＆A</h1><p>1.COM对象（接口）为什么不能new？</p>
 <p>2.超级采样(supersampling)和多重采样(multisampling)</p>
 <p>​    超级采样时将四个子像素的颜色都计算了一遍，然后取得平均值，得到该像素的颜色；</p>
 <p>​    而多重采样只计算了该像素的颜色，通过其他方法算出了平均值，从而得到了该像素的最终颜色。【这里的其他方法简单的来说是基于子像素的可见性（基于子像素的深度/模板测试）和范围（子像素的中心在三角形之内还是之外）】</p>
+<a id="more"></a>
+
 <p>3.<strong>由于<code>XMFLOAT3</code>等这些用于存储的类型是不能直接用到指令集加速的。要想进行向量的运算，就需要从用于存储的变量，通过读取函数，将数据读入到<code>XMVECTOR</code></strong></p>
 <p>4.对x86平台，XMVECTOR的定义如下：    // XMMATRIX则是一组(4个) XMVECTOR<br><code>typedef __m128 XMVECTOR;</code></p>
 <p>由于__m128在内存中需要严格的16 byte对齐，因此并不建议直接在程序中使用这两种类型保存数据，</p>
