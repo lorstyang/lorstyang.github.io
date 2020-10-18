@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  <entry>
+    <title>Hello World</title>
+    <url>/2020/10/18/hello-world/</url>
+    <content><![CDATA[<p>Welcome to <a href="https://hexo.io/">Hexo</a>! This is your very first post. Check <a href="https://hexo.io/docs/">documentation</a> for more info. If you get any problems when using Hexo, you can find the answer in <a href="https://hexo.io/docs/troubleshooting.html">troubleshooting</a> or you can ask me on <a href="https://github.com/hexojs/hexo/issues">GitHub</a>.</p>
+<h2 id="Quick-Start"><a href="#Quick-Start" class="headerlink" title="Quick Start"></a>Quick Start</h2><h3 id="Create-a-new-post"><a href="#Create-a-new-post" class="headerlink" title="Create a new post"></a>Create a new post</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo new <span class="string">&quot;My New Post&quot;</span></span><br></pre></td></tr></table></figure>
+
+<p>More info: <a href="https://hexo.io/docs/writing.html">Writing</a></p>
+<h3 id="Run-server"><a href="#Run-server" class="headerlink" title="Run server"></a>Run server</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo server</span><br></pre></td></tr></table></figure>
+
+<p>More info: <a href="https://hexo.io/docs/server.html">Server</a></p>
+<h3 id="Generate-static-files"><a href="#Generate-static-files" class="headerlink" title="Generate static files"></a>Generate static files</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo generate</span><br></pre></td></tr></table></figure>
+
+<p>More info: <a href="https://hexo.io/docs/generating.html">Generating</a></p>
+<h3 id="Deploy-to-remote-sites"><a href="#Deploy-to-remote-sites" class="headerlink" title="Deploy to remote sites"></a>Deploy to remote sites</h3><figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">$ hexo deploy</span><br></pre></td></tr></table></figure>
+
+<p>More info: <a href="https://hexo.io/docs/one-command-deployment.html">Deployment</a></p>
+]]></content>
+  </entry>
+  <entry>
+    <title>第一篇</title>
+    <url>/2020/10/18/%E7%AC%AC%E4%B8%80%E7%AF%87/</url>
+    <content><![CDATA[<a id="more"></a>
+
+<h1 id="Q＆A"><a href="#Q＆A" class="headerlink" title="Q＆A"></a>Q＆A</h1><p>1.COM对象（接口）为什么不能new？</p>
+<p>2.超级采样(supersampling)和多重采样(multisampling)</p>
+<p>​    超级采样时将四个子像素的颜色都计算了一遍，然后取得平均值，得到该像素的颜色；</p>
+<p>​    而多重采样只计算了该像素的颜色，通过其他方法算出了平均值，从而得到了该像素的最终颜色。【这里的其他方法简单的来说是基于子像素的可见性（基于子像素的深度/模板测试）和范围（子像素的中心在三角形之内还是之外）】</p>
+<p>3.<strong>由于<code>XMFLOAT3</code>等这些用于存储的类型是不能直接用到指令集加速的。要想进行向量的运算，就需要从用于存储的变量，通过读取函数，将数据读入到<code>XMVECTOR</code></strong></p>
+<p>4.对x86平台，XMVECTOR的定义如下：    // XMMATRIX则是一组(4个) XMVECTOR<br><code>typedef __m128 XMVECTOR;</code></p>
+<p>由于__m128在内存中需要严格的16 byte对齐，因此并不建议直接在程序中使用这两种类型保存数据，</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line">Class Camera</span><br><span class="line">&#123;</span><br><span class="line">      XMVECTOR position;</span><br><span class="line">      XMMATRIX viewMatrix;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>上面的代码基本上不会成功运行，32位下new并不保证16byte对齐，而且由于类成员布局的关系，其中的XMVECTOR也不一定是16byte对齐，访问以上数据，程序可能直接崩溃。因此，DXM定义了大量用来储存数据的类型，比如XMFLOAT4,XMFLOAT3,XMFLOAT4X4等。</p>
+<p>既然__m128需要16byte对齐，那为什么在分配内存的时候，不能直接确定好分配给XMVECTOR 16byte的内存？</p>
+<p>5.图片的放大和缩小</p>
+<p>放大很好搞，按比例用一样的颜色填充就行了，也就是做个插值，但也会导致太大了会变得马赛克</p>
+<p>缩小要丢弃一些像素，一般用的是mipmap，然后找到最接近目的大小的mipmap等级，再进行插值。（按道理是最接近但小于的目标大小的等级，因为后续插值相当于放大）</p>
+<p>.* : 操作放大缩小的叫过滤器</p>
+<p>6.纹理坐标以及采样</p>
+<p>纹理（贴图）坐标，即UV坐标</p>
+<p>纹理在计算机中就是一堆数据，那纹理坐标又是个什么玩意？    因为我们在给物体做纹理时，相当于把一张图片贴在了物体上，这张图由很多纹理像素（texel）构成，那纹理其实就是一个二维数组，纹理坐标（u，v）用来确定纹理像素的位置。【纹理像素（texel）也称纹素与像素相似但并不完全等价】</p>
+<p>玩家们所谓的贴图是什么？ - Focux的回答 - 知乎 <a href="https://www.zhihu.com/question/319059045/answer/1286403304">https://www.zhihu.com/question/319059045/answer/1286403304</a>  说的很详细</p>
+<p>相关资料<a href="https://blog.csdn.net/u014800094/article/details/55224541">https://blog.csdn.net/u014800094/article/details/55224541</a></p>
+<p>7.交换链<br><a href="https://blog.csdn.net/sinat_24229853/article/details/46884833">https://blog.csdn.net/sinat_24229853/article/details/46884833</a></p>
+<p><a href="https://gavinkg.github.io/ILearnVulkanFromScratch-CN/mdroot/%E6%A6%82%E5%BF%B5%E6%B1%87%E6%80%BB/%E4%BA%A4%E6%8D%A2%E9%93%BE.html">https://gavinkg.github.io/ILearnVulkanFromScratch-CN/mdroot/%E6%A6%82%E5%BF%B5%E6%B1%87%E6%80%BB/%E4%BA%A4%E6%8D%A2%E9%93%BE.html</a><br>双重缓冲其实也存在问题，上面链接就说了，渲染速度较vblank快的话，会有可感知的延迟造成，其实在我的理解里，准确来说应该是vblank太慢了（刷新过慢）导致的延迟，<br>因为所谓延迟就是一帧画面渲染好了之后，它过了一段时间才被显示出来，仔细想想其实问题是出在刷新太慢了上面，如果刷新频率符合人眼的习惯，即使他渲染速度再快，<br>只要我在人眼习惯的频率上把它显示出来，也不会出现延迟，最多会有部分资源被浪费掉（渲染好了不刷新导致设备闲置不能进行下一帧的渲染）。</p>
+<p>那同理可以很容易推出渲染速度较慢的话，就会造成卡顿，前台缓冲区显示后，后台没渲染完，导致下一帧画面显示的还是原前台缓冲区的东西，呈现出来的结果就是卡顿。</p>
+<p>8.视图（view）就是描述符（descriptor），它告诉我们资源如何使用，相当于一个中间层</p>
+<p>9.任何 Direct3D 程序的最后一件事情是清理并且释放你所创建的对象，你必须释放这些对象将资源归还系统进行再利用<br>COM对象持有一个引用计数，告诉系统什么时候将它从内存中删除是安全的。通过使用 Release函数，将会减少对象的引用数，当引用计数为 0 时，系统将对象删除以便回收再利用。<br>在对象调用 Release 函数之前总是检查确保对象非 NULL，可以减少由于无效指针导致你的游戏由于未 定义行为所产生的崩溃</p>
+<p>引用技术的初始值是多少？是调用一次release就变为0了吗？</p>
+<p>10.ClearRenderTargetView说是清除屏幕，实际上是用一种颜色覆盖掉整个屏幕<br>其实有点讨厌这样的概念，总感觉很冗杂，函数名是清除渲染目标视图，参数传进去缓冲区（即渲染目标，一般是后台缓冲区，因为后台用来渲染，前台用来显示），虽然view实际上就是类似于target的引用或者说是它的一个中间层，这样是可以理解它具体指的啥，但看起来总有点别扭</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="keyword">float</span> clearColor[<span class="number">4</span>] = &#123; <span class="number">0.0f</span>, <span class="number">0.0f</span>, <span class="number">0.25f</span>, <span class="number">1.0f</span> &#125;; </span><br><span class="line">d3dContext_-&gt;ClearRenderTargetView( backBufferTarget_, clearColor ); </span><br><span class="line"></span><br><span class="line">swapChain_-&gt;Present( <span class="number">0</span>, <span class="number">0</span> );</span><br></pre></td></tr></table></figure>
+
+<p>11.DESC就是（description）描述符的缩写，名字里带这个的都是描述符，也就是视图。</p>
+<h1 id="XJUN项目"><a href="#XJUN项目" class="headerlink" title="XJUN项目"></a>XJUN项目</h1><h2 id="02-rendering-a-triangle"><a href="#02-rendering-a-triangle" class="headerlink" title="02 rendering a triangle"></a>02 rendering a triangle</h2><p>设置三角形顶点时，顶点的顺序需要按顺时针顺序给（可自行查找why），但图元类型为trianglestrip时，第二个三角形的点的顺序可以为逆时针，这是为什么？</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">//draw rect with 4 vertexes</span></span><br><span class="line">		&#123; XMFLOAT3(<span class="number">-0.5f</span>, <span class="number">-0.5f</span>, <span class="number">0.0f</span>), XMFLOAT4(<span class="number">0.0f</span>, <span class="number">1.0f</span>, <span class="number">0.0f</span>, <span class="number">1.0f</span>) &#125;,</span><br><span class="line">		&#123; XMFLOAT3(<span class="number">-0.5f</span>, <span class="number">0.5f</span>, <span class="number">0.0f</span>), XMFLOAT4(<span class="number">0.0f</span>, <span class="number">0.0f</span>, <span class="number">1.0f</span>, <span class="number">1.0f</span>) &#125;,</span><br><span class="line">		&#123; XMFLOAT3(<span class="number">0.5f</span>, <span class="number">-0.5f</span>, <span class="number">0.0f</span>), XMFLOAT4(<span class="number">1.0f</span>, <span class="number">0.0f</span>, <span class="number">0.0f</span>, <span class="number">1.0f</span>) &#125;,</span><br><span class="line">		&#123; XMFLOAT3(<span class="number">0.5f</span>, <span class="number">0.5f</span>, <span class="number">0.0f</span>), XMFLOAT4(<span class="number">0.0f</span>, <span class="number">0.0f</span>, <span class="number">1.0f</span>, <span class="number">1.0f</span>) &#125;</span><br></pre></td></tr></table></figure>
+
+<p>(-0.5f, -0.5f, 0.0f)–&gt;(-0.5f, 0.5f, 0.0f)–&gt;(0.5f, -0.5f, 0.0f) 是顺时针的</p>
+<p>但 (-0.5f, 0.5f, 0.0f)–&gt;(0.5f, -0.5f, 0.0f)–&gt;(0.5f, 0.5f, 0.0f) 是逆时针的</p>
+<p>见龙书P149</p>
+<h2 id="06-Mouse-and-Keyboard"><a href="#06-Mouse-and-Keyboard" class="headerlink" title="06 Mouse and Keyboard"></a>06 Mouse and Keyboard</h2><p>对于瞬时状态，比如按鼠标，就按照接收的事件次数来处理，但对于会保持一段时间的状态比如滚轮或按着一个键，就需要获取两个状态一个state，一个laststate(上一帧状态)，通过两者之间的时间差来改变状态。</p>
+<h2 id="07-Lighting"><a href="#07-Lighting" class="headerlink" title="07 Lighting"></a>07 Lighting</h2><p>做XJUN的作业时，第三个通过滚轮改变汇聚强度做是做出来了，但是在另外两种光照模型下也会触发，暂时还没找到解决办法<br>我最开始是以为改变光照强度，那样又该如何做？<br>4(不太懂这题是啥意思，看起来不难),5,7还没做出来，其他都比较简单。</p>
+<h1 id="points"><a href="#points" class="headerlink" title="points"></a>points</h1><p>##一些改进</p>
+<p>从Windows 8开始，DirectX不再是您下载和安装的单独SDK；相反，DirectX随操作系统一起提供，并通过Windows Update进行更新。 此外，D3DX库已被弃用，Windows不附带，现在XNA Math库的名称为DirectX Math。 另外，从Visual Studio 2015开始，dxerr.lib不再与Visual Studio 2015兼容。</p>
+<h2 id="修改全屏模式"><a href="#修改全屏模式" class="headerlink" title="修改全屏模式"></a>修改全屏模式</h2><p>为什么要修改窗口使其没有背景？</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// wc.hbrBackground =（HBRUSH）COLOR_WINDOW;</span></span><br></pre></td></tr></table></figure>
+
+<p>教程给出的解释是这样的：<strong>Doing this leaves the background color untouched, which means it won’t be visible as a window for a second or two before the game starts (important to making your game look professional).</strong></p>
+<p>机翻果然有点问题…我理解了一下，大概就是说游戏在刚开始的时候，也就是从窗口变成全屏的时候，会显示出窗口的（背景）颜色，因为游戏本质上是一个程序，打开的时候就是一窗口的模式打开的，这样做就可以避免掉显示出窗口的颜色。</p>
+<p>窗口背景颜色：顾名思义，就是一个窗口里面那个背景板的颜色。</p>
+<h2 id="XMVector2Dot的返回值"><a href="#XMVector2Dot的返回值" class="headerlink" title="XMVector2Dot的返回值"></a>XMVector2Dot的返回值</h2><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function">XMVECTOR XM_CALLCONV <span class="title">XMVector2Dot</span><span class="params">(FXMVECTOR V1, FXMVECTOR V2)</span></span>;		<span class="comment">// 每个分量都是V1.x * V2.x + V1.y * V2.y</span></span><br></pre></td></tr></table></figure>
+
+<p>返回一个向量，向量的每一分量的值都是v1和v2的点积。</p>
+<p>很奇特，也让人很迷惑的操作…… I need a reason.      叉积也是，不知道在干嘛。。</p>
+]]></content>
+      <categories>
+        <category>CG</category>
+      </categories>
+  </entry>
+</search>
