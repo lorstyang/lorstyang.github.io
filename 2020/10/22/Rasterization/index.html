@@ -20,19 +20,24 @@
     var CONFIG = {"hostname":"example.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="仿射变换 仿射变换 &#x3D; 线性变换 + 平移  线性变换包括 缩放，切变，旋转 线性变换可以用一个矩阵表示，但是变换中有平移的时候，一个矩阵就表示不了了，为了解决这个问题，就引入了齐次坐标（懒惰是一种美德）">
+  <meta name="description" content="after MVP 做完MVP后所有的物体到了[-1, 1]3的立方体内，然后我们需要把他画到屏幕上去  Mviewport 假设屏幕的宽度是width，高度是height。对于那个标准的立方体，先不管它的z方向，现在要把x，y两个方向拉成屏幕的大小，用到的矩阵就是Mviewport :">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Games101: Transformation">
-<meta property="og:url" content="http://example.com/2020/10/19/Games101-Transformation/index.html">
+<meta property="og:title" content="Rasterization">
+<meta property="og:url" content="http://example.com/2020/10/22/Rasterization/index.html">
 <meta property="og:site_name" content="lorstyang">
-<meta property="og:description" content="仿射变换 仿射变换 &#x3D; 线性变换 + 平移  线性变换包括 缩放，切变，旋转 线性变换可以用一个矩阵表示，但是变换中有平移的时候，一个矩阵就表示不了了，为了解决这个问题，就引入了齐次坐标（懒惰是一种美德）">
+<meta property="og:description" content="after MVP 做完MVP后所有的物体到了[-1, 1]3的立方体内，然后我们需要把他画到屏幕上去  Mviewport 假设屏幕的宽度是width，高度是height。对于那个标准的立方体，先不管它的z方向，现在要把x，y两个方向拉成屏幕的大小，用到的矩阵就是Mviewport :">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2020-10-19T10:58:07.000Z">
-<meta property="article:modified_time" content="2020-10-19T15:39:38.404Z">
+<meta property="og:image" content="http://ww1.sinaimg.cn/large/0088bkyIgy1gjygf4r6bzj30z70mfwm7.jpg">
+<meta property="og:image" content="http://ww1.sinaimg.cn/large/0088bkyIgy1gjyh22slzsj30tl0e6gn2.jpg">
+<meta property="og:image" content="http://ww1.sinaimg.cn/large/0088bkyIgy1gjyhd066l2j30uv0dg75n.jpg">
+<meta property="og:image" content="http://ww1.sinaimg.cn/large/0088bkyIgy1gjyi4yigqzj314e0oitam.jpg">
+<meta property="article:published_time" content="2020-10-22T02:31:11.000Z">
+<meta property="article:modified_time" content="2020-10-22T14:55:55.756Z">
 <meta property="article:author" content="lorstyang">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://ww1.sinaimg.cn/large/0088bkyIgy1gjygf4r6bzj30z70mfwm7.jpg">
 
-<link rel="canonical" href="http://example.com/2020/10/19/Games101-Transformation/">
+<link rel="canonical" href="http://example.com/2020/10/22/Rasterization/">
 
 
 <script id="page-configurations">
@@ -45,7 +50,7 @@
   };
 </script>
 
-  <title>Games101: Transformation | lorstyang</title>
+  <title>Rasterization | lorstyang</title>
   
 
 
@@ -183,7 +188,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2020/10/19/Games101-Transformation/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/10/22/Rasterization/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/header.jpg">
@@ -196,7 +201,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          Games101: Transformation
+          Rasterization
         </h1>
 
         <div class="post-meta">
@@ -207,7 +212,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2020-10-19 18:58:07 / 修改时间：23:39:38" itemprop="dateCreated datePublished" datetime="2020-10-19T18:58:07+08:00">2020-10-19</time>
+              <time title="创建时间：2020-10-22 10:31:11 / 修改时间：22:55:55" itemprop="dateCreated datePublished" datetime="2020-10-22T10:31:11+08:00">2020-10-22</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -230,54 +235,95 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h3 id="仿射变换"><a href="#仿射变换" class="headerlink" title="仿射变换"></a>仿射变换</h3><ul>
-<li><p>仿射变换 = 线性变换 + 平移</p>
+        <ul>
+<li><p>after MVP</p>
+<p>做完MVP后所有的物体到了[-1, 1]<sup>3</sup>的立方体内，然后我们需要把他画到屏幕上去</p>
 </li>
-<li><p>线性变换包括 缩放，切变，旋转</p>
-<p>线性变换可以用一个矩阵表示，但是变换中有平移的时候，一个矩阵就表示不了了，为了解决这个问题，就引入了齐次坐标（懒惰是一种美德）</p>
-</li>
-</ul>
+<li><p>M<sub>viewport</sub></p>
+<p>假设屏幕的宽度是width，高度是height。对于那个标准的立方体，先不管它的z方向，现在要把x，y两个方向拉成屏幕的大小，用到的矩阵就是M<sub>viewport</sub> :</p>
 <a id="more"></a>
-<h4 id="齐次坐标"><a href="#齐次坐标" class="headerlink" title="齐次坐标"></a>齐次坐标</h4><ul>
-<li><p>给原来的点/向量增加一个维度</p>
-<p>2D point (x, y) —&gt; (x, y, 1)</p>
-<p>2D vector (x, y) —&gt; (x, y, 0)</p>
-</li>
-<li><p>这样仿射变换就从原来的</p>
 <script type="math/tex; mode=display">
-\left[ \begin{matrix} x' \\ y' \end{matrix} \right] = \left[ \begin{matrix} a & b \\ c & d \end{matrix} \right]\left[ \begin{matrix} x \\ y \end{matrix} \right] + \left[ \begin{matrix} t_{x} \\ t_{y} \end{matrix} \right]</script><p>变成了</p>
-<script type="math/tex; mode=display">
-\left[ \begin{matrix} x' \\ y' \\ w' \end{matrix} \right] = \left[ \begin{matrix} a & b & t_{x} \\ c & d & t_{y} \\ 0 & 0 & 1 \end{matrix} \right]\left[ \begin{matrix} x \\ y \\ 1 \end{matrix} \right] = \left[ \begin{matrix} ax+by+t_{x} \\ cx+dy+t_{y} \\ 1 \end{matrix} \right]</script><p>这样，现在的变换矩阵不仅包含了原有的线性变换，还包括了平移（t<sub>x</sub>和t<sub>y</sub>）</p>
+M_{viewport} = \left[ \begin{matrix} width/2 & 0 & 0 & width/2 \\ 0 & height/2 & 0 & height/2 \\ 0 & 0 & 1 & 0 \\ 0 & 0 & 0 & 1 \end{matrix} \right]</script><p>这里默认屏幕坐标系的起点是左下角，所以最右边一列有width/2和height/2，将立方体向右上方平移，使它的左下角与屏幕原点重合。</p>
 </li>
 </ul>
-<p>之前的旋转默认都是绕原点转的，如果要绕任意点旋转，可以先把那个任意点平移到原点（物体也做同样的平移），然后绕原点旋转，再平移回来。</p>
+<h4 id="sampling"><a href="#sampling" class="headerlink" title="sampling"></a>sampling</h4><ul>
+<li><p>屏幕是一系列离散的像素</p>
+</li>
+<li><p>计算机生成的图像最基本的单位是三角形</p>
 <ul>
-<li>3D中，绕任意经过原点的轴：Rodrigues’ Rotation Formula：<script type="math/tex; mode=display">
-\mathbf{R}(\mathbf{n}, \alpha)=\cos (\alpha) \mathbf{I}+(1-\cos (\alpha)) \mathbf{n} \mathbf{n}^{T}+\sin (\alpha)\left(\begin{array}{ccc} 0 & -n_{z} & n_{y} \\ n_{z} & 0 & -n_{x} \\ -n_{y} & n_{x} & 0 \end{array}\right)</script>如果要绕任意轴，而不一定经过原点，同样的思路，将该轴平移至经过原点，旋转完后再平移回去</li>
+<li>最基本的多边形</li>
+<li>内外定义清晰</li>
+<li>平面</li>
+<li>方便插值</li>
 </ul>
-<h3 id="MVP"><a href="#MVP" class="headerlink" title="MVP"></a>MVP</h3><ul>
-<li><p>Model transformation</p>
-<p>把物体从局部坐标系变换到世界坐标系，玩过建模软件的应该知道，你点物体，处于移动物体模式时，会有X，Y，Z三个方向的箭头，可以把那个当成物体的局部坐标系，然后用矩阵可以把局部坐标系里的物体的顶点坐标转换到世界坐标系。至于世界坐标系，就是整个场景的坐标系了。</p>
 </li>
-<li><p>View transformation</p>
-<p>闫老师是这样说的 Find a good ”angle“ to put the camera 很形象是吧。这一步是把世界坐标系转换到摄像机坐标系。摄像机坐标系就是把摄像机本身的局部坐标系与世界坐标系以某种方式重叠了起来，显而易见，如果世界坐标系里的物体不改变坐标的话，会导致摄像机里的内容发生变化（想象一下，摄像机转到了世界坐标系中心，而物体不动），所以世界空间中的物体也要做同样的变换，相当于把摄像机和物体看成一个整体，一起动，这个变换就是M<sub>view</sub>。前面所说的某种方式就是规定的摄像机的朝向之类的，一般来说是 位于原点，up at Y，look at -Z（约定俗成的，方便计算）。</p>
-<p>M<sub>view</sub>是通过求逆变换得到的，用到了正交矩阵的逆矩阵等于其转置矩阵，而旋转矩阵是正交矩阵。 </p>
-<p>摄像机从任意位置到原点，有旋转和平移两个操作，将其分开来看清楚一点，M<sub>view</sub> = R<sub>view</sub>T<sub>view</sub></p>
-<script type="math/tex; mode=display">
-T_{view} = \left[ \begin{matrix} 1 & 0 & 0 & -x_{e} \\ 0 & 1 & 0 & -y_{e} \\ 0 & 0 & 1 & -z_{e} \\ 0 & 0 & 0 & 1 \end{matrix}\right]</script><p>对于R<sub>view</sub>不好求，先求他的逆矩阵</p>
-<script type="math/tex; mode=display">
-R_{view}^{-1} = \left[ \begin{matrix} x_{g×t} & x_{t} & x_{-g} & 0 \\ y_{g×t} & y_{t} & y_{-g} & 0 \\ z_{g×t} & z_{t} & z_{-g} & 0 \\ 0 & 0 & 0 & 1 \end{matrix}\right]</script><p>因为R<sub>view</sub>的转置等于它的逆，所以R<sup>T</sup><sub>view</sub> = R<sup>-1</sup><sub>view</sub>，将R<sup>T</sup><sub>view</sub>再转置一下就得到了R<sub>view</sub>。即</p>
-<script type="math/tex; mode=display">
-R_{view} = \left[ \begin{matrix} x_{g×t} & y_{g×t} & z_{g×t} & 0 \\ x_{t} & y_{t} & z_{t} & 0 \\ x_{-g} & y_{-g} & z_{-g} & 0 \\ 0 & 0 & 0 & 1 \end{matrix}\right]</script></li>
-<li><p>Projection transform</p>
+<li><p>这里的采样就是判断像素是否在三角形中</p>
+</li>
+<li><p>如何判断一个像素是否在三角形内？</p>
+<p>可以用三次叉积来判断。假设有像素Q（用像素中心的点来代表像素），三角形p<sub>0</sub>p<sub>1</sub>p<sub>2</sub></p>
+<p>首先算出<strong>p<sub>0</sub>p<sub>1</sub></strong> × <strong>p<sub>1</sub>p<sub>Q</sub></strong>，可以根据得到的向量的正负判断Q点在<strong>p<sub>0</sub>p<sub>1</sub></strong>的左边还是右边，同理算出<strong>p<sub>1</sub>p<sub>2</sub></strong> × <strong>p<sub>1</sub>p<sub>Q</sub></strong>，<strong>p<sub>2</sub>p<sub>0</sub></strong> × <strong>p<sub>2</sub>p<sub>Q</sub></strong>，如何得到的三个向量同正或同负，则代表像素在三角形内。画图可以很清晰的看到，一个点在三角形内部时，将三角形的三条边看成顺序的三个向量，这个点一定是在这三个向量的同一侧的。</p>
+</li>
+<li><p>点在边界上怎么算</p>
+<p>自己规定。不过一些API（opengl，directx）都已经规定好了。</p>
+</li>
+<li><p>Bounding Box</p>
+<p>遍历像素判断它是否在三角形中时，肯定不会把所有的像素全部遍历一遍，一种做法就是找到一个最小的能把一个三角形包围起来的包围盒（矩形），然后在这个矩形内部遍历就可以了。这个矩形也好找，取三个顶点坐标的最大最小值就可以了。</p>
 <ul>
-<li>Orthographic projection 正交投影</li>
-<li>Perspective projection 透视投影（近大远小</li>
+<li>缺点：三角形比较奇怪的时候会做很多无用功，比如一个很细长的呈45°的三角形</li>
+<li>还有很多其他的加速方法</li>
 </ul>
-<p>M<sub>persp</sub> = M<sub>ortho</sub> M<sub>persp-&gt;ortho</sub> </p>
-<p>M<sub>persp-&gt;ortho</sub> 将视锥体变成立方体，M<sub>ortho</sub> 将立方体变成[-1, 1]的正方体</p>
 </li>
 </ul>
+<h4 id="Antialiasing"><a href="#Antialiasing" class="headerlink" title="Antialiasing"></a>Antialiasing</h4><ul>
+<li><p>把像素看成一个个方块，最后的图形就会有锯齿，称之为走样，所以需要反走样</p>
+</li>
+<li><p>走样原因：采样速度跟不上信号变化速度</p>
+</li>
+<li><p>解决办法：采样之前，做一个模糊/滤波（Filtering）</p>
+</li>
+<li><p>为什么先采样再模糊不行？/为什么…?</p>
+<p>这一部分可以看一下傅里叶变换相关的知识，看懂了之后再来看这部分会有种垂死病中惊坐起的感觉（不知道这么形容对不对，但感觉蛮贴切的）”如果看了这篇文章你还不懂傅里叶变换，那就过来掐死我吧 - Heinrich的文章 - 知乎 <a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/19759362">https://zhuanlan.zhihu.com/p/19759362</a>“</p>
+</li>
+</ul>
+<p><img src="http://ww1.sinaimg.cn/large/0088bkyIgy1gjygf4r6bzj30z70mfwm7.jpg"/></p>
+<p>有这幅图可以看出，频率很高采样速度跟不上的时候会与原来的曲线差很远，所以会产生走样。为了贴近原曲线，现在有两个选项，一个是提高采样速度，另一个就是把高频的部分去掉。如果要提高采样速度的话，就要在硬件上想办法（提高像素数量，屏幕分辨率），但这就不是我们考虑的方向了。从后续的那个帅小伙指着我们的图片可以知道，在他的频域图上，高频的部分代表图像内的边界部分，把高频部分去掉后，也就是加一个低通滤波，图像自然就变模糊了，那个帅小伙也确实证明了这点。到这里，其实已经和前面连起来了，先将照片模糊，然后再采样，就可以达到反走样的目的。</p>
+<p>还剩一个问题就是前面提到的为什么先采样，再模糊不行？</p>
+<p><img src="http://ww1.sinaimg.cn/large/0088bkyIgy1gjyh22slzsj30tl0e6gn2.jpg"/></p>
+<p><img src="http://ww1.sinaimg.cn/large/0088bkyIgy1gjyhd066l2j30uv0dg75n.jpg"/></p>
+<p>从这里看会比较清楚，前面说采样就是在重复原始信号的频谱，采样不够密集时，会发生混叠，也就是Sparse sampling这种情况，也就引发了走样。可以想象，先采样，再做模糊（把那个平行四边形的边角去掉），波形重叠的情况下截断也会发生混叠。</p>
+<p>关于卷积这一部分听得不是特别明白，还需加深理解。</p>
+<ul>
+<li><p>Antialiasing By Supersampling (MSAA) （具体怎么做）</p>
+<ul>
+<li>supersampling 将一个像素分成多个小的像素，根据在三角形内的小像素的数量来判断该像素的颜色程度（多次取样。</li>
+</ul>
+</li>
+<li><p>no free lunch！</p>
+<ul>
+<li>MSAA每个像素多次采样浪费性能</li>
+<li>优化：不使用均匀分布，采样复用</li>
+</ul>
+</li>
+<li>其他的老师推荐的抗锯齿方法<ul>
+<li>FXAA(Fast Approximate AA)：先得到有锯齿的图，然后再做后续处理</li>
+<li>TAA (Tem‘poral AA)：借助前面的帧</li>
+</ul>
+</li>
+<li>Super resolution / super sampling<ul>
+<li>From low resolution to high resolution</li>
+<li>Essentially still “not enough samples” problem</li>
+<li>DLSS (Deep Learning Super Sampling) 靠深度学习去猜</li>
+</ul>
+</li>
+</ul>
+<h4 id="Z-Buffering"><a href="#Z-Buffering" class="headerlink" title="Z-Buffering"></a>Z-Buffering</h4><ul>
+<li>画家算法<ul>
+<li>三个三角形互相重叠会没法排序</li>
+<li>无法处理透明物体</li>
+</ul>
+</li>
+</ul>
+<p><img src="http://ww1.sinaimg.cn/large/0088bkyIgy1gjyi4yigqzj314e0oitam.jpg"/></p>
 
     </div>
 
@@ -293,13 +339,10 @@ R_{view} = \left[ \begin{matrix} x_{g×t} & y_{g×t} & z_{g×t} & 0 \\ x_{t} & y
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2020/10/18/%E6%9D%82%E9%B1%BC/" rel="prev" title="杂鱼">
-      <i class="fa fa-chevron-left"></i> 杂鱼
+    <a href="/2020/10/19/Games101-Transformation/" rel="prev" title="Games101: Transformation">
+      <i class="fa fa-chevron-left"></i> Games101: Transformation
     </a></div>
-      <div class="post-nav-item">
-    <a href="/2020/10/22/Rasterization/" rel="next" title="Rasterization">
-      Rasterization <i class="fa fa-chevron-right"></i>
-    </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
@@ -358,7 +401,7 @@ R_{view} = \left[ \begin{matrix} x_{g×t} & y_{g×t} & z_{g×t} & 0 \\ x_{t} & y
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%BF%E5%B0%84%E5%8F%98%E6%8D%A2"><span class="nav-number">1.</span> <span class="nav-text">仿射变换</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%BD%90%E6%AC%A1%E5%9D%90%E6%A0%87"><span class="nav-number">1.1.</span> <span class="nav-text">齐次坐标</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MVP"><span class="nav-number">2.</span> <span class="nav-text">MVP</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#sampling"><span class="nav-number">1.</span> <span class="nav-text">sampling</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Antialiasing"><span class="nav-number">2.</span> <span class="nav-text">Antialiasing</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Z-Buffering"><span class="nav-number">3.</span> <span class="nav-text">Z-Buffering</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
