@@ -57,15 +57,6 @@ R_{view} = \left[ \begin{matrix} x_{g×t} & y_{g×t} & z_{g×t} & 0 \\ x_{t} & y
       </categories>
   </entry>
   <entry>
-    <title>杂鱼</title>
-    <url>/2020/10/18/%E6%9D%82%E9%B1%BC/</url>
-    <content><![CDATA[<p>鱼塘里没有一只鱼，全是钩子。</p>
-]]></content>
-      <categories>
-        <category>什么玩意儿</category>
-      </categories>
-  </entry>
-  <entry>
     <title>Rasterization</title>
     <url>/2020/10/22/Rasterization/</url>
     <content><![CDATA[<ul>
@@ -123,7 +114,7 @@ M_{viewport} = \left[ \begin{matrix} width/2 & 0 & 0 & width/2 \\ 0 & height/2 &
 <p>还剩一个问题就是前面提到的为什么先采样，再模糊不行？</p>
 <p><img src="https://i.loli.net/2020/10/23/ZU5cx2KziT9RJ6y.png" alt="LDOX__Y_D_7638_9_B8JEGO.png"></p>
 <p><img src="https://i.loli.net/2020/10/23/rZFkG71DXQcjyTW.png" alt="DU__G_5_FSV96W_RC_X6E16.png"></p>
-<p>从这里看会比较清楚，前面说采样就是在重复原始信号的频谱，采样不够密集时，会发生混叠，也就是Sparse sampling这种情况，也就引发了走样。可以想象，先采样，再做模糊（把那个平行四边形的边角去掉），波形重叠的情况下截断也会发生混叠。</p>
+<p>从这里看会比较清楚，前面说采样就是在重复原始信号的频谱，采样不够密集时，会发生混叠，也就是Sparse sampling这种情况，也就引发了走样。可以想象，先采样，再做模糊（把那个梯形形的边角去掉），波形重叠的情况下截断也会发生混叠。</p>
 <p>关于卷积这一部分听得不是特别明白，还需加深理解。</p>
 <ul>
 <li><p>Antialiasing By Supersampling (MSAA) （具体怎么做）</p>
@@ -160,6 +151,59 @@ M_{viewport} = \left[ \begin{matrix} width/2 & 0 & 0 & width/2 \\ 0 & height/2 &
 ]]></content>
       <categories>
         <category>CG</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>Shading(Blinn-Phong Reflectance Model)</title>
+    <url>/2020/10/27/Shading/</url>
+    <content><![CDATA[<h4 id="Blinn-Phong-Reflectance-Model-反射模型"><a href="#Blinn-Phong-Reflectance-Model-反射模型" class="headerlink" title="Blinn-Phong Reflectance Model 反射模型"></a>Blinn-Phong Reflectance Model 反射模型</h4><p>是一个经验模型，并不完全准确，但相对简单</p>
+<p>光源照射会分成三个部分，一是Diffuse漫反射，二是Specular镜面反射（高光部分），三是环境光（各个方向乱七八糟经过多次反射打过来的光）</p>
+<a id="more"></a>
+<ul>
+<li><p>Diffuse 漫反射</p>
+<p>因为是漫反射，各个方向看到的光线能量强度都相同，所以与视角（view）方向无关，表示漫反射的公式里就只有光源方向 <strong>l</strong> 和 法线方向<strong>n</strong></p>
+<script type="math/tex; mode=display">
+L_{d} = k_{d}( I/r^{2})\max(0, \mathbf{n} \cdot \mathbf{l})</script><ul>
+<li>k<sub>d</sub>是漫反射系数，因为不同的材质对光线的吸收情况不同</li>
+<li><strong>n</strong> 和 <strong>l</strong> 点乘得出cos的结果以求得光线直着打到shading point上的能量强度</li>
+<li>max(0, <strong>n</strong> · <strong>l</strong>) 就是取0和 <strong>n</strong> · <strong>l</strong> 之间的最大值，光线从背着shading point的方向射过来的时候 <strong>n</strong> · <strong>l</strong> 会是个负值，而这种情况是将其视作没有意义的，因为我们只在考虑反射，没考虑折射之类的，所以 <strong>n</strong> · <strong>l</strong> 为负值时直接取0就好了。</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><p>Specular 镜面反射</p>
+<ul>
+<li>高光是只有你的视角方向对着镜面反射光的方向了才能看到的，所以反射光与视角的夹角会影响你看到的高光</li>
+<li>计算反射光与视角的夹角余弦相对来说比较麻烦，有聪明人发现了视角靠近反射光时，半程向量会靠近法线向量</li>
+<li>p用来控制高光大小，角度在增大时，余弦值其实下降的比较慢，就会造成视角与反射光相差很大时都可以看到很明显的高光，但高光一般就集中在一小片区域，视角偏差大一点就看不到了，所以加一个指数来加快它的下降速度，p一般取100~200</li>
+</ul>
+</li>
+</ul>
+<p>  <img src="https://i.loli.net/2020/10/27/QRLx16ZdOpVr4Go.png" alt="Specular.png"></p>
+<ul>
+<li><p>Ambient</p>
+<ul>
+<li>fake</li>
+<li>提升亮度</li>
+<li>精确计算需要用到全局光照</li>
+</ul>
+<script type="math/tex; mode=display">
+L_{a}=k_{a} I_{a}</script></li>
+</ul>
+<p>要得到最后的光照效果，把上面三种加起来就可以了</p>
+<script type="math/tex; mode=display">
+\begin{aligned} L &=L_{a}+L_{d}+L_{s} \\ &=k_{a} I_{a}+k_{d}\left(I / r^{2}\right) \max (0, \mathbf{n} \cdot \mathbf{l})+k_{s}\left(I / r^{2}\right) \max (0, \mathbf{n} \cdot \mathbf{h})^{p} \end{aligned}</script>]]></content>
+      <categories>
+        <category>CG</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>杂鱼</title>
+    <url>/2020/10/18/%E6%9D%82%E9%B1%BC/</url>
+    <content><![CDATA[<p>鱼塘里没有一只鱼，全是钩子。</p>
+]]></content>
+      <categories>
+        <category>什么玩意儿</category>
       </categories>
   </entry>
   <entry>
