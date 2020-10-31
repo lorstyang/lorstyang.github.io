@@ -154,6 +154,176 @@ M_{viewport} = \left[ \begin{matrix} width/2 & 0 & 0 & width/2 \\ 0 & height/2 &
       </categories>
   </entry>
   <entry>
+    <title>Shading(续)</title>
+    <url>/2020/10/31/Shading-2/</url>
+    <content><![CDATA[<h4 id="Shading-frequencies"><a href="#Shading-frequencies" class="headerlink" title="Shading frequencies"></a>Shading frequencies</h4><ul>
+<li>Flat shading<ul>
+<li>每个三角形都有一个法线，每个三角形做一次shading</li>
+<li>对平滑的表面来说效果不好</li>
+</ul>
+</li>
+<li>Gouraud shading<ul>
+<li>每个顶点做一次shading，三角形内部的颜色用插值的方式算出来</li>
+</ul>
+</li>
+</ul>
+<a id="more"></a>
+<ul>
+<li>Phong shading<ul>
+<li>求出顶点法线，插值出每一个像素的法线，对每个像素进行一次着色</li>
+<li>不要与Blinn-Phong着色模型搞混了</li>
+</ul>
+</li>
+</ul>
+<p><img src="https://i.loli.net/2020/10/31/Jz5AGUi1Mhq8TLy.png" width="50%" height="50%"></p>
+<p>面很多的时候，逐像素的效果并不会比逐面要好，但是当面多到一定程度(当面的数量超过像素时)的时候，逐面的计算量又不会比逐像素少了。所以想要好的效果，大量的计算基本上是免不了的。</p>
+<p>比较好奇面的数量比像素多的时候，到底是个什么情况？</p>
+<p>我最开始不能理解的地方在于顶点，也就是一个点，为什么会有颜色，开始给自己的解释是 为了插值给他定义的属性。后来发现这样想或许也挺能接受的 假如有一个红色的正方形，我说它上面的任意一点的颜色是红色的，感觉上也没什么错哈。</p>
+<p>前面(三种着色频率)遗留下来一个问题，顶点怎么算法线。</p>
+<ul>
+<li>求顶点相邻的面的法线的平均 作为顶点的法线</li>
+<li>法线向量要归一化</li>
+</ul>
+<h4 id="Graphics-pipeline"><a href="#Graphics-pipeline" class="headerlink" title="Graphics pipeline"></a>Graphics pipeline</h4><p><img src="https://i.loli.net/2020/10/31/h1kNm54wRJiMdDb.png" width="80%" height="80%"></p>
+<ul>
+<li>Vertex Processing<ul>
+<li>输入是场景中的模型，对其顶点进行处理</li>
+<li>MVP </li>
+<li>shading，texture mapping</li>
+</ul>
+</li>
+<li>Triangle Processing<ul>
+<li>将得到的顶点按一定规则连起来，得到三角形</li>
+</ul>
+</li>
+<li>Rasterization<ul>
+<li>Sampling</li>
+</ul>
+</li>
+<li>Fragment Processing<ul>
+<li>Z-buffer</li>
+<li>shading，texture mapping</li>
+</ul>
+</li>
+<li>Framebuffer Operations<ul>
+<li>帧缓冲区中输出图片</li>
+</ul>
+</li>
+</ul>
+<p>着色频率不同，shading发生的阶段也不同，比如说Gouraud shading是对顶点做shading，所以发生在Vertex Processing，而Phong shading则发生在Fragment Processing。不过Gouraud shading来说，三角形内部的着色是发生在哪？sampling还没做，还不知道三角形覆盖了那些像素。</p>
+<h4 id="Texture-mapping"><a href="#Texture-mapping" class="headerlink" title="Texture mapping"></a>Texture mapping</h4><ul>
+<li>一个点的颜色由漫反射系数决定，实际中不可能去逐点去设置它的系数，这样太蠢了，所以有了纹理映射，找一张能把物体包着的图片，并且有3D物体上任一点到2D图片上对应点的映射关系，然后计算着色的时候通过映射关系找到每个点的漫反射系数进行计算（每个点的漫反射系数存储在2D的图片，也就是texture上）。</li>
+<li>纹理坐标UV，2维图片上点的坐标，范围[0, 1]<sup>2</sup></li>
+<li>tilable texture无缝衔接的纹理<ul>
+<li>Wang Tiling</li>
+</ul>
+</li>
+</ul>
+<h4 id="Barycentric-coordinates-重心坐标-（插值）"><a href="#Barycentric-coordinates-重心坐标-（插值）" class="headerlink" title="Barycentric coordinates 重心坐标 （插值）"></a>Barycentric coordinates 重心坐标 （插值）</h4><ul>
+<li>三角形内部任一点的坐标(x, y)</li>
+</ul>
+<script type="math/tex; mode=display">
+\begin{array}{r} (x, y)=\alpha A+\beta B+\gamma C \\ \alpha+\beta+\gamma=1 \end{array}</script><ul>
+<li><p>α，β，γ    (α，β，γ)即为重心坐标</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\alpha &= \frac{A_{A}}{A_{A}+A_{B}+A_{C}} \\
+\beta &= \frac{A_{B}}{A_{A}+A_{B}+A_{C}} \\
+\gamma &= \frac{A_{C}}{A_{A}+A_{B}+A_{C}}
+\end{aligned}</script><ul>
+<li>将要求的那一点与三个顶点连起来，形成三个三角形A<sub>A</sub>, A<sub>B </sub>, A<sub>C</sub> 式中代表三角形面积</li>
+</ul>
+</li>
+<li><p>算面积较为麻烦，有公式可以直接算</p>
+<script type="math/tex; mode=display">
+\begin{aligned} 
+\alpha &=\frac{-\left(x-x_{B}\right)\left(y_{C}-y_{B}\right)+\left(y-y_{B}\right)\left(x_{C}-x_{B}\right)}{-\left(x_{A}-x_{B}\right)\left(y_{C}-y_{B}\right)+\left(y_{A}-y_{B}\right)\left(x_{C}-x_{B}\right)} \\ 
+\beta &=\frac{-\left(x-x_{C}\right)\left(y_{A}-y_{C}\right)+\left(y-y_{C}\right)\left(x_{A}-x_{C}\right)}{-\left(x_{B}-x_{C}\right)\left(y_{A}-y_{C}\right)+\left(y_{B}-y_{C}\right)\left(x_{A}-x_{C}\right)} \\ \gamma &=1-\alpha-\beta 
+\end{aligned}</script></li>
+<li><p>投影后重心坐标会发生变化</p>
+</li>
+</ul>
+<h4 id="Applying-Textures"><a href="#Applying-Textures" class="headerlink" title="Applying Textures"></a>Applying Textures</h4><ul>
+<li>步骤前面已经大致提到了，利用重心坐标插值算出和映射关系算出每个点（如果是Gouraud shading的话，应该是不会查每个像素的UV的，中间的像素颜色直接插值出来了）的UV坐标，然后去查texture，得到漫反射系数</li>
+</ul>
+<p>会遇到些问题</p>
+<ul>
+<li><p>纹理太小</p>
+<ul>
+<li><p>首先有个概念纹理像素texel，纹理的基本单位（纹素）</p>
+</li>
+<li><p>纹理太小会导致一个texel映射到多个pixel</p>
+</li>
+<li><p>决解方法</p>
+<ul>
+<li><p>Bilinear Interpolation 双线性插值</p>
+<p><img src="https://i.loli.net/2020/10/31/udiIgDMRFXbtBC5.png" width="70%" height="70%"></p>
+<p>红点是一个pixel，每个方格是一个texel，为了求红点的颜色，不是直接等同于u11</p>
+<p>先通过u01和u11插值得到u1，同理得到u0，然后u0和u1再做一个插值得到红点的颜色</p>
+</li>
+<li><p>Bicubic Interpolation 双三次插值</p>
+<p>周围16个点做三次插值，效果更好，但运算量更大</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>纹理太大</p>
+<ul>
+<li><p>纹理太大导致了一个pixel会对应多个texel，就是说一个pixel需要表示多个texel的信息，显然这是不够的，必然会造成信息的丢失，所以会导致失真。从信号的角度来讲也是，用pixel去采样texture，采样频率太低导致走样。</p>
+</li>
+<li><p>简单暴力的解决方法就是增加采样频率，比如说supersampling，问题也显而易见，超采样对性能影响太大</p>
+</li>
+<li><p>正着来不行，就反着来，可以将texture的纹素密度变小，这样也能达到目的，就有了mipmap</p>
+<ul>
+<li><p>每次长宽都减少一半，形成一个新的纹理</p>
+<p><img src="https://i.loli.net/2020/10/31/p26le5HnzJVAkQP.png" width="70%" height="70%"></p>
+</li>
+<li><p>所有的纹理合起来形成一个金字塔的形状，不同的纹理在不同的层level=D，D=0,1,2…</p>
+</li>
+<li><p>把所有纹理层都存储起来，也只比原来的纹理多了1/3(等比数列求和)</p>
+</li>
+<li><p>如何确定D，D=log<sub>2</sub>L，L是像素对应到纹理上近似的正方形的边长(占几个纹素)</p>
+<ul>
+<li><p>如果D是整数，直接取该层就可以了</p>
+</li>
+<li><p>如果不是整数，有两种应对方法</p>
+<ul>
+<li><p>四舍五入取最近的那层</p>
+</li>
+<li><p>Trilinear Interpolation 三线性插值</p>
+<p>首先D向下取整，假设取整后为d，在d层做一次Bilinear Interpolation，然后再d+1层再做一次Bilinear Interpolation(这两次双线性插值插的是颜色)，然后将两次结果再做一次插值(这次是层与层之间的插值，根据小数D的值做一次线性插值)</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>mipmap也存在问题，因为不同level的mipmap的Range Query(也就是一个像素在纹理上近似的区域)都是正方形的，然而一个像素实际在纹理上对应的区域可能是比较奇怪的形状，将这个奇怪的形状近似成正方形肯定会产生很大的误差，所以有了各向异性过滤Anisotropic Filtering    </p>
+<p><img src="https://i.loli.net/2020/11/01/njubQOEH8ogfLrh.png" width="70%" height="70%"></p>
+<p><img src="https://i.loli.net/2020/11/01/yWdeIVDx2ZOupm8.png" width="40%" height="40%"></p>
+<ul>
+<li>比如说，上面第二幅图左下角一个纹理上，一个像素在上面近似了一个正方形，还原到最初的纹理上就被拉伸成了一个矩形的形状，这样我们就可以解决在实际纹理中对应矩形的像素</li>
+<li>但是Anisotropic Filtering也只解决了部分问题，那种斜着的也没很好的办法处理</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li>EWA filtering</li>
+<li>可以解决斜着的情况<ul>
+<li>不太懂</li>
+</ul>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>CG</category>
+      </categories>
+  </entry>
+  <entry>
     <title>Shading(Blinn-Phong Reflectance Model)</title>
     <url>/2020/10/27/Shading/</url>
     <content><![CDATA[<h4 id="Blinn-Phong-Reflectance-Model-反射模型"><a href="#Blinn-Phong-Reflectance-Model-反射模型" class="headerlink" title="Blinn-Phong Reflectance Model 反射模型"></a>Blinn-Phong Reflectance Model 反射模型</h4><p>是一个经验模型，并不完全准确，但相对简单</p>

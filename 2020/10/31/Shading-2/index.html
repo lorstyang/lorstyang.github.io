@@ -20,19 +20,26 @@
     var CONFIG = {"hostname":"example.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="仿射变换 仿射变换 &#x3D; 线性变换 + 平移  线性变换包括 缩放，切变，旋转 线性变换可以用一个矩阵表示，但是变换中有平移的时候，一个矩阵就表示不了了，为了解决这个问题，就引入了齐次坐标（懒惰是一种美德）">
+  <meta name="description" content="Shading frequencies Flat shading 每个三角形都有一个法线，每个三角形做一次shading 对平滑的表面来说效果不好   Gouraud shading 每个顶点做一次shading，三角形内部的颜色用插值的方式算出来">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Games101: Transformation">
-<meta property="og:url" content="http://example.com/2020/10/19/Games101-Transformation/index.html">
+<meta property="og:title" content="Shading(续)">
+<meta property="og:url" content="http://example.com/2020/10/31/Shading-2/index.html">
 <meta property="og:site_name" content="lorstyang">
-<meta property="og:description" content="仿射变换 仿射变换 &#x3D; 线性变换 + 平移  线性变换包括 缩放，切变，旋转 线性变换可以用一个矩阵表示，但是变换中有平移的时候，一个矩阵就表示不了了，为了解决这个问题，就引入了齐次坐标（懒惰是一种美德）">
+<meta property="og:description" content="Shading frequencies Flat shading 每个三角形都有一个法线，每个三角形做一次shading 对平滑的表面来说效果不好   Gouraud shading 每个顶点做一次shading，三角形内部的颜色用插值的方式算出来">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2020-10-19T10:58:07.000Z">
-<meta property="article:modified_time" content="2020-10-19T15:39:38.404Z">
+<meta property="og:image" content="https://i.loli.net/2020/10/31/Jz5AGUi1Mhq8TLy.png">
+<meta property="og:image" content="https://i.loli.net/2020/10/31/h1kNm54wRJiMdDb.png">
+<meta property="og:image" content="https://i.loli.net/2020/10/31/udiIgDMRFXbtBC5.png">
+<meta property="og:image" content="https://i.loli.net/2020/10/31/p26le5HnzJVAkQP.png">
+<meta property="og:image" content="https://i.loli.net/2020/11/01/njubQOEH8ogfLrh.png">
+<meta property="og:image" content="https://i.loli.net/2020/11/01/yWdeIVDx2ZOupm8.png">
+<meta property="article:published_time" content="2020-10-31T02:20:32.000Z">
+<meta property="article:modified_time" content="2020-10-31T16:42:14.042Z">
 <meta property="article:author" content="lorstyang">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.loli.net/2020/10/31/Jz5AGUi1Mhq8TLy.png">
 
-<link rel="canonical" href="http://example.com/2020/10/19/Games101-Transformation/">
+<link rel="canonical" href="http://example.com/2020/10/31/Shading-2/">
 
 
 <script id="page-configurations">
@@ -45,7 +52,7 @@
   };
 </script>
 
-  <title>Games101: Transformation | lorstyang</title>
+  <title>Shading(续) | lorstyang</title>
   
 
 
@@ -183,7 +190,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2020/10/19/Games101-Transformation/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/10/31/Shading-2/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/header.jpg">
@@ -196,7 +203,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          Games101: Transformation
+          Shading(续)
         </h1>
 
         <div class="post-meta">
@@ -205,10 +212,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2020-10-19 18:58:07 / 修改时间：23:39:38" itemprop="dateCreated datePublished" datetime="2020-10-19T18:58:07+08:00">2020-10-19</time>
+              <time title="创建时间：2020-10-31 10:20:32" itemprop="dateCreated datePublished" datetime="2020-10-31T10:20:32+08:00">2020-10-31</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-11-01 00:42:14" itemprop="dateModified" datetime="2020-11-01T00:42:14+08:00">2020-11-01</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -230,52 +243,166 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h3 id="仿射变换"><a href="#仿射变换" class="headerlink" title="仿射变换"></a>仿射变换</h3><ul>
-<li><p>仿射变换 = 线性变换 + 平移</p>
+        <h4 id="Shading-frequencies"><a href="#Shading-frequencies" class="headerlink" title="Shading frequencies"></a>Shading frequencies</h4><ul>
+<li>Flat shading<ul>
+<li>每个三角形都有一个法线，每个三角形做一次shading</li>
+<li>对平滑的表面来说效果不好</li>
+</ul>
 </li>
-<li><p>线性变换包括 缩放，切变，旋转</p>
-<p>线性变换可以用一个矩阵表示，但是变换中有平移的时候，一个矩阵就表示不了了，为了解决这个问题，就引入了齐次坐标（懒惰是一种美德）</p>
+<li>Gouraud shading<ul>
+<li>每个顶点做一次shading，三角形内部的颜色用插值的方式算出来</li>
+</ul>
 </li>
 </ul>
 <a id="more"></a>
-<h4 id="齐次坐标"><a href="#齐次坐标" class="headerlink" title="齐次坐标"></a>齐次坐标</h4><ul>
-<li><p>给原来的点/向量增加一个维度</p>
-<p>2D point (x, y) —&gt; (x, y, 1)</p>
-<p>2D vector (x, y) —&gt; (x, y, 0)</p>
-</li>
-<li><p>这样仿射变换就从原来的</p>
-<script type="math/tex; mode=display">
-\left[ \begin{matrix} x' \\ y' \end{matrix} \right] = \left[ \begin{matrix} a & b \\ c & d \end{matrix} \right]\left[ \begin{matrix} x \\ y \end{matrix} \right] + \left[ \begin{matrix} t_{x} \\ t_{y} \end{matrix} \right]</script><p>变成了</p>
-<script type="math/tex; mode=display">
-\left[ \begin{matrix} x' \\ y' \\ w' \end{matrix} \right] = \left[ \begin{matrix} a & b & t_{x} \\ c & d & t_{y} \\ 0 & 0 & 1 \end{matrix} \right]\left[ \begin{matrix} x \\ y \\ 1 \end{matrix} \right] = \left[ \begin{matrix} ax+by+t_{x} \\ cx+dy+t_{y} \\ 1 \end{matrix} \right]</script><p>这样，现在的变换矩阵不仅包含了原有的线性变换，还包括了平移（t<sub>x</sub>和t<sub>y</sub>）</p>
-</li>
-</ul>
-<p>之前的旋转默认都是绕原点转的，如果要绕任意点旋转，可以先把那个任意点平移到原点（物体也做同样的平移），然后绕原点旋转，再平移回来。</p>
 <ul>
-<li>3D中，绕任意经过原点的轴：Rodrigues’ Rotation Formula：<script type="math/tex; mode=display">
-\mathbf{R}(\mathbf{n}, \alpha)=\cos (\alpha) \mathbf{I}+(1-\cos (\alpha)) \mathbf{n} \mathbf{n}^{T}+\sin (\alpha)\left(\begin{array}{ccc} 0 & -n_{z} & n_{y} \\ n_{z} & 0 & -n_{x} \\ -n_{y} & n_{x} & 0 \end{array}\right)</script>如果要绕任意轴，而不一定经过原点，同样的思路，将该轴平移至经过原点，旋转完后再平移回去</li>
+<li>Phong shading<ul>
+<li>求出顶点法线，插值出每一个像素的法线，对每个像素进行一次着色</li>
+<li>不要与Blinn-Phong着色模型搞混了</li>
 </ul>
-<h3 id="MVP"><a href="#MVP" class="headerlink" title="MVP"></a>MVP</h3><ul>
-<li><p>Model transformation</p>
-<p>把物体从局部坐标系变换到世界坐标系，玩过建模软件的应该知道，你点物体，处于移动物体模式时，会有X，Y，Z三个方向的箭头，可以把那个当成物体的局部坐标系，然后用矩阵可以把局部坐标系里的物体的顶点坐标转换到世界坐标系。至于世界坐标系，就是整个场景的坐标系了。</p>
 </li>
-<li><p>View transformation</p>
-<p>闫老师是这样说的 Find a good ”angle“ to put the camera 很形象是吧。这一步是把世界坐标系转换到摄像机坐标系。摄像机坐标系就是把摄像机本身的局部坐标系与世界坐标系以某种方式重叠了起来，显而易见，如果世界坐标系里的物体不改变坐标的话，会导致摄像机里的内容发生变化（想象一下，摄像机转到了世界坐标系中心，而物体不动），所以世界空间中的物体也要做同样的变换，相当于把摄像机和物体看成一个整体，一起动，这个变换就是M<sub>view</sub>。前面所说的某种方式就是规定的摄像机的朝向之类的，一般来说是 位于原点，up at Y，look at -Z（约定俗成的，方便计算）。</p>
-<p>M<sub>view</sub>是通过求逆变换得到的，用到了正交矩阵的逆矩阵等于其转置矩阵，而旋转矩阵是正交矩阵。 </p>
-<p>摄像机从任意位置到原点，有旋转和平移两个操作，将其分开来看清楚一点，M<sub>view</sub> = R<sub>view</sub>T<sub>view</sub></p>
-<script type="math/tex; mode=display">
-T_{view} = \left[ \begin{matrix} 1 & 0 & 0 & -x_{e} \\ 0 & 1 & 0 & -y_{e} \\ 0 & 0 & 1 & -z_{e} \\ 0 & 0 & 0 & 1 \end{matrix}\right]</script><p>对于R<sub>view</sub>不好求，先求他的逆矩阵</p>
-<script type="math/tex; mode=display">
-R_{view}^{-1} = \left[ \begin{matrix} x_{g×t} & x_{t} & x_{-g} & 0 \\ y_{g×t} & y_{t} & y_{-g} & 0 \\ z_{g×t} & z_{t} & z_{-g} & 0 \\ 0 & 0 & 0 & 1 \end{matrix}\right]</script><p>因为R<sub>view</sub>的转置等于它的逆，所以R<sup>T</sup><sub>view</sub> = R<sup>-1</sup><sub>view</sub>，将R<sup>T</sup><sub>view</sub>再转置一下就得到了R<sub>view</sub>。即</p>
-<script type="math/tex; mode=display">
-R_{view} = \left[ \begin{matrix} x_{g×t} & y_{g×t} & z_{g×t} & 0 \\ x_{t} & y_{t} & z_{t} & 0 \\ x_{-g} & y_{-g} & z_{-g} & 0 \\ 0 & 0 & 0 & 1 \end{matrix}\right]</script></li>
-<li><p>Projection transform</p>
-<ul>
-<li>Orthographic projection 正交投影</li>
-<li>Perspective projection 透视投影（近大远小</li>
 </ul>
-<p>M<sub>persp</sub> = M<sub>ortho</sub> M<sub>persp-&gt;ortho</sub> </p>
-<p>M<sub>persp-&gt;ortho</sub> 将视锥体变成立方体，M<sub>ortho</sub> 将立方体变成[-1, 1]的正方体</p>
+<p><img src="https://i.loli.net/2020/10/31/Jz5AGUi1Mhq8TLy.png" width="50%" height="50%"></p>
+<p>面很多的时候，逐像素的效果并不会比逐面要好，但是当面多到一定程度(当面的数量超过像素时)的时候，逐面的计算量又不会比逐像素少了。所以想要好的效果，大量的计算基本上是免不了的。</p>
+<p>比较好奇面的数量比像素多的时候，到底是个什么情况？</p>
+<p>我最开始不能理解的地方在于顶点，也就是一个点，为什么会有颜色，开始给自己的解释是 为了插值给他定义的属性。后来发现这样想或许也挺能接受的 假如有一个红色的正方形，我说它上面的任意一点的颜色是红色的，感觉上也没什么错哈。</p>
+<p>前面(三种着色频率)遗留下来一个问题，顶点怎么算法线。</p>
+<ul>
+<li>求顶点相邻的面的法线的平均 作为顶点的法线</li>
+<li>法线向量要归一化</li>
+</ul>
+<h4 id="Graphics-pipeline"><a href="#Graphics-pipeline" class="headerlink" title="Graphics pipeline"></a>Graphics pipeline</h4><p><img src="https://i.loli.net/2020/10/31/h1kNm54wRJiMdDb.png" width="80%" height="80%"></p>
+<ul>
+<li>Vertex Processing<ul>
+<li>输入是场景中的模型，对其顶点进行处理</li>
+<li>MVP </li>
+<li>shading，texture mapping</li>
+</ul>
+</li>
+<li>Triangle Processing<ul>
+<li>将得到的顶点按一定规则连起来，得到三角形</li>
+</ul>
+</li>
+<li>Rasterization<ul>
+<li>Sampling</li>
+</ul>
+</li>
+<li>Fragment Processing<ul>
+<li>Z-buffer</li>
+<li>shading，texture mapping</li>
+</ul>
+</li>
+<li>Framebuffer Operations<ul>
+<li>帧缓冲区中输出图片</li>
+</ul>
+</li>
+</ul>
+<p>着色频率不同，shading发生的阶段也不同，比如说Gouraud shading是对顶点做shading，所以发生在Vertex Processing，而Phong shading则发生在Fragment Processing。不过Gouraud shading来说，三角形内部的着色是发生在哪？sampling还没做，还不知道三角形覆盖了那些像素。</p>
+<h4 id="Texture-mapping"><a href="#Texture-mapping" class="headerlink" title="Texture mapping"></a>Texture mapping</h4><ul>
+<li>一个点的颜色由漫反射系数决定，实际中不可能去逐点去设置它的系数，这样太蠢了，所以有了纹理映射，找一张能把物体包着的图片，并且有3D物体上任一点到2D图片上对应点的映射关系，然后计算着色的时候通过映射关系找到每个点的漫反射系数进行计算（每个点的漫反射系数存储在2D的图片，也就是texture上）。</li>
+<li>纹理坐标UV，2维图片上点的坐标，范围[0, 1]<sup>2</sup></li>
+<li>tilable texture无缝衔接的纹理<ul>
+<li>Wang Tiling</li>
+</ul>
+</li>
+</ul>
+<h4 id="Barycentric-coordinates-重心坐标-（插值）"><a href="#Barycentric-coordinates-重心坐标-（插值）" class="headerlink" title="Barycentric coordinates 重心坐标 （插值）"></a>Barycentric coordinates 重心坐标 （插值）</h4><ul>
+<li>三角形内部任一点的坐标(x, y)</li>
+</ul>
+<script type="math/tex; mode=display">
+\begin{array}{r} (x, y)=\alpha A+\beta B+\gamma C \\ \alpha+\beta+\gamma=1 \end{array}</script><ul>
+<li><p>α，β，γ    (α，β，γ)即为重心坐标</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\alpha &= \frac{A_{A}}{A_{A}+A_{B}+A_{C}} \\
+\beta &= \frac{A_{B}}{A_{A}+A_{B}+A_{C}} \\
+\gamma &= \frac{A_{C}}{A_{A}+A_{B}+A_{C}}
+\end{aligned}</script><ul>
+<li>将要求的那一点与三个顶点连起来，形成三个三角形A<sub>A</sub>, A<sub>B </sub>, A<sub>C</sub> 式中代表三角形面积</li>
+</ul>
+</li>
+<li><p>算面积较为麻烦，有公式可以直接算</p>
+<script type="math/tex; mode=display">
+\begin{aligned} 
+\alpha &=\frac{-\left(x-x_{B}\right)\left(y_{C}-y_{B}\right)+\left(y-y_{B}\right)\left(x_{C}-x_{B}\right)}{-\left(x_{A}-x_{B}\right)\left(y_{C}-y_{B}\right)+\left(y_{A}-y_{B}\right)\left(x_{C}-x_{B}\right)} \\ 
+\beta &=\frac{-\left(x-x_{C}\right)\left(y_{A}-y_{C}\right)+\left(y-y_{C}\right)\left(x_{A}-x_{C}\right)}{-\left(x_{B}-x_{C}\right)\left(y_{A}-y_{C}\right)+\left(y_{B}-y_{C}\right)\left(x_{A}-x_{C}\right)} \\ \gamma &=1-\alpha-\beta 
+\end{aligned}</script></li>
+<li><p>投影后重心坐标会发生变化</p>
+</li>
+</ul>
+<h4 id="Applying-Textures"><a href="#Applying-Textures" class="headerlink" title="Applying Textures"></a>Applying Textures</h4><ul>
+<li>步骤前面已经大致提到了，利用重心坐标插值算出和映射关系算出每个点（如果是Gouraud shading的话，应该是不会查每个像素的UV的，中间的像素颜色直接插值出来了）的UV坐标，然后去查texture，得到漫反射系数</li>
+</ul>
+<p>会遇到些问题</p>
+<ul>
+<li><p>纹理太小</p>
+<ul>
+<li><p>首先有个概念纹理像素texel，纹理的基本单位（纹素）</p>
+</li>
+<li><p>纹理太小会导致一个texel映射到多个pixel</p>
+</li>
+<li><p>决解方法</p>
+<ul>
+<li><p>Bilinear Interpolation 双线性插值</p>
+<p><img src="https://i.loli.net/2020/10/31/udiIgDMRFXbtBC5.png" width="70%" height="70%"></p>
+<p>红点是一个pixel，每个方格是一个texel，为了求红点的颜色，不是直接等同于u11</p>
+<p>先通过u01和u11插值得到u1，同理得到u0，然后u0和u1再做一个插值得到红点的颜色</p>
+</li>
+<li><p>Bicubic Interpolation 双三次插值</p>
+<p>周围16个点做三次插值，效果更好，但运算量更大</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>纹理太大</p>
+<ul>
+<li><p>纹理太大导致了一个pixel会对应多个texel，就是说一个pixel需要表示多个texel的信息，显然这是不够的，必然会造成信息的丢失，所以会导致失真。从信号的角度来讲也是，用pixel去采样texture，采样频率太低导致走样。</p>
+</li>
+<li><p>简单暴力的解决方法就是增加采样频率，比如说supersampling，问题也显而易见，超采样对性能影响太大</p>
+</li>
+<li><p>正着来不行，就反着来，可以将texture的纹素密度变小，这样也能达到目的，就有了mipmap</p>
+<ul>
+<li><p>每次长宽都减少一半，形成一个新的纹理</p>
+<p><img src="https://i.loli.net/2020/10/31/p26le5HnzJVAkQP.png" width="70%" height="70%"></p>
+</li>
+<li><p>所有的纹理合起来形成一个金字塔的形状，不同的纹理在不同的层level=D，D=0,1,2…</p>
+</li>
+<li><p>把所有纹理层都存储起来，也只比原来的纹理多了1/3(等比数列求和)</p>
+</li>
+<li><p>如何确定D，D=log<sub>2</sub>L，L是像素对应到纹理上近似的正方形的边长(占几个纹素)</p>
+<ul>
+<li><p>如果D是整数，直接取该层就可以了</p>
+</li>
+<li><p>如果不是整数，有两种应对方法</p>
+<ul>
+<li><p>四舍五入取最近的那层</p>
+</li>
+<li><p>Trilinear Interpolation 三线性插值</p>
+<p>首先D向下取整，假设取整后为d，在d层做一次Bilinear Interpolation，然后再d+1层再做一次Bilinear Interpolation(这两次双线性插值插的是颜色)，然后将两次结果再做一次插值(这次是层与层之间的插值，根据小数D的值做一次线性插值)</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>mipmap也存在问题，因为不同level的mipmap的Range Query(也就是一个像素在纹理上近似的区域)都是正方形的，然而一个像素实际在纹理上对应的区域可能是比较奇怪的形状，将这个奇怪的形状近似成正方形肯定会产生很大的误差，所以有了各向异性过滤Anisotropic Filtering    </p>
+<p><img src="https://i.loli.net/2020/11/01/njubQOEH8ogfLrh.png" width="70%" height="70%"></p>
+<p><img src="https://i.loli.net/2020/11/01/yWdeIVDx2ZOupm8.png" width="40%" height="40%"></p>
+<ul>
+<li>比如说，上面第二幅图左下角一个纹理上，一个像素在上面近似了一个正方形，还原到最初的纹理上就被拉伸成了一个矩形的形状，这样我们就可以解决在实际纹理中对应矩形的像素</li>
+<li>但是Anisotropic Filtering也只解决了部分问题，那种斜着的也没很好的办法处理</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li>EWA filtering</li>
+<li>可以解决斜着的情况<ul>
+<li>不太懂</li>
+</ul>
 </li>
 </ul>
 
@@ -293,13 +420,10 @@ R_{view} = \left[ \begin{matrix} x_{g×t} & y_{g×t} & z_{g×t} & 0 \\ x_{t} & y
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2020/10/18/%E6%9D%82%E9%B1%BC/" rel="prev" title="杂鱼">
-      <i class="fa fa-chevron-left"></i> 杂鱼
+    <a href="/2020/10/27/Shading/" rel="prev" title="Shading(Blinn-Phong Reflectance Model)">
+      <i class="fa fa-chevron-left"></i> Shading(Blinn-Phong Reflectance Model)
     </a></div>
-      <div class="post-nav-item">
-    <a href="/2020/10/22/Rasterization/" rel="next" title="Rasterization">
-      Rasterization <i class="fa fa-chevron-right"></i>
-    </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
@@ -358,7 +482,7 @@ R_{view} = \left[ \begin{matrix} x_{g×t} & y_{g×t} & z_{g×t} & 0 \\ x_{t} & y
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%BB%BF%E5%B0%84%E5%8F%98%E6%8D%A2"><span class="nav-number">1.</span> <span class="nav-text">仿射变换</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E9%BD%90%E6%AC%A1%E5%9D%90%E6%A0%87"><span class="nav-number">1.1.</span> <span class="nav-text">齐次坐标</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#MVP"><span class="nav-number">2.</span> <span class="nav-text">MVP</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#Shading-frequencies"><span class="nav-number">1.</span> <span class="nav-text">Shading frequencies</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Graphics-pipeline"><span class="nav-number">2.</span> <span class="nav-text">Graphics pipeline</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Texture-mapping"><span class="nav-number">3.</span> <span class="nav-text">Texture mapping</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Barycentric-coordinates-%E9%87%8D%E5%BF%83%E5%9D%90%E6%A0%87-%EF%BC%88%E6%8F%92%E5%80%BC%EF%BC%89"><span class="nav-number">4.</span> <span class="nav-text">Barycentric coordinates 重心坐标 （插值）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Applying-Textures"><span class="nav-number">5.</span> <span class="nav-text">Applying Textures</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
