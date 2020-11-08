@@ -20,26 +20,24 @@
     var CONFIG = {"hostname":"example.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="Shading frequencies Flat shading 每个三角形都有一个法线，每个三角形做一次shading 对平滑的表面来说效果不好   Gouraud shading 每个顶点做一次shading，三角形内部的颜色用插值的方式算出来">
+  <meta name="description" content="几何的表示方法">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Shading(续)">
-<meta property="og:url" content="http://example.com/2020/10/31/Shading-2/index.html">
+<meta property="og:title" content="Geometry">
+<meta property="og:url" content="http://example.com/2020/11/08/Geometry/index.html">
 <meta property="og:site_name" content="lorstyang">
-<meta property="og:description" content="Shading frequencies Flat shading 每个三角形都有一个法线，每个三角形做一次shading 对平滑的表面来说效果不好   Gouraud shading 每个顶点做一次shading，三角形内部的颜色用插值的方式算出来">
+<meta property="og:description" content="几何的表示方法">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://i.loli.net/2020/10/31/Jz5AGUi1Mhq8TLy.png">
-<meta property="og:image" content="https://i.loli.net/2020/10/31/h1kNm54wRJiMdDb.png">
-<meta property="og:image" content="https://i.loli.net/2020/10/31/udiIgDMRFXbtBC5.png">
-<meta property="og:image" content="https://i.loli.net/2020/10/31/p26le5HnzJVAkQP.png">
-<meta property="og:image" content="https://i.loli.net/2020/11/01/njubQOEH8ogfLrh.png">
-<meta property="og:image" content="https://i.loli.net/2020/11/01/yWdeIVDx2ZOupm8.png">
-<meta property="article:published_time" content="2020-10-31T02:20:32.000Z">
-<meta property="article:modified_time" content="2020-10-31T16:47:54.774Z">
+<meta property="og:image" content="https://i.loli.net/2020/11/08/cPVrQnBwTvol8DH.png">
+<meta property="og:image" content="https://i.loli.net/2020/11/08/WsUFcthNPuKEn9l.png">
+<meta property="og:image" content="https://i.loli.net/2020/11/08/vz4o6heUdqAXwYJ.png">
+<meta property="og:image" content="https://i.loli.net/2020/11/08/VlDPp9yRxiTen5c.png">
+<meta property="article:published_time" content="2020-11-08T07:36:09.000Z">
+<meta property="article:modified_time" content="2020-11-08T11:56:20.055Z">
 <meta property="article:author" content="lorstyang">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://i.loli.net/2020/10/31/Jz5AGUi1Mhq8TLy.png">
+<meta name="twitter:image" content="https://i.loli.net/2020/11/08/cPVrQnBwTvol8DH.png">
 
-<link rel="canonical" href="http://example.com/2020/10/31/Shading-2/">
+<link rel="canonical" href="http://example.com/2020/11/08/Geometry/">
 
 
 <script id="page-configurations">
@@ -52,7 +50,7 @@
   };
 </script>
 
-  <title>Shading(续) | lorstyang</title>
+  <title>Geometry | lorstyang</title>
   
 
 
@@ -190,7 +188,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2020/10/31/Shading-2/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/11/08/Geometry/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/header.jpg">
@@ -203,7 +201,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          Shading(续)
+          Geometry
         </h1>
 
         <div class="post-meta">
@@ -212,16 +210,10 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
+              
 
-              <time title="创建时间：2020-10-31 10:20:32" itemprop="dateCreated datePublished" datetime="2020-10-31T10:20:32+08:00">2020-10-31</time>
+              <time title="创建时间：2020-11-08 15:36:09 / 修改时间：19:56:20" itemprop="dateCreated datePublished" datetime="2020-11-08T15:36:09+08:00">2020-11-08</time>
             </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-11-01 00:47:54" itemprop="dateModified" datetime="2020-11-01T00:47:54+08:00">2020-11-01</time>
-              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -243,167 +235,116 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h4 id="Shading-frequencies"><a href="#Shading-frequencies" class="headerlink" title="Shading frequencies"></a>Shading frequencies</h4><ul>
-<li>Flat shading<ul>
-<li>每个三角形都有一个法线，每个三角形做一次shading</li>
-<li>对平滑的表面来说效果不好</li>
-</ul>
-</li>
-<li>Gouraud shading<ul>
-<li>每个顶点做一次shading，三角形内部的颜色用插值的方式算出来</li>
-</ul>
-</li>
-</ul>
-<a id="more"></a>
+        <h4 id="几何的表示方法"><a href="#几何的表示方法" class="headerlink" title="几何的表示方法"></a>几何的表示方法</h4><a id="more"></a>
 <ul>
-<li>Phong shading<ul>
-<li>求出顶点法线，插值出每一个像素的法线，对每个像素进行一次着色</li>
-<li>不要与Blinn-Phong着色模型搞混了</li>
-</ul>
-</li>
-</ul>
-<p><img src="https://i.loli.net/2020/10/31/Jz5AGUi1Mhq8TLy.png" width="50%" height="50%"></p>
-<p>面很多的时候，逐像素的效果并不会比逐面要好，但是当面多到一定程度(当面的数量超过像素时)的时候，逐面的计算量又不会比逐像素少了。所以想要好的效果，大量的计算基本上是免不了的。</p>
-<p>比较好奇面的数量比像素多的时候，到底是个什么情况？</p>
-<p>我最开始不能理解的地方在于顶点，也就是一个点，为什么会有颜色，开始给自己的解释是 为了插值给他定义的属性。后来发现这样想或许也挺能接受的 假如有一个红色的正方形，我说它上面的任意一点的颜色是红色的，感觉上也没什么错哈。</p>
-<p>前面(三种着色频率)遗留下来一个问题，顶点怎么算法线。</p>
-<ul>
-<li>求顶点相邻的面的法线的平均 作为顶点的法线</li>
-<li>法线向量要归一化</li>
-</ul>
-<h4 id="Graphics-pipeline"><a href="#Graphics-pipeline" class="headerlink" title="Graphics pipeline"></a>Graphics pipeline</h4><p><img src="https://i.loli.net/2020/10/31/h1kNm54wRJiMdDb.png" width="80%" height="80%"></p>
-<ul>
-<li>Vertex Processing<ul>
-<li>输入是场景中的模型，对其顶点进行处理</li>
-<li>MVP </li>
-<li>shading，texture mapping</li>
-</ul>
-</li>
-<li>Triangle Processing<ul>
-<li>将得到的顶点按一定规则连起来，得到三角形</li>
-</ul>
-</li>
-<li>Rasterization<ul>
-<li>Sampling</li>
-</ul>
-</li>
-<li>Fragment Processing<ul>
-<li>Z-buffer</li>
-<li>shading，texture mapping</li>
-</ul>
-</li>
-<li>Framebuffer Operations<ul>
-<li>帧缓冲区中输出图片</li>
-</ul>
-</li>
-</ul>
-<p>着色频率不同，shading发生的阶段也不同，比如说Gouraud shading是对顶点做shading，所以发生在Vertex Processing，而Phong shading则发生在Fragment Processing。不过Gouraud shading来说，三角形内部的着色是发生在哪？sampling还没做，还不知道三角形覆盖了那些像素。</p>
-<h4 id="Texture-mapping"><a href="#Texture-mapping" class="headerlink" title="Texture mapping"></a>Texture mapping</h4><ul>
-<li>一个点的颜色由漫反射系数决定，实际中不可能去逐点去设置它的系数，这样太蠢了，所以有了纹理映射，找一张能把物体包着的图片，并且有3D物体上任一点到2D图片上对应点的映射关系，然后计算着色的时候通过映射关系找到每个点的漫反射系数进行计算（每个点的漫反射系数存储在2D的图片，也就是texture上）。</li>
-<li>纹理坐标UV，2维图片上点的坐标，范围[0, 1]<sup>2</sup></li>
-<li>tilable texture无缝衔接的纹理<ul>
-<li>Wang Tiling</li>
-</ul>
-</li>
-</ul>
-<h4 id="Barycentric-coordinates-重心坐标-（插值）"><a href="#Barycentric-coordinates-重心坐标-（插值）" class="headerlink" title="Barycentric coordinates 重心坐标 （插值）"></a>Barycentric coordinates 重心坐标 （插值）</h4><ul>
-<li>三角形内部任一点的坐标(x, y)</li>
-</ul>
+<li><p>隐式曲面</p>
+<p>隐式曲面不会告诉具体点的位置，只会告诉你点的坐标满足的关系，举个栗子：</p>
 <script type="math/tex; mode=display">
-\begin{array}{r} (x, y)=\alpha A+\beta B+\gamma C \\ \alpha+\beta+\gamma=1 \end{array}</script><ul>
-<li><p>α，β，γ    (α，β，γ)即为重心坐标</p>
+x^{2}+y^{2}+z^{2} = 1</script><p>我们一般将其表示为</p>
 <script type="math/tex; mode=display">
-\begin{aligned}
-\alpha &= \frac{A_{A}}{A_{A}+A_{B}+A_{C}} \\
-\beta &= \frac{A_{B}}{A_{A}+A_{B}+A_{C}} \\
-\gamma &= \frac{A_{C}}{A_{A}+A_{B}+A_{C}}
-\end{aligned}</script><ul>
-<li>将要求的那一点与三个顶点连起来，形成三个三角形A<sub>A</sub>, A<sub>B </sub>, A<sub>C</sub> 式中代表三角形面积</li>
+f(x,y,z)=x^{2}+y^{2}+z^{2}-1</script></li>
 </ul>
-</li>
-<li><p>算面积较为麻烦，有公式可以直接算</p>
+<p>  这个特殊一点，一看就知道是个球，但有些就不太明显，再举个栗子：</p>
 <script type="math/tex; mode=display">
-\begin{aligned} 
-\alpha &=\frac{-\left(x-x_{B}\right)\left(y_{C}-y_{B}\right)+\left(y-y_{B}\right)\left(x_{C}-x_{B}\right)}{-\left(x_{A}-x_{B}\right)\left(y_{C}-y_{B}\right)+\left(y_{A}-y_{B}\right)\left(x_{C}-x_{B}\right)} \\ 
-\beta &=\frac{-\left(x-x_{C}\right)\left(y_{A}-y_{C}\right)+\left(y-y_{C}\right)\left(x_{A}-x_{C}\right)}{-\left(x_{B}-x_{C}\right)\left(y_{A}-y_{C}\right)+\left(y_{B}-y_{C}\right)\left(x_{A}-x_{C}\right)} \\ \gamma &=1-\alpha-\beta 
-\end{aligned}</script></li>
-<li><p>投影后重心坐标会发生变化</p>
+  f(x,y,z)=(2- \sqrt{x^{2} + y^{2}})^{2} + z^{2} - 1</script><p>  这个就不太明显，它是一个圆环。所以说隐式曲面跟你能不能看出来它是个什么东西一点关系没有，判断隐式还是靠上面说的那种方式，没告诉点的具体位置，只告诉点的位置关系</p>
+<ul>
+<li>缺点：难以采样到曲面上具体的点。就是说要你给我一个在这曲面上的点，如果是复杂一点的曲面或者说不知道长什么样的曲面，你对着函数表达式想破脑袋估计也难想出一个点来</li>
+<li>优点：容易判断某个点与曲面的关系。反过来就不一样了，你给我一个点，我很容易判断它跟曲面的位置关系，直接带进去看正负就可以了</li>
+</ul>
+<ul>
+<li><p>显式曲面</p>
+<p>显式曲面的点都被直接给出，或者可以通过映射关系直接得到</p>
+<p>二维到三维的映射 (u, v) —&gt; (x, y, z)</p>
+<p><img src="https://i.loli.net/2020/11/08/cPVrQnBwTvol8DH.png" width="70%" height="70%"></p>
+<p>这个(2+cosu)cosv是x，后面两个对应y，z。</p>
+<p>咋一看，这个和那个函数表达式很像，但两个并不一样，u,v是曲面在二维图上的坐标，所以带入是直接得到的(x, y, z)。虽说大体上是懂了，但是总感觉充满了违和感，为什么突然蹦出来个u,v，感觉没任何道理啊，单纯是因为 得到显式曲面的点的一种方法是映射吗？</p>
+<ul>
+<li>缺点：没办法判断特定点与曲面的关系</li>
+<li>优点：可以直接采样到曲面上所有的点</li>
+</ul>
+<p>与隐式曲面相反</p>
 </li>
 </ul>
-<h4 id="Applying-Textures"><a href="#Applying-Textures" class="headerlink" title="Applying Textures"></a>Applying Textures</h4><ul>
-<li>步骤前面已经大致提到了，利用重心坐标插值算出和映射关系算出每个点（如果是Gouraud shading的话，应该是不会查每个像素的UV的，中间的像素颜色直接插值出来了）的UV坐标，然后去查texture，得到漫反射系数</li>
-</ul>
-<p>会遇到些问题</p>
 <ul>
-<li><p>纹理太小</p>
+<li><p>隐式曲面种类</p>
 <ul>
-<li><p>首先有个概念纹理像素texel，纹理的基本单位（纹素）</p>
-</li>
-<li><p>纹理太小会导致一个texel映射到多个pixel</p>
-</li>
-<li><p>决解方法</p>
-<ul>
-<li><p>Bilinear Interpolation 双线性插值</p>
-<p><img src="https://i.loli.net/2020/10/31/udiIgDMRFXbtBC5.png" width="70%" height="70%"></p>
-<p>红点是一个pixel，每个方格是一个texel，为了求红点的颜色，不是直接等同于u11</p>
-<p>先通过u01和u11插值得到u1，同理得到u0，然后u0和u1再做一个插值得到红点的颜色</p>
-</li>
-<li><p>Bicubic Interpolation 双三次插值</p>
-<p>周围16个点做三次插值，效果更好，但运算量更大</p>
-</li>
+<li>Algebraic Surface</li>
+<li>最直接的代数表达式</li>
+<li>Constructive Solid Geometry(CSG)<ul>
+<li>对不同的几何体做布尔运算</li>
+<li>通过这些布尔运算可以得到更复杂的几何</li>
 </ul>
 </li>
+<li>Distance Function 距离函数<ul>
+<li>这个东西很有意思，可以实现两个几何体混合的效果</li>
+<li>实现混合效果的方法是找到任意一个点到两个几何体表面最短的距离，然后再减去一个变量作为最终的SDF(Signed Distance Function)</li>
 </ul>
 </li>
-<li><p>纹理太大</p>
-<ul>
-<li><p>纹理太大导致了一个pixel会对应多个texel，就是说一个pixel需要表示多个texel的信息，显然这是不够的，必然会造成信息的丢失，所以会导致失真。从信号的角度来讲也是，用pixel去采样texture，采样频率太低导致走样。</p>
-</li>
-<li><p>简单暴力的解决方法就是增加采样频率，比如说supersampling，问题也显而易见，超采样对性能影响太大</p>
-</li>
-<li><p>正着来不行，就反着来，可以将texture的纹素密度变小，这样也能达到目的，就有了mipmap</p>
-<ul>
-<li><p>每次长宽都减少一半，形成一个新的纹理</p>
-<p><img src="https://i.loli.net/2020/10/31/p26le5HnzJVAkQP.png" width="70%" height="70%"></p>
-</li>
-<li><p>所有的纹理合起来形成一个金字塔的形状，不同的纹理在不同的层level=D，D=0,1,2…</p>
-</li>
-<li><p>把所有纹理层都存储起来，也只比原来的纹理多了1/3(等比数列求和)</p>
-</li>
-<li><p>如何确定D，D=log<sub>2</sub>L，L是像素对应到纹理上近似的正方形的边长(占几个纹素)</p>
-<ul>
-<li><p>如果D是整数，直接取该层就可以了</p>
-</li>
-<li><p>如果不是整数，有两种应对方法</p>
-<ul>
-<li><p>四舍五入取最近的那层</p>
-</li>
-<li><p>Trilinear Interpolation 三线性插值</p>
-<p>首先D向下取整，假设取整后为d，在d层做一次Bilinear Interpolation，然后再d+1层再做一次Bilinear Interpolation(这两次双线性插值插的是颜色)，然后将两次结果再做一次插值(这次是层与层之间的插值，根据小数D的值做一次线性插值)</p>
-</li>
+<li>level set 水平集<ul>
+<li>和SDF很像，只不过函数不是以数学表达式的方式显式的表示出来，而是用一个一个格子表示出函数离散的值，然后通过双线性插值算出所有值等于0的点</li>
 </ul>
 </li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p>mipmap也存在问题，因为不同level的mipmap的Range Query(也就是一个像素在纹理上近似的区域)都是正方形的，然而一个像素实际在纹理上对应的区域可能是比较奇怪的形状，将这个奇怪的形状近似成正方形肯定会产生很大的误差，所以有了各向异性过滤Anisotropic Filtering    </p>
-<p><img src="https://i.loli.net/2020/11/01/njubQOEH8ogfLrh.png" width="70%" height="70%"></p>
-<p><img src="https://i.loli.net/2020/11/01/yWdeIVDx2ZOupm8.png" width="40%" height="40%"></p>
-<ul>
-<li>比如说，上面第二幅图左下角一个纹理上，一个像素在上面近似了一个正方形，还原到最初的纹理上就被拉伸成了一个矩形的形状，这样我们就可以解决在实际纹理中对应矩形的像素</li>
-<li>但是Anisotropic Filtering也只解决了部分问题，那种斜着的也没很好的办法处理</li>
+<li>Fractals 分型几何<ul>
+<li>自相似，递归</li>
 </ul>
 </li>
 </ul>
 </li>
 </ul>
 <ul>
-<li><p>EWA filtering</p>
-<ul>
-<li><p>可以解决斜着的情况</p>
+<li>显式曲面种类<ul>
+<li>点云<ul>
+<li>一堆点的表示方法，有所有的点的信息</li>
+</ul>
 </li>
-<li><p>不太懂</p>
+<li>Polygon Mesh 多边形网格<ul>
+<li>应用的最广泛</li>
+<li>object file(.obj) 和编译出来的.obj不是一回事，注意区分。其实就是一个文本文件，里面给出了所有的顶点，法线，纹理信息，然后加上它们的组织方式</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="贝塞尔曲线-Bezier-Curves-amp-贝塞尔曲面-Bezier-Surfaces"><a href="#贝塞尔曲线-Bezier-Curves-amp-贝塞尔曲面-Bezier-Surfaces" class="headerlink" title="贝塞尔曲线(Bézier Curves) &amp; 贝塞尔曲面(Bézier Surfaces)"></a>贝塞尔曲线(Bézier Curves) &amp; 贝塞尔曲面(Bézier Surfaces)</h4><ul>
+<li><p>曲线</p>
+<ul>
+<li><p>其实就是不停做线性插值，插值到只剩一个点，下图中的b(3,0)，时间t∈[0, 1]，这个点的轨迹就是贝塞尔曲线，实际上就是一个关于t的函数</p>
+<p><img src="https://i.loli.net/2020/11/08/WsUFcthNPuKEn9l.png" width="60%" height="60%"></p>
+</li>
+<li><p>这个关于t的函数挺好求的，三个控制点的贝塞尔曲线：</p>
+<script type="math/tex; mode=display">
+\textbf{b}^{2}_{0}(t) = (1-t)^{2}\textbf{b}_{0} + 2t(1-t)\textbf{b}_{1} + t^{2}\textbf{b}_{2}</script><p>可以看到，最高项指数为2，所以说n个控制点的贝塞尔曲线为n-1次</p>
+</li>
+<li><p>这个系数可以看出来有规律，所以有了n+1个控制点的贝塞尔曲线的公式</p>
+<p><img src="https://i.loli.net/2020/11/08/vz4o6heUdqAXwYJ.png" width="70%" height="70%"></p>
+<p>图中下面那个伯恩斯坦多项式(Bernstein polynomials)跟多项式展开差不多</p>
+</li>
+<li><p>性质</p>
+<ul>
+<li>必定经过起点和终点，并与这两个点相切</li>
+<li>具有仿射变换性质，可以通过移动控制点移动整条曲线</li>
+<li>凸包性质，曲线一定不会超出所有控制点构成的多边形范围</li>
+</ul>
+</li>
+<li><p>分段贝塞尔曲线</p>
+<ul>
+<li>原因：控制点太多时，局部的曲线形状会出问题</li>
+</ul>
+</li>
+<li><p>further：B样条，NURBS</p>
+</li>
+</ul>
+</li>
+<li><p>曲面</p>
+<ul>
+<li><p>贝塞尔曲面与曲线类似，只是从2维到了3维。原来只有一个参数t，现在有两个u，v，范围都是[0, 1]</p>
+<p><img src="https://i.loli.net/2020/11/08/VlDPp9yRxiTen5c.png" width="70%" height="70%"></p>
+</li>
+<li><p>1、用参数u，先根据4列（每列4个点，这4个点形成折线段）用算贝塞尔曲线的方式算出4个蓝色的点，灰色的线即为生成的贝塞尔曲线（底下的方格即为点的位置，但没表示出点的高度信息）</p>
+<p>2、再用参数中，根据4个蓝色的点用同样的方法算出最终贝塞尔曲面上的一点</p>
+<p>3、遍历所有的u，v，得到的所有点贝塞尔曲面，即点在u，v上的轨迹</p>
+</li>
+<li><p>其实可以看出来，所有的蓝色线条就组成了贝塞尔曲面，灰色线条是不在曲面上的</p>
 </li>
 </ul>
 </li>
@@ -423,13 +364,10 @@
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2020/10/27/Shading/" rel="prev" title="Shading(Blinn-Phong Reflectance Model)">
-      <i class="fa fa-chevron-left"></i> Shading(Blinn-Phong Reflectance Model)
+    <a href="/2020/11/07/Shading-3/" rel="prev" title="Applications of textures">
+      <i class="fa fa-chevron-left"></i> Applications of textures
     </a></div>
-      <div class="post-nav-item">
-    <a href="/2020/11/07/Shading-3/" rel="next" title="Applications of textures">
-      Applications of textures <i class="fa fa-chevron-right"></i>
-    </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
@@ -488,7 +426,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#Shading-frequencies"><span class="nav-number">1.</span> <span class="nav-text">Shading frequencies</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Graphics-pipeline"><span class="nav-number">2.</span> <span class="nav-text">Graphics pipeline</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Texture-mapping"><span class="nav-number">3.</span> <span class="nav-text">Texture mapping</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Barycentric-coordinates-%E9%87%8D%E5%BF%83%E5%9D%90%E6%A0%87-%EF%BC%88%E6%8F%92%E5%80%BC%EF%BC%89"><span class="nav-number">4.</span> <span class="nav-text">Barycentric coordinates 重心坐标 （插值）</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Applying-Textures"><span class="nav-number">5.</span> <span class="nav-text">Applying Textures</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%87%A0%E4%BD%95%E7%9A%84%E8%A1%A8%E7%A4%BA%E6%96%B9%E6%B3%95"><span class="nav-number">1.</span> <span class="nav-text">几何的表示方法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%B4%9D%E5%A1%9E%E5%B0%94%E6%9B%B2%E7%BA%BF-Bezier-Curves-amp-%E8%B4%9D%E5%A1%9E%E5%B0%94%E6%9B%B2%E9%9D%A2-Bezier-Surfaces"><span class="nav-number">2.</span> <span class="nav-text">贝塞尔曲线(Bézier Curves) &amp; 贝塞尔曲面(Bézier Surfaces)</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 

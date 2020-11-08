@@ -57,6 +57,204 @@ R_{view} = \left[ \begin{matrix} x_{g×t} & y_{g×t} & z_{g×t} & 0 \\ x_{t} & y
       </categories>
   </entry>
   <entry>
+    <title>Applications of textures</title>
+    <url>/2020/11/07/Shading-3/</url>
+    <content><![CDATA[<p>纹理的应用很多，远不止作为反射系数来表现出不同的颜色</p>
+<a id="more"></a>
+<ul>
+<li><p>Environment lighting</p>
+<p>纹理用来描述环境光长什么样，记录各个方向来的光照信息(光照信息并不仅仅指看到的照过来的光，任何方向上，只要能看到东西，都说明有光从那里打到了你的眼睛，这些都是光照信息)</p>
+<ul>
+<li>Spherical Map<ul>
+<li>会存在扭曲现象</li>
+</ul>
+</li>
+<li>Cube Map<ul>
+<li>球会出现扭曲现象，将它投影到一个立方体上</li>
+<li>立方体扭曲更少，但是计算量会多一点，比如说给你一个方向(角度)，要求这个方向上的光线信息，在原本的球上直接根据角度计算即可，但在立方体上要先计算它在立方体的哪一个面上面</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>Store microgeometry</p>
+<ul>
+<li><p>Bump/normal mapping</p>
+<ul>
+<li>不改变几何</li>
+<li>把任何像素的法线都做一个扰动</li>
+<li>通过定义的不同位置的高度和它邻近位置的高度差来重新计算法线</li>
+<li>计算法线的方法：先求得切线，然后根据切线得到法线</li>
+<li>边缘地方会露馅</li>
+</ul>
+</li>
+<li><p>Displacement mapping</p>
+<ul>
+<li>会改变三角形顶点，而不是像凹凸贴图一样只改变法线</li>
+<li>会更逼真，但需要模型足够细致，改变模型做凹凸效果的时候顶点不够用了肯定不行</li>
+<li>DX有动态的曲面细分，初始的时候不用做的特别细致，后续根据需要再将面做细分</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>Procedural textures</p>
+<ul>
+<li>纹理并不一定是二维的，也有三维的（比如球形）</li>
+<li>实际上并没有生成一张纹理的图</li>
+<li>Perlin noise</li>
+</ul>
+</li>
+</ul>
+<p>Shadow map</p>
+<ul>
+<li><p>之前没涉及阴影，用这东西处理阴影</p>
+</li>
+<li><p>阴影产生原因：光源不能直接照到，但摄像机能看到</p>
+</li>
+<li>硬阴影</li>
+<li>只适用点光源</li>
+</ul>
+<p>步骤：</p>
+<ul>
+<li>第一步：render from light<ul>
+<li>把光源当做摄像机去渲染整个场景一遍，得到光源角度的深度buffer，这玩意就是shadow map</li>
+</ul>
+</li>
+<li>第二步：render from eye</li>
+<li>第三步：project to light<ul>
+<li>如果一点在光源角度的深度图里可见，回摄像机就正常做shading</li>
+<li>反之，比如用blinn-phong着色模型的话，就不计算镜面反射和漫反射，留一个环境光做阴影，以免全黑。</li>
+</ul>
+</li>
+</ul>
+<p><a href="https://zhuanlan.zhihu.com/p/144357517">https://zhuanlan.zhihu.com/p/144357517</a></p>
+]]></content>
+      <categories>
+        <category>CG</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>Geometry</title>
+    <url>/2020/11/08/Geometry/</url>
+    <content><![CDATA[<h4 id="几何的表示方法"><a href="#几何的表示方法" class="headerlink" title="几何的表示方法"></a>几何的表示方法</h4><a id="more"></a>
+<ul>
+<li><p>隐式曲面</p>
+<p>隐式曲面不会告诉具体点的位置，只会告诉你点的坐标满足的关系，举个栗子：</p>
+<script type="math/tex; mode=display">
+x^{2}+y^{2}+z^{2} = 1</script><p>我们一般将其表示为</p>
+<script type="math/tex; mode=display">
+f(x,y,z)=x^{2}+y^{2}+z^{2}-1</script></li>
+</ul>
+<p>  这个特殊一点，一看就知道是个球，但有些就不太明显，再举个栗子：</p>
+<script type="math/tex; mode=display">
+  f(x,y,z)=(2- \sqrt{x^{2} + y^{2}})^{2} + z^{2} - 1</script><p>  这个就不太明显，它是一个圆环。所以说隐式曲面跟你能不能看出来它是个什么东西一点关系没有，判断隐式还是靠上面说的那种方式，没告诉点的具体位置，只告诉点的位置关系</p>
+<ul>
+<li>缺点：难以采样到曲面上具体的点。就是说要你给我一个在这曲面上的点，如果是复杂一点的曲面或者说不知道长什么样的曲面，你对着函数表达式想破脑袋估计也难想出一个点来</li>
+<li>优点：容易判断某个点与曲面的关系。反过来就不一样了，你给我一个点，我很容易判断它跟曲面的位置关系，直接带进去看正负就可以了</li>
+</ul>
+<ul>
+<li><p>显式曲面</p>
+<p>显式曲面的点都被直接给出，或者可以通过映射关系直接得到</p>
+<p>二维到三维的映射 (u, v) —&gt; (x, y, z)</p>
+<p><img src="https://i.loli.net/2020/11/08/cPVrQnBwTvol8DH.png" width="70%" height="70%"></p>
+<p>这个(2+cosu)cosv是x，后面两个对应y，z。</p>
+<p>咋一看，这个和那个函数表达式很像，但两个并不一样，u,v是曲面在二维图上的坐标，所以带入是直接得到的(x, y, z)。虽说大体上是懂了，但是总感觉充满了违和感，为什么突然蹦出来个u,v，感觉没任何道理啊，单纯是因为 得到显式曲面的点的一种方法是映射吗？</p>
+<ul>
+<li>缺点：没办法判断特定点与曲面的关系</li>
+<li>优点：可以直接采样到曲面上所有的点</li>
+</ul>
+<p>与隐式曲面相反</p>
+</li>
+</ul>
+<ul>
+<li><p>隐式曲面种类</p>
+<ul>
+<li>Algebraic Surface</li>
+<li>最直接的代数表达式</li>
+<li>Constructive Solid Geometry(CSG)<ul>
+<li>对不同的几何体做布尔运算</li>
+<li>通过这些布尔运算可以得到更复杂的几何</li>
+</ul>
+</li>
+<li>Distance Function 距离函数<ul>
+<li>这个东西很有意思，可以实现两个几何体混合的效果</li>
+<li>实现混合效果的方法是找到任意一个点到两个几何体表面最短的距离，然后再减去一个变量作为最终的SDF(Signed Distance Function)</li>
+</ul>
+</li>
+<li>level set 水平集<ul>
+<li>和SDF很像，只不过函数不是以数学表达式的方式显式的表示出来，而是用一个一个格子表示出函数离散的值，然后通过双线性插值算出所有值等于0的点</li>
+</ul>
+</li>
+<li>Fractals 分型几何<ul>
+<li>自相似，递归</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li>显式曲面种类<ul>
+<li>点云<ul>
+<li>一堆点的表示方法，有所有的点的信息</li>
+</ul>
+</li>
+<li>Polygon Mesh 多边形网格<ul>
+<li>应用的最广泛</li>
+<li>object file(.obj) 和编译出来的.obj不是一回事，注意区分。其实就是一个文本文件，里面给出了所有的顶点，法线，纹理信息，然后加上它们的组织方式</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="贝塞尔曲线-Bezier-Curves-amp-贝塞尔曲面-Bezier-Surfaces"><a href="#贝塞尔曲线-Bezier-Curves-amp-贝塞尔曲面-Bezier-Surfaces" class="headerlink" title="贝塞尔曲线(Bézier Curves) &amp; 贝塞尔曲面(Bézier Surfaces)"></a>贝塞尔曲线(Bézier Curves) &amp; 贝塞尔曲面(Bézier Surfaces)</h4><ul>
+<li><p>曲线</p>
+<ul>
+<li><p>其实就是不停做线性插值，插值到只剩一个点，下图中的b(3,0)，时间t∈[0, 1]，这个点的轨迹就是贝塞尔曲线，实际上就是一个关于t的函数</p>
+<p><img src="https://i.loli.net/2020/11/08/WsUFcthNPuKEn9l.png" width="60%" height="60%"></p>
+</li>
+<li><p>这个关于t的函数挺好求的，三个控制点的贝塞尔曲线：</p>
+<script type="math/tex; mode=display">
+\textbf{b}^{2}_{0}(t) = (1-t)^{2}\textbf{b}_{0} + 2t(1-t)\textbf{b}_{1} + t^{2}\textbf{b}_{2}</script><p>可以看到，最高项指数为2，所以说n个控制点的贝塞尔曲线为n-1次</p>
+</li>
+<li><p>这个系数可以看出来有规律，所以有了n+1个控制点的贝塞尔曲线的公式</p>
+<p><img src="https://i.loli.net/2020/11/08/vz4o6heUdqAXwYJ.png" width="70%" height="70%"></p>
+<p>图中下面那个伯恩斯坦多项式(Bernstein polynomials)跟多项式展开差不多</p>
+</li>
+<li><p>性质</p>
+<ul>
+<li>必定经过起点和终点，并与这两个点相切</li>
+<li>具有仿射变换性质，可以通过移动控制点移动整条曲线</li>
+<li>凸包性质，曲线一定不会超出所有控制点构成的多边形范围</li>
+</ul>
+</li>
+<li><p>分段贝塞尔曲线</p>
+<ul>
+<li>原因：控制点太多时，局部的曲线形状会出问题</li>
+</ul>
+</li>
+<li><p>further：B样条，NURBS</p>
+</li>
+</ul>
+</li>
+<li><p>曲面</p>
+<ul>
+<li><p>贝塞尔曲面与曲线类似，只是从2维到了3维。原来只有一个参数t，现在有两个u，v，范围都是[0, 1]</p>
+<p><img src="https://i.loli.net/2020/11/08/VlDPp9yRxiTen5c.png" width="70%" height="70%"></p>
+</li>
+<li><p>1、用参数u，先根据4列（每列4个点，这4个点形成折线段）用算贝塞尔曲线的方式算出4个蓝色的点，灰色的线即为生成的贝塞尔曲线（底下的方格即为点的位置，但没表示出点的高度信息）</p>
+<p>2、再用参数中，根据4个蓝色的点用同样的方法算出最终贝塞尔曲面上的一点</p>
+<p>3、遍历所有的u，v，得到的所有点贝塞尔曲面，即点在u，v上的轨迹</p>
+</li>
+<li><p>其实可以看出来，所有的蓝色线条就组成了贝塞尔曲面，灰色线条是不在曲面上的</p>
+</li>
+</ul>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>CG</category>
+      </categories>
+  </entry>
+  <entry>
     <title>Rasterization</title>
     <url>/2020/10/22/Rasterization/</url>
     <content><![CDATA[<ul>
@@ -149,50 +347,6 @@ M_{viewport} = \left[ \begin{matrix} width/2 & 0 & 0 & width/2 \\ 0 & height/2 &
 </ul>
 <p><img src="https://i.loli.net/2020/10/23/pIw8osTPKiZOhdj.png" alt="Untitled.png"></p>
 ]]></content>
-      <categories>
-        <category>CG</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>Shading(Blinn-Phong Reflectance Model)</title>
-    <url>/2020/10/27/Shading/</url>
-    <content><![CDATA[<h4 id="Blinn-Phong-Reflectance-Model-反射模型"><a href="#Blinn-Phong-Reflectance-Model-反射模型" class="headerlink" title="Blinn-Phong Reflectance Model 反射模型"></a>Blinn-Phong Reflectance Model 反射模型</h4><p>是一个经验模型，并不完全准确，但相对简单</p>
-<p>光源照射会分成三个部分，一是Diffuse漫反射，二是Specular镜面反射（高光部分），三是环境光（各个方向乱七八糟经过多次反射打过来的光）</p>
-<a id="more"></a>
-<ul>
-<li><p>Diffuse 漫反射</p>
-<p>因为是漫反射，各个方向看到的光线能量强度都相同，所以与视角（view）方向无关，表示漫反射的公式里就只有光源方向 <strong>l</strong> 和 法线方向<strong>n</strong></p>
-<script type="math/tex; mode=display">
-L_{d} = k_{d}( I/r^{2})\max(0, \mathbf{n} \cdot \mathbf{l})</script><ul>
-<li>k<sub>d</sub>是漫反射系数，因为不同的材质对光线的吸收情况不同</li>
-<li><strong>n</strong> 和 <strong>l</strong> 点乘得出cos的结果以求得光线直着打到shading point上的能量强度</li>
-<li>max(0, <strong>n</strong> · <strong>l</strong>) 就是取0和 <strong>n</strong> · <strong>l</strong> 之间的最大值，光线从背着shading point的方向射过来的时候 <strong>n</strong> · <strong>l</strong> 会是个负值，而这种情况是将其视作没有意义的，因为我们只在考虑反射，没考虑折射之类的，所以 <strong>n</strong> · <strong>l</strong> 为负值时直接取0就好了。</li>
-</ul>
-</li>
-</ul>
-<ul>
-<li><p>Specular 镜面反射</p>
-<ul>
-<li>高光是只有你的视角方向对着镜面反射光的方向了才能看到的，所以反射光与视角的夹角会影响你看到的高光</li>
-<li>计算反射光与视角的夹角余弦相对来说比较麻烦，有聪明人发现了视角靠近反射光时，半程向量会靠近法线向量</li>
-<li>p用来控制高光大小，角度在增大时，余弦值其实下降的比较慢，就会造成视角与反射光相差很大时都可以看到很明显的高光，但高光一般就集中在一小片区域，视角偏差大一点就看不到了，所以加一个指数来加快它的下降速度，p一般取100~200</li>
-</ul>
-</li>
-</ul>
-<p>  <img src="https://i.loli.net/2020/10/27/QRLx16ZdOpVr4Go.png" alt="Specular.png"></p>
-<ul>
-<li><p>Ambient</p>
-<ul>
-<li>fake</li>
-<li>提升亮度</li>
-<li>精确计算需要用到全局光照</li>
-</ul>
-<script type="math/tex; mode=display">
-L_{a}=k_{a} I_{a}</script></li>
-</ul>
-<p>要得到最后的光照效果，把上面三种加起来就可以了</p>
-<script type="math/tex; mode=display">
-\begin{aligned} L &=L_{a}+L_{d}+L_{s} \\ &=k_{a} I_{a}+k_{d}\left(I / r^{2}\right) \max (0, \mathbf{n} \cdot \mathbf{l})+k_{s}\left(I / r^{2}\right) \max (0, \mathbf{n} \cdot \mathbf{h})^{p} \end{aligned}</script>]]></content>
       <categories>
         <category>CG</category>
       </categories>
@@ -371,79 +525,56 @@ L_{a}=k_{a} I_{a}</script></li>
       </categories>
   </entry>
   <entry>
-    <title>Applications of textures</title>
-    <url>/2020/11/07/Shading-3/</url>
-    <content><![CDATA[<p>纹理的应用很多，远不止作为反射系数来表现出不同的颜色</p>
+    <title>Shading(Blinn-Phong Reflectance Model)</title>
+    <url>/2020/10/27/Shading/</url>
+    <content><![CDATA[<h4 id="Blinn-Phong-Reflectance-Model-反射模型"><a href="#Blinn-Phong-Reflectance-Model-反射模型" class="headerlink" title="Blinn-Phong Reflectance Model 反射模型"></a>Blinn-Phong Reflectance Model 反射模型</h4><p>是一个经验模型，并不完全准确，但相对简单</p>
+<p>光源照射会分成三个部分，一是Diffuse漫反射，二是Specular镜面反射（高光部分），三是环境光（各个方向乱七八糟经过多次反射打过来的光）</p>
 <a id="more"></a>
 <ul>
-<li><p>Environment lighting</p>
-<p>纹理用来描述环境光长什么样，记录各个方向来的光照信息(光照信息并不仅仅指看到的照过来的光，任何方向上，只要能看到东西，都说明有光从那里打到了你的眼睛，这些都是光照信息)</p>
+<li><p>Diffuse 漫反射</p>
+<p>因为是漫反射，各个方向看到的光线能量强度都相同，所以与视角（view）方向无关，表示漫反射的公式里就只有光源方向 <strong>l</strong> 和 法线方向<strong>n</strong></p>
+<script type="math/tex; mode=display">
+L_{d} = k_{d}( I/r^{2})\max(0, \mathbf{n} \cdot \mathbf{l})</script><ul>
+<li>k<sub>d</sub>是漫反射系数，因为不同的材质对光线的吸收情况不同</li>
+<li><strong>n</strong> 和 <strong>l</strong> 点乘得出cos的结果以求得光线直着打到shading point上的能量强度</li>
+<li>max(0, <strong>n</strong> · <strong>l</strong>) 就是取0和 <strong>n</strong> · <strong>l</strong> 之间的最大值，光线从背着shading point的方向射过来的时候 <strong>n</strong> · <strong>l</strong> 会是个负值，而这种情况是将其视作没有意义的，因为我们只在考虑反射，没考虑折射之类的，所以 <strong>n</strong> · <strong>l</strong> 为负值时直接取0就好了。</li>
+</ul>
+</li>
+</ul>
 <ul>
-<li>Spherical Map<ul>
-<li>会存在扭曲现象</li>
-</ul>
-</li>
-<li>Cube Map<ul>
-<li>球会出现扭曲现象，将它投影到一个立方体上</li>
-<li>立方体扭曲更少，但是计算量会多一点，比如说给你一个方向(角度)，要求这个方向上的光线信息，在原本的球上直接根据角度计算即可，但在立方体上要先计算它在立方体的哪一个面上面</li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p>Store microgeometry</p>
+<li><p>Specular 镜面反射</p>
 <ul>
-<li><p>Bump/normal mapping</p>
+<li>高光是只有你的视角方向对着镜面反射光的方向了才能看到的，所以反射光与视角的夹角会影响你看到的高光</li>
+<li>计算反射光与视角的夹角余弦相对来说比较麻烦，有聪明人发现了视角靠近反射光时，半程向量会靠近法线向量</li>
+<li>p用来控制高光大小，角度在增大时，余弦值其实下降的比较慢，就会造成视角与反射光相差很大时都可以看到很明显的高光，但高光一般就集中在一小片区域，视角偏差大一点就看不到了，所以加一个指数来加快它的下降速度，p一般取100~200</li>
+</ul>
+</li>
+</ul>
+<p>  <img src="https://i.loli.net/2020/10/27/QRLx16ZdOpVr4Go.png" alt="Specular.png"></p>
 <ul>
-<li>不改变几何</li>
-<li>把任何像素的法线都做一个扰动</li>
-<li>通过定义的不同位置的高度和它邻近位置的高度差来重新计算法线</li>
-<li>计算法线的方法：先求得切线，然后根据切线得到法线</li>
-<li>边缘地方会露馅</li>
-</ul>
-</li>
-<li><p>Displacement mapping</p>
+<li><p>Ambient</p>
 <ul>
-<li>会改变三角形顶点，而不是像凹凸贴图一样只改变法线</li>
-<li>会更逼真，但需要模型足够细致，改变模型做凹凸效果的时候顶点不够用了肯定不行</li>
-<li>DX有动态的曲面细分，初始的时候不用做的特别细致，后续根据需要再将面做细分</li>
+<li>fake</li>
+<li>提升亮度</li>
+<li>精确计算需要用到全局光照</li>
 </ul>
-</li>
+<script type="math/tex; mode=display">
+L_{a}=k_{a} I_{a}</script></li>
 </ul>
-</li>
-<li><p>Procedural textures</p>
-<ul>
-<li>纹理并不一定是二维的，也有三维的（比如球形）</li>
-<li>实际上并没有生成一张纹理的图</li>
-<li>Perlin noise</li>
-</ul>
-</li>
-</ul>
-<p>Shadow map</p>
-<ul>
-<li><p>之前没涉及阴影，用这东西处理阴影</p>
-</li>
-<li><p>阴影产生原因：光源不能直接照到，但摄像机能看到</p>
-</li>
-<li>硬阴影</li>
-<li>只适用点光源</li>
-</ul>
-<p>步骤：</p>
-<ul>
-<li>第一步：render from light<ul>
-<li>把光源当做摄像机去渲染整个场景一遍，得到光源角度的深度buffer，这玩意就是shadow map</li>
-</ul>
-</li>
-<li>第二步：render from eye</li>
-<li>第三步：project to light<ul>
-<li>如果一点在光源角度的深度图里可见，回摄像机就正常做shading</li>
-<li>反之，比如用blinn-phong着色模型的话，就不计算镜面反射和漫反射，留一个环境光做阴影，以免全黑。</li>
-</ul>
-</li>
-</ul>
-<p><a href="https://zhuanlan.zhihu.com/p/144357517">https://zhuanlan.zhihu.com/p/144357517</a></p>
-]]></content>
+<p>要得到最后的光照效果，把上面三种加起来就可以了</p>
+<script type="math/tex; mode=display">
+\begin{aligned} L &=L_{a}+L_{d}+L_{s} \\ &=k_{a} I_{a}+k_{d}\left(I / r^{2}\right) \max (0, \mathbf{n} \cdot \mathbf{l})+k_{s}\left(I / r^{2}\right) \max (0, \mathbf{n} \cdot \mathbf{h})^{p} \end{aligned}</script>]]></content>
       <categories>
         <category>CG</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>杂鱼</title>
+    <url>/2020/10/18/%E6%9D%82%E9%B1%BC/</url>
+    <content><![CDATA[<p>鱼塘里没有一只鱼，全是钩子。</p>
+]]></content>
+      <categories>
+        <category>什么玩意儿</category>
       </categories>
   </entry>
   <entry>
@@ -497,15 +628,6 @@ L_{a}=k_{a} I_{a}</script></li>
 ]]></content>
       <categories>
         <category>CG</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>杂鱼</title>
-    <url>/2020/10/18/%E6%9D%82%E9%B1%BC/</url>
-    <content><![CDATA[<p>鱼塘里没有一只鱼，全是钩子。</p>
-]]></content>
-      <categories>
-        <category>什么玩意儿</category>
       </categories>
   </entry>
 </search>
