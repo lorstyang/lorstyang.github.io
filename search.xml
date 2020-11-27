@@ -57,73 +57,6 @@ R_{view} = \left[ \begin{matrix} x_{g×t} & y_{g×t} & z_{g×t} & 0 \\ x_{t} & y
       </categories>
   </entry>
   <entry>
-    <title>曲面细分与曲面简化</title>
-    <url>/2020/11/20/Geometry-2/</url>
-    <content><![CDATA[<p>最忙的一段时间总算过去了，但是总有种预感后面的工作并不会变少，不过能接受的是肯定没之前那么有压迫感了。</p>
-<a id="more"></a>
-<p>曲面细分与曲面简化</p>
-<ul>
-<li><p>mesh subdivision</p>
-<p>曲面细分，顾名思义，就是将原本模型的三角形变得更多，让模型更加丝滑</p>
-<ul>
-<li><p>Loop Subdivision (loop是发明者名字)</p>
-<p>这种细分很好理解，就是把每条边的中点连起来，形成更多的三角形</p>
-<p><img src="https://i.loli.net/2020/11/20/zwcWqa5RMfBFDYQ.png" width="40%" height="40%"></p>
-<p>完成了将一个三角形分成多个三角形之后肯定得调整三角形的位置，如果让分出来的三角形还在一个平面上那不等于没分嘛。调整三角形的位置其实也就是调整顶点的位置，loop细分的操作是将顶点分为新的顶点和旧的顶点两部分，分别用不同的规则来改变它们的位置。</p>
-<p><img src="https://i.loli.net/2020/11/20/S8DLRtq4d6ONEmp.png" width="50%" height="50%"></p>
-<p>新顶点的位置就是周围点的位置的加权平均。特殊情况如点在边界的情况老师没说，是不是也是平均，只不过少用几个点？</p>
-<p><img src="https://i.loli.net/2020/11/20/UgrLk8F4xQ7TfB6.png" width="50%" height="50%"></p>
-<p>本质上也是一种加权平均，只不过平均的是它自己原本的位置和周围的顶点的位置，权重的设置与顶点的度有关。这个u没听懂怎么回事，用来确定权重的？</p>
-</li>
-</ul>
-</li>
-</ul>
-<ul>
-<li><p>Catmull-Clark Subdivision</p>
-<p>loop subdivision是针对三角形网格的，对于有非三角形网格的就需要用到新的方法了。</p>
-<p><img src="https://i.loli.net/2020/11/20/KOT7mwiMGEqhVFt.png" width="50%" height="50%"></p>
-<p>​    图是以三角形和四边形混合的面为例子的，经过上图中的处理，会得到下面的情况</p>
-<p><img src="https://i.loli.net/2020/11/20/prCl2ksxgHfPAMi.png" width="40%" height="40%"></p>
-<p>​    再做一次细分</p>
-<p><img src="https://i.loli.net/2020/11/20/8H1IOzV5pQGPYUT.png" width="30%" height="30%"></p>
-<p>到这里已经可以得出CC细分的一些特点了</p>
-<ul>
-<li>在第一次细分后，增加了 非四边形面的数量 这么多个的奇异点之后（相当于所有的非四边形面“变成”了奇异点），奇异点的数量就再也不会增加了，并且所有面会变成四边形</li>
-<li>新出现的奇异点的度数与原来所在面的边数相等</li>
-</ul>
-<p>调整顶点的位置，点被分为了3类：</p>
-<p><img src="https://i.loli.net/2020/11/20/LT1RzjgZseQAqvu.png" width="60%" height="60%"></p>
-<p>自己遗留的一些问题：</p>
-<p>第一个：四边形不是都可以分为三角形吗，分为三角形后再用loop细分怎么样？</p>
-<p>第二个：物体的网格不都是三角形吗，渲染的时候用到的都是三角形吧，这是不是说明后续将四边形分成了三角形，如果是的话，上一个问题的结论怎么样，如果不是的话，那具体又是什么个情况？</p>
-</li>
-</ul>
-<ul>
-<li><p>mesh simplification</p>
-<p>曲面简化，也很好理解，模型三角形太多了，影响性能 或者 这个模型离我们很远，不需要这么多三角形，就要在不影响模型基本形状的情况下减少三角形。</p>
-<p>简化使用的方法就是边坍缩</p>
-<p><img src="https://i.loli.net/2020/11/20/SFNnOAZygqjUrH3.png" width="40%" height="40%"></p>
-<p>如何去坍缩，坍缩成的那个点，位置该怎么取</p>
-<p><img src="https://i.loli.net/2020/11/20/7ZWw8vElJx2OAMh.png" width="40%" height="40%"></p>
-<p>如果仅仅是按照上图左边取平均的方法，无论是取5个点还是3个点的平均，那个新形成的点的位置都会在原形状下面，可想而知，这样会使模型特征变得模糊，效果不会太好（变得模糊只是我的猜测，但结果确实不是我们想要的）。所以就引入了上图右边的方法，二次误差度量，和最小二乘法的思路很像，这个方法就是找一个点，使这个点与原来各平面的距离之和最小，那这个点就是坍缩后影响最小的点。</p>
-<p>整个曲面简化流程的思路就是算出每条边的坍缩的二次误差度量，然后从小到大的去做边坍缩，这样其实还会存在一个问题，就是坍缩一条边后，与其相连的边会被影响，这样需要去更新被影响边的误差值，解决的办法是使用优先队列（堆）。</p>
-<p>曲面简化的算法流程：</p>
-<p>1 算出每条边的误差值</p>
-<p>2 选取值最小的边做坍缩</p>
-<p>3 更新相连边的误差值</p>
-<p>4 重复上述23步骤，直到达到终止条件</p>
-<p>这种简化方式本质上是一种贪心算法，我在每一次坍缩都取误差值最小的那条边（局部最优）以达到最后整个模型的 形状变化最小/误差最小 的结果（全局最优）。</p>
-<p>那么，这样做到底对不对？好像也没人证明贪心在曲面简化上的正确性。老师给出的答案是也没人给出贪心做出来结果很差的例子，事实证明最终的结果还是挺不错的。</p>
-<p><img src="https://i.loli.net/2020/11/20/CaVUmMsqptnYAjI.png" width="70%" height="70%"></p>
-<p>从上面的结果图可以看出，下面的牛的面部比较简单，就坍缩的边多一点，而脖子这种复杂的地方，坍缩就少一些，这些也是可以从算法上预想到的。</p>
-</li>
-</ul>
-]]></content>
-      <categories>
-        <category>CG</category>
-      </categories>
-  </entry>
-  <entry>
     <title>Geometry</title>
     <url>/2020/11/08/Geometry/</url>
     <content><![CDATA[<h4 id="几何的表示方法"><a href="#几何的表示方法" class="headerlink" title="几何的表示方法"></a>几何的表示方法</h4><a id="more"></a>
@@ -238,6 +171,73 @@ f(x,y,z)=x^{2}+y^{2}+z^{2}-1</script></li>
 <li><p>其实可以看出来，所有的蓝色线条就组成了贝塞尔曲面，灰色线条是不在曲面上的</p>
 </li>
 </ul>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>CG</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>曲面细分与曲面简化</title>
+    <url>/2020/11/20/Geometry-2/</url>
+    <content><![CDATA[<p>最忙的一段时间总算过去了，但是总有种预感后面的工作并不会变少，不过能接受的是肯定没之前那么有压迫感了。</p>
+<a id="more"></a>
+<p>曲面细分与曲面简化</p>
+<ul>
+<li><p>mesh subdivision</p>
+<p>曲面细分，顾名思义，就是将原本模型的三角形变得更多，让模型更加丝滑</p>
+<ul>
+<li><p>Loop Subdivision (loop是发明者名字)</p>
+<p>这种细分很好理解，就是把每条边的中点连起来，形成更多的三角形</p>
+<p><img src="https://i.loli.net/2020/11/20/zwcWqa5RMfBFDYQ.png" width="40%" height="40%"></p>
+<p>完成了将一个三角形分成多个三角形之后肯定得调整三角形的位置，如果让分出来的三角形还在一个平面上那不等于没分嘛。调整三角形的位置其实也就是调整顶点的位置，loop细分的操作是将顶点分为新的顶点和旧的顶点两部分，分别用不同的规则来改变它们的位置。</p>
+<p><img src="https://i.loli.net/2020/11/20/S8DLRtq4d6ONEmp.png" width="50%" height="50%"></p>
+<p>新顶点的位置就是周围点的位置的加权平均。特殊情况如点在边界的情况老师没说，是不是也是平均，只不过少用几个点？</p>
+<p><img src="https://i.loli.net/2020/11/20/UgrLk8F4xQ7TfB6.png" width="50%" height="50%"></p>
+<p>本质上也是一种加权平均，只不过平均的是它自己原本的位置和周围的顶点的位置，权重的设置与顶点的度有关。这个u没听懂怎么回事，用来确定权重的？</p>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><p>Catmull-Clark Subdivision</p>
+<p>loop subdivision是针对三角形网格的，对于有非三角形网格的就需要用到新的方法了。</p>
+<p><img src="https://i.loli.net/2020/11/20/KOT7mwiMGEqhVFt.png" width="50%" height="50%"></p>
+<p>​    图是以三角形和四边形混合的面为例子的，经过上图中的处理，会得到下面的情况</p>
+<p><img src="https://i.loli.net/2020/11/20/prCl2ksxgHfPAMi.png" width="40%" height="40%"></p>
+<p>​    再做一次细分</p>
+<p><img src="https://i.loli.net/2020/11/20/8H1IOzV5pQGPYUT.png" width="30%" height="30%"></p>
+<p>到这里已经可以得出CC细分的一些特点了</p>
+<ul>
+<li>在第一次细分后，增加了 非四边形面的数量 这么多个的奇异点之后（相当于所有的非四边形面“变成”了奇异点），奇异点的数量就再也不会增加了，并且所有面会变成四边形</li>
+<li>新出现的奇异点的度数与原来所在面的边数相等</li>
+</ul>
+<p>调整顶点的位置，点被分为了3类：</p>
+<p><img src="https://i.loli.net/2020/11/20/LT1RzjgZseQAqvu.png" width="60%" height="60%"></p>
+<p>自己遗留的一些问题：</p>
+<p>第一个：四边形不是都可以分为三角形吗，分为三角形后再用loop细分怎么样？</p>
+<p>第二个：物体的网格不都是三角形吗，渲染的时候用到的都是三角形吧，这是不是说明后续将四边形分成了三角形，如果是的话，上一个问题的结论怎么样，如果不是的话，那具体又是什么个情况？</p>
+</li>
+</ul>
+<ul>
+<li><p>mesh simplification</p>
+<p>曲面简化，也很好理解，模型三角形太多了，影响性能 或者 这个模型离我们很远，不需要这么多三角形，就要在不影响模型基本形状的情况下减少三角形。</p>
+<p>简化使用的方法就是边坍缩</p>
+<p><img src="https://i.loli.net/2020/11/20/SFNnOAZygqjUrH3.png" width="40%" height="40%"></p>
+<p>如何去坍缩，坍缩成的那个点，位置该怎么取</p>
+<p><img src="https://i.loli.net/2020/11/20/7ZWw8vElJx2OAMh.png" width="40%" height="40%"></p>
+<p>如果仅仅是按照上图左边取平均的方法，无论是取5个点还是3个点的平均，那个新形成的点的位置都会在原形状下面，可想而知，这样会使模型特征变得模糊，效果不会太好（变得模糊只是我的猜测，但结果确实不是我们想要的）。所以就引入了上图右边的方法，二次误差度量，和最小二乘法的思路很像，这个方法就是找一个点，使这个点与原来各平面的距离之和最小，那这个点就是坍缩后影响最小的点。</p>
+<p>整个曲面简化流程的思路就是算出每条边的坍缩的二次误差度量，然后从小到大的去做边坍缩，这样其实还会存在一个问题，就是坍缩一条边后，与其相连的边会被影响，这样需要去更新被影响边的误差值，解决的办法是使用优先队列（堆）。</p>
+<p>曲面简化的算法流程：</p>
+<p>1 算出每条边的误差值</p>
+<p>2 选取值最小的边做坍缩</p>
+<p>3 更新相连边的误差值</p>
+<p>4 重复上述23步骤，直到达到终止条件</p>
+<p>这种简化方式本质上是一种贪心算法，我在每一次坍缩都取误差值最小的那条边（局部最优）以达到最后整个模型的 形状变化最小/误差最小 的结果（全局最优）。</p>
+<p>那么，这样做到底对不对？好像也没人证明贪心在曲面简化上的正确性。老师给出的答案是也没人给出贪心做出来结果很差的例子，事实证明最终的结果还是挺不错的。</p>
+<p><img src="https://i.loli.net/2020/11/20/CaVUmMsqptnYAjI.png" width="70%" height="70%"></p>
+<p>从上面的结果图可以看出，下面的牛的面部比较简单，就坍缩的边多一点，而脖子这种复杂的地方，坍缩就少一些，这些也是可以从算法上预想到的。</p>
 </li>
 </ul>
 ]]></content>
@@ -377,7 +377,7 @@ M_{viewport} = \left[ \begin{matrix} width/2 & 0 & 0 & width/2 \\ 0 & height/2 &
 \mathbf{r}(t)=\mathbf{o}+t \mathbf{d} \quad 0 \leq t<\infty</script><p><strong>o</strong> : origin</p>
 <p>t : “time”</p>
 <p><strong>d</strong> : direction</p>
-<p>t其实大体上代表了，光线与物体的那些交点的先后顺序，并不是平常所说的时间。</p>
+<p>说t是time其实大体上代表了，假设光线从原点射出去，与物体的那些交点的先后顺序，并不是平常所说的时间。</p>
 <p>对于某个确定的t来说，<strong>r</strong>其实就是一个点，但是在定义域内，所有的点就构成了线，求交点也相当于求某个t时的点。</p>
 </li>
 <li><p>光线与物体的求交</p>
@@ -415,14 +415,121 @@ M_{viewport} = \left[ \begin{matrix} width/2 & 0 & 0 & width/2 \\ 0 & height/2 &
 </ul>
 </li>
 <li><p>加速光线求交</p>
-<p>aabbs</p>
+<p>隐式曲面不管他，就看显式曲面（原因前面有），虽然一步判断交点是否在三角形内的样子很靓仔，但是去遍历场景内所有三角形面的时候真的很狼狈。有时候一个场景成百上千万的三角形，再加上每个像素都要射出一支光线，用脚想都知道这样不太行，需要加速。</p>
+<p>最简单的方法跟之前光栅化的思想是一样的，搞个包围盒，先算光线与包围盒有没有交点，然后再看要不要与物体求交，当然这个包围盒是三维的，把它想象成三对平面其实会更好一点，因为算光线与包围盒的交点时，算的其实是光线与包围盒面所在平面的相交时的t。这样算有助于判断光线有没有穿过包围盒。</p>
+<p>先看二维的情况，三维无非就是二维的拓展</p>
+<p>图4</p>
+<p>将面分为两对，x和y，每对 面 都会求出来两个值tmin，tmax，分别表示进入这对平面和出这对平面的t，t是有可能小于零的，就是射线反向延长与平面的交点，负的虽然没有实际意义，但是可以用来判断交点的先后进出顺序。</p>
+<p>这里其实可以得到一个东西，先只看光线进入包围盒面的情况，当光线经过了进入的最大点时（也就是tmin里最大的），才进入了盒子（即使包括t为负的那些“交点”），再看光线出包围盒的情况，当光线经过了出去的最小点时（也就是tmax里最小的），就出了包围盒。直观上来讲确实是这样，但是不太知道怎么解释？</p>
+<p>出入包围盒的t：t<sub>enter</sub> = max{tmin}, t<sub>exit</sub> = min{tmax}</p>
+</li>
+</ul>
+<p>  所以上面图中下方的问题：</p>
+<p>  t<sub>enter</sub> &lt; t<sub>exit</sub> &amp;&amp; t<sub>exit</sub> &gt; 0—&gt; 光线与包围盒相交</p>
+<p>  只有 t<sub>enter</sub> &lt; t<sub>exit</sub> 的话，盒子可能在光线原点后面</p>
+<p>  t<sub>enter</sub> &lt; 0 &amp;&amp; t<sub>exit</sub> &gt;= 0 —&gt;光线原点在盒子中间</p>
+<p>  t<sub>enter</sub> &gt; t<sub>exit</sub> —&gt; 光线与包围盒没有交点</p>
+<p>  总（有交点）：t<sub>enter</sub> &lt; t<sub>exit</sub> &amp;&amp; t<sub>exit</sub> &gt; 0</p>
+<p>  PS：与平面的求交可以根据前面的显示平面表达方式来</p>
+<script type="math/tex; mode=display">
+  \begin{aligned} &\mathbf{p}: (\mathbf{p} - \mathbf{p'}) \cdot \mathbf{N} = 0 \end{aligned}</script><p>  把p带进去解方程就行了。</p>
+<p>  不过上这种对物体做包围盒的加速方式有些问题</p>
+<p>  一个是场景中只有一个物体时，就是只搞一个盒子，对加速没有任何效果</p>
+<p>  另一个是场景中充斥着大量模型时，花花草草什么的，包围盒多了，加速效果有限</p>
+<p>  于是有了一些新的划分AABB的方法</p>
 <ul>
-<li>均匀空间划分 Uniform Spatial Partitions</li>
-<li>KD-Tree</li>
-<li>BVH</li>
+<li><p>均匀空间划分 Uniform Spatial Partitions</p>
+<p>首先先找到整个场景的bounding box</p>
+<p>然后把它均匀的分成很多grids</p>
+<p>把有物体的格子标记出来</p>
+<p>图5</p>
+<p>再根据射出的光线找出所有与其相交的方格（如何光栅化一条线，虎书，bresenham算法），倘若方格中存储有物体，再进一步与方格中的物体求交。</p>
+<p>划分出来的格子太多或太少都不太好，在实际中效果不错的格子数量：</p>
+<p>​    cells ≈ C * objs</p>
+<p>​    C ≈ 27 in 3D</p>
+<p>场景中无效的格子越少，越适合这种方法</p>
+</li>
+<li><p>KD-Tree</p>
+</li>
+<li><p>BVH</p>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>CG</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>Applications of textures</title>
+    <url>/2020/11/07/Shading-3/</url>
+    <content><![CDATA[<p>纹理的应用很多，远不止作为反射系数来表现出不同的颜色</p>
+<a id="more"></a>
+<ul>
+<li><p>Environment lighting</p>
+<p>纹理用来描述环境光长什么样，记录各个方向来的光照信息(光照信息并不仅仅指看到的照过来的光，任何方向上，只要能看到东西，都说明有光从那里打到了你的眼睛，这些都是光照信息)</p>
+<ul>
+<li>Spherical Map<ul>
+<li>会存在扭曲现象</li>
+</ul>
+</li>
+<li>Cube Map<ul>
+<li>球会出现扭曲现象，将它投影到一个立方体上</li>
+<li>立方体扭曲更少，但是计算量会多一点，比如说给你一个方向(角度)，要求这个方向上的光线信息，在原本的球上直接根据角度计算即可，但在立方体上要先计算它在立方体的哪一个面上面</li>
 </ul>
 </li>
 </ul>
+</li>
+<li><p>Store microgeometry</p>
+<ul>
+<li><p>Bump/normal mapping</p>
+<ul>
+<li>不改变几何</li>
+<li>把任何像素的法线都做一个扰动</li>
+<li>通过定义的不同位置的高度和它邻近位置的高度差来重新计算法线</li>
+<li>计算法线的方法：先求得切线，然后根据切线得到法线</li>
+<li>边缘地方会露馅</li>
+</ul>
+</li>
+<li><p>Displacement mapping</p>
+<ul>
+<li>会改变三角形顶点，而不是像凹凸贴图一样只改变法线</li>
+<li>会更逼真，但需要模型足够细致，改变模型做凹凸效果的时候顶点不够用了肯定不行</li>
+<li>DX有动态的曲面细分，初始的时候不用做的特别细致，后续根据需要再将面做细分</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>Procedural textures</p>
+<ul>
+<li>纹理并不一定是二维的，也有三维的（比如球形）</li>
+<li>实际上并没有生成一张纹理的图</li>
+<li>Perlin noise</li>
+</ul>
+</li>
+</ul>
+<p>Shadow map</p>
+<ul>
+<li><p>之前没涉及阴影，用这东西处理阴影</p>
+</li>
+<li><p>阴影产生原因：光源不能直接照到，但摄像机能看到</p>
+</li>
+<li>硬阴影</li>
+<li>只适用点光源</li>
+</ul>
+<p>步骤：</p>
+<ul>
+<li>第一步：render from light<ul>
+<li>把光源当做摄像机去渲染整个场景一遍，得到光源角度的深度buffer，这玩意就是shadow map</li>
+</ul>
+</li>
+<li>第二步：render from eye</li>
+<li>第三步：project to light<ul>
+<li>如果一点在光源角度的深度图里可见，回摄像机就正常做shading</li>
+<li>反之，比如用blinn-phong着色模型的话，就不计算镜面反射和漫反射，留一个环境光做阴影，以免全黑。</li>
+</ul>
+</li>
+</ul>
+<p><a href="https://zhuanlan.zhihu.com/p/144357517">https://zhuanlan.zhihu.com/p/144357517</a></p>
 ]]></content>
       <categories>
         <category>CG</category>
@@ -602,6 +709,15 @@ M_{viewport} = \left[ \begin{matrix} width/2 & 0 & 0 & width/2 \\ 0 & height/2 &
       </categories>
   </entry>
   <entry>
+    <title>杂鱼</title>
+    <url>/2020/10/18/%E6%9D%82%E9%B1%BC/</url>
+    <content><![CDATA[<p>鱼塘里没有一只鱼，全是钩子。</p>
+]]></content>
+      <categories>
+        <category>什么玩意儿</category>
+      </categories>
+  </entry>
+  <entry>
     <title>Shading(Blinn-Phong Reflectance Model)</title>
     <url>/2020/10/27/Shading/</url>
     <content><![CDATA[<h4 id="Blinn-Phong-Reflectance-Model-反射模型"><a href="#Blinn-Phong-Reflectance-Model-反射模型" class="headerlink" title="Blinn-Phong Reflectance Model 反射模型"></a>Blinn-Phong Reflectance Model 反射模型</h4><p>是一个经验模型，并不完全准确，但相对简单</p>
@@ -641,91 +757,6 @@ L_{a}=k_{a} I_{a}</script></li>
 <p>要得到最后的光照效果，把上面三种加起来就可以了</p>
 <script type="math/tex; mode=display">
 \begin{aligned} L &=L_{a}+L_{d}+L_{s} \\ &=k_{a} I_{a}+k_{d}\left(I / r^{2}\right) \max (0, \mathbf{n} \cdot \mathbf{l})+k_{s}\left(I / r^{2}\right) \max (0, \mathbf{n} \cdot \mathbf{h})^{p} \end{aligned}</script>]]></content>
-      <categories>
-        <category>CG</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>杂鱼</title>
-    <url>/2020/10/18/%E6%9D%82%E9%B1%BC/</url>
-    <content><![CDATA[<p>鱼塘里没有一只鱼，全是钩子。</p>
-]]></content>
-      <categories>
-        <category>什么玩意儿</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>Applications of textures</title>
-    <url>/2020/11/07/Shading-3/</url>
-    <content><![CDATA[<p>纹理的应用很多，远不止作为反射系数来表现出不同的颜色</p>
-<a id="more"></a>
-<ul>
-<li><p>Environment lighting</p>
-<p>纹理用来描述环境光长什么样，记录各个方向来的光照信息(光照信息并不仅仅指看到的照过来的光，任何方向上，只要能看到东西，都说明有光从那里打到了你的眼睛，这些都是光照信息)</p>
-<ul>
-<li>Spherical Map<ul>
-<li>会存在扭曲现象</li>
-</ul>
-</li>
-<li>Cube Map<ul>
-<li>球会出现扭曲现象，将它投影到一个立方体上</li>
-<li>立方体扭曲更少，但是计算量会多一点，比如说给你一个方向(角度)，要求这个方向上的光线信息，在原本的球上直接根据角度计算即可，但在立方体上要先计算它在立方体的哪一个面上面</li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p>Store microgeometry</p>
-<ul>
-<li><p>Bump/normal mapping</p>
-<ul>
-<li>不改变几何</li>
-<li>把任何像素的法线都做一个扰动</li>
-<li>通过定义的不同位置的高度和它邻近位置的高度差来重新计算法线</li>
-<li>计算法线的方法：先求得切线，然后根据切线得到法线</li>
-<li>边缘地方会露馅</li>
-</ul>
-</li>
-<li><p>Displacement mapping</p>
-<ul>
-<li>会改变三角形顶点，而不是像凹凸贴图一样只改变法线</li>
-<li>会更逼真，但需要模型足够细致，改变模型做凹凸效果的时候顶点不够用了肯定不行</li>
-<li>DX有动态的曲面细分，初始的时候不用做的特别细致，后续根据需要再将面做细分</li>
-</ul>
-</li>
-</ul>
-</li>
-<li><p>Procedural textures</p>
-<ul>
-<li>纹理并不一定是二维的，也有三维的（比如球形）</li>
-<li>实际上并没有生成一张纹理的图</li>
-<li>Perlin noise</li>
-</ul>
-</li>
-</ul>
-<p>Shadow map</p>
-<ul>
-<li><p>之前没涉及阴影，用这东西处理阴影</p>
-</li>
-<li><p>阴影产生原因：光源不能直接照到，但摄像机能看到</p>
-</li>
-<li>硬阴影</li>
-<li>只适用点光源</li>
-</ul>
-<p>步骤：</p>
-<ul>
-<li>第一步：render from light<ul>
-<li>把光源当做摄像机去渲染整个场景一遍，得到光源角度的深度buffer，这玩意就是shadow map</li>
-</ul>
-</li>
-<li>第二步：render from eye</li>
-<li>第三步：project to light<ul>
-<li>如果一点在光源角度的深度图里可见，回摄像机就正常做shading</li>
-<li>反之，比如用blinn-phong着色模型的话，就不计算镜面反射和漫反射，留一个环境光做阴影，以免全黑。</li>
-</ul>
-</li>
-</ul>
-<p><a href="https://zhuanlan.zhihu.com/p/144357517">https://zhuanlan.zhihu.com/p/144357517</a></p>
-]]></content>
       <categories>
         <category>CG</category>
       </categories>
