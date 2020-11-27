@@ -20,24 +20,23 @@
     var CONFIG = {"hostname":"example.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="几何的表示方法">
+  <meta name="description" content="光栅化不好处理全局的效果，比如有些地方光源无法直接打到，但是经过多次反射，光线会打到有些地方形成一块比较亮的地方，也许有些奇技淫巧可以处理这种东西，但是总归不是那么好。所以为了全局光照的效果，就有了光线追踪。">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Geometry">
-<meta property="og:url" content="http://example.com/2020/11/08/Geometry/index.html">
+<meta property="og:title" content="Ray Tracing">
+<meta property="og:url" content="http://example.com/2020/11/26/RayTracing/index.html">
 <meta property="og:site_name" content="lorstyang">
-<meta property="og:description" content="几何的表示方法">
+<meta property="og:description" content="光栅化不好处理全局的效果，比如有些地方光源无法直接打到，但是经过多次反射，光线会打到有些地方形成一块比较亮的地方，也许有些奇技淫巧可以处理这种东西，但是总归不是那么好。所以为了全局光照的效果，就有了光线追踪。">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://i.loli.net/2020/11/08/cPVrQnBwTvol8DH.png">
-<meta property="og:image" content="https://i.loli.net/2020/11/08/WsUFcthNPuKEn9l.png">
-<meta property="og:image" content="https://i.loli.net/2020/11/08/vz4o6heUdqAXwYJ.png">
-<meta property="og:image" content="https://i.loli.net/2020/11/08/VlDPp9yRxiTen5c.png">
-<meta property="article:published_time" content="2020-11-08T07:36:09.000Z">
-<meta property="article:modified_time" content="2020-11-08T11:56:20.055Z">
+<meta property="og:image" content="https://i.loli.net/2020/11/27/3B1rw2d97haJoxK.png">
+<meta property="og:image" content="https://i.loli.net/2020/11/27/B3uiTnlVbtDX1OY.png">
+<meta property="og:image" content="https://i.loli.net/2020/11/27/7Fj5TAd8Zg2WkMq.png">
+<meta property="article:published_time" content="2020-11-26T04:15:29.000Z">
+<meta property="article:modified_time" content="2020-11-27T04:59:40.764Z">
 <meta property="article:author" content="lorstyang">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://i.loli.net/2020/11/08/cPVrQnBwTvol8DH.png">
+<meta name="twitter:image" content="https://i.loli.net/2020/11/27/3B1rw2d97haJoxK.png">
 
-<link rel="canonical" href="http://example.com/2020/11/08/Geometry/">
+<link rel="canonical" href="http://example.com/2020/11/26/RayTracing/">
 
 
 <script id="page-configurations">
@@ -50,7 +49,7 @@
   };
 </script>
 
-  <title>Geometry | lorstyang</title>
+  <title>Ray Tracing | lorstyang</title>
   
 
 
@@ -188,7 +187,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2020/11/08/Geometry/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/11/26/RayTracing/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/header.jpg">
@@ -201,7 +200,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          Geometry
+          Ray Tracing
         </h1>
 
         <div class="post-meta">
@@ -210,10 +209,16 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
-              
 
-              <time title="创建时间：2020-11-08 15:36:09 / 修改时间：19:56:20" itemprop="dateCreated datePublished" datetime="2020-11-08T15:36:09+08:00">2020-11-08</time>
+              <time title="创建时间：2020-11-26 12:15:29" itemprop="dateCreated datePublished" datetime="2020-11-26T12:15:29+08:00">2020-11-26</time>
             </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-11-27 12:59:40" itemprop="dateModified" datetime="2020-11-27T12:59:40+08:00">2020-11-27</time>
+              </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
                 <i class="far fa-folder"></i>
@@ -235,117 +240,81 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h4 id="几何的表示方法"><a href="#几何的表示方法" class="headerlink" title="几何的表示方法"></a>几何的表示方法</h4><a id="more"></a>
+        <p>光栅化不好处理全局的效果，比如有些地方光源无法直接打到，但是经过多次反射，光线会打到有些地方形成一块比较亮的地方，也许有些奇技淫巧可以处理这种东西，但是总归不是那么好。所以为了全局光照的效果，就有了光线追踪。</p>
+<a id="more"></a>
+<p>关于ray tracing这个概念，由于现在牛逼的东西越来越多，它所代表的东西与原来已经大有不同了，引用闫老师的定义，ray tracing是所有光线传播方法的一个大集合，像whitted-style ray tracing，path tracing，photon mapping等等都是其中的一部分，这一小节说的其实是whitted-style ray tracing，以前说ray tracing的时候，一般默认的都是这个。</p>
+<h3 id="Whitted-Style-Ray-Tracing"><a href="#Whitted-Style-Ray-Tracing" class="headerlink" title="Whitted-Style Ray Tracing"></a>Whitted-Style Ray Tracing</h3><h4 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h4><ul>
+<li><p>首先对我们考虑的光线进行几个假定</p>
+<p>1.光线沿着直线传播（不考虑它的波动性）</p>
+<p>2.光线之间无法碰撞</p>
+<p>3.光路可逆（这个算是光线本身的性质）</p>
+<p>通过第三点可以还原出光路，我们反过来从视点出发，从视点向近投影平面上的每一个像素发射一条光线，然后判断光线与场景中物体的交点。</p>
+<p>其实从眼睛出发的线与其说是光路，不如说我们的“视线路径”，我们的视线路径打到的点（反射也好，折射也好），如果没有被遮挡的话，可以用blinn-phong里面算shading point的方法，算出那一点的光照信息，然后从那一点开始，光线沿着我们的视线路径回到相应的像素，所有被打到的点上的光照信息合起来就是应该被显示到那个像素上的信息了。</p>
+</li>
+<li><p>操作过程</p>
+<p>从视点向每一个像素发射一条光线（下图是其中一条），找光线与物体最近的的交点，用光照模型（eg.blinn-phong）可以对这一点计算，得到对应像素的颜色。看光源与交点的连线有没有被物体挡住也可以判断阴影。</p>
+<p><img src="https://i.loli.net/2020/11/27/3B1rw2d97haJoxK.png" width="60%" height="60%"></p>
+<p>如果只停在这一步的话，效果和光栅化是一样的，都只算了一次直接光照，所以为了全局效果whitted-style ray tracing还会算其他间接光照，折射，反射这些。因为光路可逆，所以除了从光源一次反射到达视点的光线可以贡献颜色给相应的像素，同一条光路上后面的交点上出来的光线也可以沿着光路到达同样的像素，也可以提供一定的颜色信息。</p>
+<p><img src="https://i.loli.net/2020/11/27/B3uiTnlVbtDX1OY.png" width="70%" height="70%"></p>
+<p>一些点：</p>
+<p>这是一个递归的过程，会设置递归的终止条件，最大弹射次数这种。</p>
+<p>光线弹射能量肯定会损失，不然最后结果会过曝，用的方法很简单，就是每次损失百分之多少。</p>
+<p>视点出去的光线没有打到物体的话，返回背景色。</p>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/144403005">https://zhuanlan.zhihu.com/p/144403005</a> （还有伪代码）</p>
+</li>
+</ul>
+<h4 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h4><p>上面是大致的操作方法，具体实现的时候又有很多技术难点</p>
 <ul>
-<li><p>隐式曲面</p>
-<p>隐式曲面不会告诉具体点的位置，只会告诉你点的坐标满足的关系，举个栗子：</p>
+<li><p>光线的表示方法</p>
+<p>ray is defined by its origin and a direction vector</p>
+<p>光线算是一条射线</p>
 <script type="math/tex; mode=display">
-x^{2}+y^{2}+z^{2} = 1</script><p>我们一般将其表示为</p>
+\mathbf{r}(t)=\mathbf{o}+t \mathbf{d} \quad 0 \leq t<\infty</script><p><strong>o</strong> : origin</p>
+<p>t : “time”</p>
+<p><strong>d</strong> : direction</p>
+<p>t其实大体上代表了，光线与物体的那些交点的先后顺序，并不是平常所说的时间。</p>
+<p>对于某个确定的t来说，<strong>r</strong>其实就是一个点，但是在定义域内，所有的点就构成了线，求交点也相当于求某个t时的点。</p>
+</li>
+<li><p>光线与物体的求交</p>
+<p>一种简单的情况，与球体的求交</p>
 <script type="math/tex; mode=display">
-f(x,y,z)=x^{2}+y^{2}+z^{2}-1</script></li>
-</ul>
-<p>  这个特殊一点，一看就知道是个球，但有些就不太明显，再举个栗子：</p>
+(\mathbf{o}+t \mathbf{d}-\mathbf{c})^{2}-R^{2}=0</script><p><strong>c</strong> : center</p>
+<p>R : 半径</p>
+<p>展开化简后就是一个关于t的一元二次方程，就可以解出t，得到相应的交点</p>
+<ul>
+<li><p>与隐式曲面求交</p>
 <script type="math/tex; mode=display">
-  f(x,y,z)=(2- \sqrt{x^{2} + y^{2}})^{2} + z^{2} - 1</script><p>  这个就不太明显，它是一个圆环。所以说隐式曲面跟你能不能看出来它是个什么东西一点关系没有，判断隐式还是靠上面说的那种方式，没告诉点的具体位置，只告诉点的位置关系</p>
-<ul>
-<li>缺点：难以采样到曲面上具体的点。就是说要你给我一个在这曲面上的点，如果是复杂一点的曲面或者说不知道长什么样的曲面，你对着函数表达式想破脑袋估计也难想出一个点来</li>
-<li>优点：容易判断某个点与曲面的关系。反过来就不一样了，你给我一个点，我很容易判断它跟曲面的位置关系，直接带进去看正负就可以了</li>
-</ul>
-<ul>
-<li><p>显式曲面</p>
-<p>显式曲面的点都被直接给出，或者可以通过映射关系直接得到</p>
-<p>二维到三维的映射 (u, v) —&gt; (x, y, z)</p>
-<p><img src="https://i.loli.net/2020/11/08/cPVrQnBwTvol8DH.png" width="70%" height="70%"></p>
-<p>这个(2+cosu)cosv是x，后面两个对应y，z。</p>
-<p>咋一看，这个和那个函数表达式很像，但两个并不一样，u,v是曲面在二维图上的坐标，所以带入是直接得到的(x, y, z)。虽说大体上是懂了，但是总感觉充满了违和感，为什么突然蹦出来个u,v，感觉没任何道理啊，单纯是因为 得到显式曲面的点的一种方法是映射吗？</p>
-<ul>
-<li>缺点：没办法判断特定点与曲面的关系</li>
-<li>优点：可以直接采样到曲面上所有的点</li>
-</ul>
-<p>与隐式曲面相反</p>
+\begin{aligned} &\mathbf{p}: f(\mathbf{p})=0\\ &f(\mathbf{o}+t \mathbf{d})=0 \end{aligned}</script><p>一般隐式曲面都可以表示成：f(<strong>p</strong>)=0（<strong>p</strong>代表曲面上的一点），把光线的方程带进去，得到下面那个式子，解就行了，至于怎么把曲面的表达式转换成f(<strong>p</strong>)=0这种形式，目前没什么头绪？</p>
+<p>还有一个就是，这些式子里，点和向量都是加粗表示的，以往是向量和标量用加粗区分开来，点的表示也是一样要加粗吗，不过点的维度和向量是一样的，从这个角度好像还是挺说得通的。</p>
 </li>
-</ul>
-<ul>
-<li><p>隐式曲面种类</p>
-<ul>
-<li>Algebraic Surface</li>
-<li>最直接的代数表达式</li>
-<li>Constructive Solid Geometry(CSG)<ul>
-<li>对不同的几何体做布尔运算</li>
-<li>通过这些布尔运算可以得到更复杂的几何</li>
-</ul>
-</li>
-<li>Distance Function 距离函数<ul>
-<li>这个东西很有意思，可以实现两个几何体混合的效果</li>
-<li>实现混合效果的方法是找到任意一个点到两个几何体表面最短的距离，然后再减去一个变量作为最终的SDF(Signed Distance Function)</li>
-</ul>
-</li>
-<li>level set 水平集<ul>
-<li>和SDF很像，只不过函数不是以数学表达式的方式显式的表示出来，而是用一个一个格子表示出函数离散的值，然后通过双线性插值算出所有值等于0的点</li>
-</ul>
-</li>
-<li>Fractals 分型几何<ul>
-<li>自相似，递归</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<ul>
-<li>显式曲面种类<ul>
-<li>点云<ul>
-<li>一堆点的表示方法，有所有的点的信息</li>
-</ul>
-</li>
-<li>Polygon Mesh 多边形网格<ul>
-<li>应用的最广泛</li>
-<li>object file(.obj) 和编译出来的.obj不是一回事，注意区分。其实就是一个文本文件，里面给出了所有的顶点，法线，纹理信息，然后加上它们的组织方式</li>
-</ul>
-</li>
-</ul>
-</li>
-</ul>
-<h4 id="贝塞尔曲线-Bezier-Curves-amp-贝塞尔曲面-Bezier-Surfaces"><a href="#贝塞尔曲线-Bezier-Curves-amp-贝塞尔曲面-Bezier-Surfaces" class="headerlink" title="贝塞尔曲线(Bézier Curves) &amp; 贝塞尔曲面(Bézier Surfaces)"></a>贝塞尔曲线(Bézier Curves) &amp; 贝塞尔曲面(Bézier Surfaces)</h4><ul>
-<li><p>曲线</p>
-<ul>
-<li><p>其实就是不停做线性插值，插值到只剩一个点，下图中的b(3,0)，时间t∈[0, 1]，这个点的轨迹就是贝塞尔曲线，实际上就是一个关于t的函数</p>
-<p><img src="https://i.loli.net/2020/11/08/WsUFcthNPuKEn9l.png" width="60%" height="60%"></p>
-</li>
-<li><p>这个关于t的函数挺好求的，三个控制点的贝塞尔曲线：</p>
+<li><p>与显式曲面求交</p>
+<p>图形学中，显示曲面其实才是常态，毕竟三角形的顶点数据是都有的。</p>
+<p>判断光线与显示曲面的交点，其实就是判断光线与三角形面的交点。那么就可以分为两步，第一步算出光线与三角形所在平面的交点，然后判断该电是否在三角形内（这个方法在光栅化里有说过）。</p>
+<p>显式平面表示：</p>
 <script type="math/tex; mode=display">
-\textbf{b}^{2}_{0}(t) = (1-t)^{2}\textbf{b}_{0} + 2t(1-t)\textbf{b}_{1} + t^{2}\textbf{b}_{2}</script><p>可以看到，最高项指数为2，所以说n个控制点的贝塞尔曲线为n-1次</p>
-</li>
-<li><p>这个系数可以看出来有规律，所以有了n+1个控制点的贝塞尔曲线的公式</p>
-<p><img src="https://i.loli.net/2020/11/08/vz4o6heUdqAXwYJ.png" width="70%" height="70%"></p>
-<p>图中下面那个伯恩斯坦多项式(Bernstein polynomials)跟多项式展开差不多</p>
-</li>
-<li><p>性质</p>
+\begin{aligned} &\mathbf{p}: (\mathbf{p} - \mathbf{p'}) \cdot \mathbf{N} = 0 \end{aligned}</script><p><strong>N</strong> : 法线</p>
+<p><strong>p’</strong> : 平面上一点</p>
+<p>同样的求出点以后，看点是否在三角形里面就可以判断光线是否与物体相交了。</p>
+<p>这样需要两步，有人想了个办法把它一步搞出来</p>
 <ul>
-<li>必定经过起点和终点，并与这两个点相切</li>
-<li>具有仿射变换性质，可以通过移动控制点移动整条曲线</li>
-<li>凸包性质，曲线一定不会超出所有控制点构成的多边形范围</li>
-</ul>
-</li>
-<li><p>分段贝塞尔曲线</p>
-<ul>
-<li>原因：控制点太多时，局部的曲线形状会出问题</li>
-</ul>
-</li>
-<li><p>further：B样条，NURBS</p>
+<li><p>Moller Trumbore Algorithm</p>
+<p>把点用重心坐标的方式表示出来，然后把重心坐标和t解出来</p>
+<p><img src="https://i.loli.net/2020/11/27/7Fj5TAd8Zg2WkMq.png" width="70%" height="70%"></p>
+<p>因为<strong>O</strong>、<strong>D</strong>、<strong>P<sub>0</sub></strong>、<strong>P<sub>1</sub></strong>、<strong>P<sub>2</sub></strong>都有三个坐标，相当于可以列出来三个方程，那三个未知数t，b1，b2也很好求出来了</p>
+<p>结果判断：</p>
+<p>​    t为正—&gt;这很河里，没算反</p>
+<p>​    重心坐标都为正—&gt;点在三角形内</p>
 </li>
 </ul>
 </li>
-<li><p>曲面</p>
+</ul>
+</li>
+<li><p>加速光线求交</p>
+<p>aabbs</p>
 <ul>
-<li><p>贝塞尔曲面与曲线类似，只是从2维到了3维。原来只有一个参数t，现在有两个u，v，范围都是[0, 1]</p>
-<p><img src="https://i.loli.net/2020/11/08/VlDPp9yRxiTen5c.png" width="70%" height="70%"></p>
-</li>
-<li><p>1、用参数u，先根据4列（每列4个点，这4个点形成折线段）用算贝塞尔曲线的方式算出4个蓝色的点，灰色的线即为生成的贝塞尔曲线（底下的方格即为点的位置，但没表示出点的高度信息）</p>
-<p>2、再用参数中，根据4个蓝色的点用同样的方法算出最终贝塞尔曲面上的一点</p>
-<p>3、遍历所有的u，v，得到的所有点贝塞尔曲面，即点在u，v上的轨迹</p>
-</li>
-<li><p>其实可以看出来，所有的蓝色线条就组成了贝塞尔曲面，灰色线条是不在曲面上的</p>
-</li>
+<li>均匀空间划分 Uniform Spatial Partitions</li>
+<li>KD-Tree</li>
+<li>BVH</li>
 </ul>
 </li>
 </ul>
@@ -364,13 +333,10 @@ f(x,y,z)=x^{2}+y^{2}+z^{2}-1</script></li>
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2020/11/07/Shading-3/" rel="prev" title="Applications of textures">
-      <i class="fa fa-chevron-left"></i> Applications of textures
+    <a href="/2020/11/20/Geometry-2/" rel="prev" title="曲面细分与曲面简化">
+      <i class="fa fa-chevron-left"></i> 曲面细分与曲面简化
     </a></div>
-      <div class="post-nav-item">
-    <a href="/2020/11/20/Geometry-2/" rel="next" title="曲面细分与曲面简化">
-      曲面细分与曲面简化 <i class="fa fa-chevron-right"></i>
-    </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
@@ -429,7 +395,7 @@ f(x,y,z)=x^{2}+y^{2}+z^{2}-1</script></li>
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%87%A0%E4%BD%95%E7%9A%84%E8%A1%A8%E7%A4%BA%E6%96%B9%E6%B3%95"><span class="nav-number">1.</span> <span class="nav-text">几何的表示方法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%B4%9D%E5%A1%9E%E5%B0%94%E6%9B%B2%E7%BA%BF-Bezier-Curves-amp-%E8%B4%9D%E5%A1%9E%E5%B0%94%E6%9B%B2%E9%9D%A2-Bezier-Surfaces"><span class="nav-number">2.</span> <span class="nav-text">贝塞尔曲线(Bézier Curves) &amp; 贝塞尔曲面(Bézier Surfaces)</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Whitted-Style-Ray-Tracing"><span class="nav-number">1.</span> <span class="nav-text">Whitted-Style Ray Tracing</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8E%9F%E7%90%86"><span class="nav-number">1.1.</span> <span class="nav-text">原理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0"><span class="nav-number">1.2.</span> <span class="nav-text">实现</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 

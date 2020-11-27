@@ -124,103 +124,6 @@ R_{view} = \left[ \begin{matrix} x_{g×t} & y_{g×t} & z_{g×t} & 0 \\ x_{t} & y
       </categories>
   </entry>
   <entry>
-    <title>Rasterization</title>
-    <url>/2020/10/22/Rasterization/</url>
-    <content><![CDATA[<ul>
-<li><p>after MVP</p>
-<p>做完MVP后所有的物体到了[-1, 1]<sup>3</sup>的立方体内，然后我们需要把他画到屏幕上去</p>
-</li>
-<li><p>M<sub>viewport</sub></p>
-<p>假设屏幕的宽度是width，高度是height。对于那个标准的立方体，先不管它的z方向，现在要把x，y两个方向拉成屏幕的大小，用到的矩阵就是M<sub>viewport</sub> :</p>
-<a id="more"></a>
-<script type="math/tex; mode=display">
-M_{viewport} = \left[ \begin{matrix} width/2 & 0 & 0 & width/2 \\ 0 & height/2 & 0 & height/2 \\ 0 & 0 & 1 & 0 \\ 0 & 0 & 0 & 1 \end{matrix} \right]</script><p>这里默认屏幕坐标系的起点是左下角，所以最右边一列有width/2和height/2，将立方体向右上方平移，使它的左下角与屏幕原点重合。</p>
-</li>
-</ul>
-<h4 id="sampling"><a href="#sampling" class="headerlink" title="sampling"></a>sampling</h4><ul>
-<li><p>屏幕是一系列离散的像素</p>
-</li>
-<li><p>计算机生成的图像最基本的单位是三角形</p>
-<ul>
-<li>最基本的多边形</li>
-<li>内外定义清晰</li>
-<li>平面</li>
-<li>方便插值</li>
-</ul>
-</li>
-<li><p>这里的采样就是判断像素是否在三角形中</p>
-</li>
-<li><p>如何判断一个像素是否在三角形内？</p>
-<p>可以用三次叉积来判断。假设有像素Q（用像素中心的点来代表像素），三角形p<sub>0</sub>p<sub>1</sub>p<sub>2</sub></p>
-<p>首先算出<strong>p<sub>0</sub>p<sub>1</sub></strong> × <strong>p<sub>1</sub>p<sub>Q</sub></strong>，可以根据得到的向量的正负判断Q点在<strong>p<sub>0</sub>p<sub>1</sub></strong>的左边还是右边，同理算出<strong>p<sub>1</sub>p<sub>2</sub></strong> × <strong>p<sub>1</sub>p<sub>Q</sub></strong>，<strong>p<sub>2</sub>p<sub>0</sub></strong> × <strong>p<sub>2</sub>p<sub>Q</sub></strong>，如何得到的三个向量同正或同负，则代表像素在三角形内。画图可以很清晰的看到，一个点在三角形内部时，将三角形的三条边看成顺序的三个向量，这个点一定是在这三个向量的同一侧的。</p>
-</li>
-<li><p>点在边界上怎么算</p>
-<p>自己规定。不过一些API（opengl，directx）都已经规定好了。</p>
-</li>
-<li><p>Bounding Box</p>
-<p>遍历像素判断它是否在三角形中时，肯定不会把所有的像素全部遍历一遍，一种做法就是找到一个最小的能把一个三角形包围起来的包围盒（矩形），然后在这个矩形内部遍历就可以了。这个矩形也好找，取三个顶点坐标的最大最小值就可以了。</p>
-<ul>
-<li>缺点：三角形比较奇怪的时候会做很多无用功，比如一个很细长的呈45°的三角形</li>
-<li>还有很多其他的加速方法</li>
-</ul>
-</li>
-</ul>
-<h4 id="Antialiasing"><a href="#Antialiasing" class="headerlink" title="Antialiasing"></a>Antialiasing</h4><ul>
-<li><p>把像素看成一个个方块，最后的图形就会有锯齿，称之为走样，所以需要反走样</p>
-</li>
-<li><p>走样原因：采样速度跟不上信号变化速度</p>
-</li>
-<li><p>解决办法：采样之前，做一个模糊/滤波（Filtering）</p>
-</li>
-<li><p>为什么先采样再模糊不行？/为什么…?</p>
-<p>这一部分可以看一下傅里叶变换相关的知识，看懂了之后再来看这部分会有种垂死病中惊坐起的感觉（不知道这么形容对不对，但感觉蛮贴切的）”如果看了这篇文章你还不懂傅里叶变换，那就过来掐死我吧 - Heinrich的文章 - 知乎 <a href="https://zhuanlan.zhihu.com/p/19759362">https://zhuanlan.zhihu.com/p/19759362</a>“</p>
-</li>
-</ul>
-<p><img src="https://i.loli.net/2020/10/23/igEotWaOAs7N6mU.png" alt="C8CBB3IA0HBE6BL65VH8P_S.png"></p>
-<p>有这幅图可以看出，频率很高采样速度跟不上的时候会与原来的曲线差很远，所以会产生走样。为了贴近原曲线，现在有两个选项，一个是提高采样速度，另一个就是把高频的部分去掉。如果要提高采样速度的话，就要在硬件上想办法（提高像素数量，屏幕分辨率），但这就不是我们考虑的方向了。从后续的那个帅小伙指着我们的图片可以知道，在他的频域图上，高频的部分代表图像内的边界部分，把高频部分去掉后，也就是加一个低通滤波，图像自然就变模糊了，那个帅小伙也确实证明了这点。到这里，其实已经和前面连起来了，先将照片模糊，然后再采样，就可以达到反走样的目的。</p>
-<p>还剩一个问题就是前面提到的为什么先采样，再模糊不行？</p>
-<p><img src="https://i.loli.net/2020/10/23/ZU5cx2KziT9RJ6y.png" alt="LDOX__Y_D_7638_9_B8JEGO.png"></p>
-<p><img src="https://i.loli.net/2020/10/23/rZFkG71DXQcjyTW.png" alt="DU__G_5_FSV96W_RC_X6E16.png"></p>
-<p>从这里看会比较清楚，前面说采样就是在重复原始信号的频谱，采样不够密集时，会发生混叠，也就是Sparse sampling这种情况，也就引发了走样。可以想象，先采样，再做模糊（把那个梯形形的边角去掉），波形重叠的情况下截断也会发生混叠。</p>
-<p>关于卷积这一部分听得不是特别明白，还需加深理解。</p>
-<ul>
-<li><p>Antialiasing By Supersampling (MSAA) （具体怎么做）</p>
-<ul>
-<li>supersampling 将一个像素分成多个小的像素，根据在三角形内的小像素的数量来判断该像素的颜色程度（多次取样。</li>
-</ul>
-</li>
-<li><p>no free lunch！</p>
-<ul>
-<li>MSAA每个像素多次采样浪费性能</li>
-<li>优化：不使用均匀分布，采样复用</li>
-</ul>
-</li>
-<li>其他的老师推荐的抗锯齿方法<ul>
-<li>FXAA(Fast Approximate AA)：先得到有锯齿的图，然后再做后续处理</li>
-<li>TAA (Tem‘poral AA)：借助前面的帧</li>
-</ul>
-</li>
-<li>Super resolution / super sampling<ul>
-<li>From low resolution to high resolution</li>
-<li>Essentially still “not enough samples” problem</li>
-<li>DLSS (Deep Learning Super Sampling) 靠深度学习去猜</li>
-</ul>
-</li>
-</ul>
-<h4 id="Z-Buffering"><a href="#Z-Buffering" class="headerlink" title="Z-Buffering"></a>Z-Buffering</h4><ul>
-<li>画家算法<ul>
-<li>三个三角形互相重叠会没法排序</li>
-<li>无法处理透明物体</li>
-</ul>
-</li>
-</ul>
-<p><img src="https://i.loli.net/2020/10/23/pIw8osTPKiZOhdj.png" alt="Untitled.png"></p>
-]]></content>
-      <categories>
-        <category>CG</category>
-      </categories>
-  </entry>
-  <entry>
     <title>Geometry</title>
     <url>/2020/11/08/Geometry/</url>
     <content><![CDATA[<h4 id="几何的表示方法"><a href="#几何的表示方法" class="headerlink" title="几何的表示方法"></a>几何的表示方法</h4><a id="more"></a>
@@ -334,6 +237,189 @@ f(x,y,z)=x^{2}+y^{2}+z^{2}-1</script></li>
 </li>
 <li><p>其实可以看出来，所有的蓝色线条就组成了贝塞尔曲面，灰色线条是不在曲面上的</p>
 </li>
+</ul>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>CG</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>Rasterization</title>
+    <url>/2020/10/22/Rasterization/</url>
+    <content><![CDATA[<ul>
+<li><p>after MVP</p>
+<p>做完MVP后所有的物体到了[-1, 1]<sup>3</sup>的立方体内，然后我们需要把他画到屏幕上去</p>
+</li>
+<li><p>M<sub>viewport</sub></p>
+<p>假设屏幕的宽度是width，高度是height。对于那个标准的立方体，先不管它的z方向，现在要把x，y两个方向拉成屏幕的大小，用到的矩阵就是M<sub>viewport</sub> :</p>
+<a id="more"></a>
+<script type="math/tex; mode=display">
+M_{viewport} = \left[ \begin{matrix} width/2 & 0 & 0 & width/2 \\ 0 & height/2 & 0 & height/2 \\ 0 & 0 & 1 & 0 \\ 0 & 0 & 0 & 1 \end{matrix} \right]</script><p>这里默认屏幕坐标系的起点是左下角，所以最右边一列有width/2和height/2，将立方体向右上方平移，使它的左下角与屏幕原点重合。</p>
+</li>
+</ul>
+<h4 id="sampling"><a href="#sampling" class="headerlink" title="sampling"></a>sampling</h4><ul>
+<li><p>屏幕是一系列离散的像素</p>
+</li>
+<li><p>计算机生成的图像最基本的单位是三角形</p>
+<ul>
+<li>最基本的多边形</li>
+<li>内外定义清晰</li>
+<li>平面</li>
+<li>方便插值</li>
+</ul>
+</li>
+<li><p>这里的采样就是判断像素是否在三角形中</p>
+</li>
+<li><p>如何判断一个像素是否在三角形内？</p>
+<p>可以用三次叉积来判断。假设有像素Q（用像素中心的点来代表像素），三角形p<sub>0</sub>p<sub>1</sub>p<sub>2</sub></p>
+<p>首先算出<strong>p<sub>0</sub>p<sub>1</sub></strong> × <strong>p<sub>1</sub>p<sub>Q</sub></strong>，可以根据得到的向量的正负判断Q点在<strong>p<sub>0</sub>p<sub>1</sub></strong>的左边还是右边，同理算出<strong>p<sub>1</sub>p<sub>2</sub></strong> × <strong>p<sub>1</sub>p<sub>Q</sub></strong>，<strong>p<sub>2</sub>p<sub>0</sub></strong> × <strong>p<sub>2</sub>p<sub>Q</sub></strong>，如何得到的三个向量同正或同负，则代表像素在三角形内。画图可以很清晰的看到，一个点在三角形内部时，将三角形的三条边看成顺序的三个向量，这个点一定是在这三个向量的同一侧的。</p>
+</li>
+<li><p>点在边界上怎么算</p>
+<p>自己规定。不过一些API（opengl，directx）都已经规定好了。</p>
+</li>
+<li><p>Bounding Box</p>
+<p>遍历像素判断它是否在三角形中时，肯定不会把所有的像素全部遍历一遍，一种做法就是找到一个最小的能把一个三角形包围起来的包围盒（矩形），然后在这个矩形内部遍历就可以了。这个矩形也好找，取三个顶点坐标的最大最小值就可以了。</p>
+<ul>
+<li>缺点：三角形比较奇怪的时候会做很多无用功，比如一个很细长的呈45°的三角形</li>
+<li>还有很多其他的加速方法</li>
+</ul>
+</li>
+</ul>
+<h4 id="Antialiasing"><a href="#Antialiasing" class="headerlink" title="Antialiasing"></a>Antialiasing</h4><ul>
+<li><p>把像素看成一个个方块，最后的图形就会有锯齿，称之为走样，所以需要反走样</p>
+</li>
+<li><p>走样原因：采样速度跟不上信号变化速度</p>
+</li>
+<li><p>解决办法：采样之前，做一个模糊/滤波（Filtering）</p>
+</li>
+<li><p>为什么先采样再模糊不行？/为什么…?</p>
+<p>这一部分可以看一下傅里叶变换相关的知识，看懂了之后再来看这部分会有种垂死病中惊坐起的感觉（不知道这么形容对不对，但感觉蛮贴切的）”如果看了这篇文章你还不懂傅里叶变换，那就过来掐死我吧 - Heinrich的文章 - 知乎 <a href="https://zhuanlan.zhihu.com/p/19759362">https://zhuanlan.zhihu.com/p/19759362</a>“</p>
+</li>
+</ul>
+<p><img src="https://i.loli.net/2020/10/23/igEotWaOAs7N6mU.png" alt="C8CBB3IA0HBE6BL65VH8P_S.png"></p>
+<p>有这幅图可以看出，频率很高采样速度跟不上的时候会与原来的曲线差很远，所以会产生走样。为了贴近原曲线，现在有两个选项，一个是提高采样速度，另一个就是把高频的部分去掉。如果要提高采样速度的话，就要在硬件上想办法（提高像素数量，屏幕分辨率），但这就不是我们考虑的方向了。从后续的那个帅小伙指着我们的图片可以知道，在他的频域图上，高频的部分代表图像内的边界部分，把高频部分去掉后，也就是加一个低通滤波，图像自然就变模糊了，那个帅小伙也确实证明了这点。到这里，其实已经和前面连起来了，先将照片模糊，然后再采样，就可以达到反走样的目的。</p>
+<p>还剩一个问题就是前面提到的为什么先采样，再模糊不行？</p>
+<p><img src="https://i.loli.net/2020/10/23/ZU5cx2KziT9RJ6y.png" alt="LDOX__Y_D_7638_9_B8JEGO.png"></p>
+<p><img src="https://i.loli.net/2020/10/23/rZFkG71DXQcjyTW.png" alt="DU__G_5_FSV96W_RC_X6E16.png"></p>
+<p>从这里看会比较清楚，前面说采样就是在重复原始信号的频谱，采样不够密集时，会发生混叠，也就是Sparse sampling这种情况，也就引发了走样。可以想象，先采样，再做模糊（把那个梯形形的边角去掉），波形重叠的情况下截断也会发生混叠。</p>
+<p>关于卷积这一部分听得不是特别明白，还需加深理解。</p>
+<ul>
+<li><p>Antialiasing By Supersampling (MSAA) （具体怎么做）</p>
+<ul>
+<li>supersampling 将一个像素分成多个小的像素，根据在三角形内的小像素的数量来判断该像素的颜色程度（多次取样。</li>
+</ul>
+</li>
+<li><p>no free lunch！</p>
+<ul>
+<li>MSAA每个像素多次采样浪费性能</li>
+<li>优化：不使用均匀分布，采样复用</li>
+</ul>
+</li>
+<li>其他的老师推荐的抗锯齿方法<ul>
+<li>FXAA(Fast Approximate AA)：先得到有锯齿的图，然后再做后续处理</li>
+<li>TAA (Tem‘poral AA)：借助前面的帧</li>
+</ul>
+</li>
+<li>Super resolution / super sampling<ul>
+<li>From low resolution to high resolution</li>
+<li>Essentially still “not enough samples” problem</li>
+<li>DLSS (Deep Learning Super Sampling) 靠深度学习去猜</li>
+</ul>
+</li>
+</ul>
+<h4 id="Z-Buffering"><a href="#Z-Buffering" class="headerlink" title="Z-Buffering"></a>Z-Buffering</h4><ul>
+<li>画家算法<ul>
+<li>三个三角形互相重叠会没法排序</li>
+<li>无法处理透明物体</li>
+</ul>
+</li>
+</ul>
+<p><img src="https://i.loli.net/2020/10/23/pIw8osTPKiZOhdj.png" alt="Untitled.png"></p>
+]]></content>
+      <categories>
+        <category>CG</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>Ray Tracing</title>
+    <url>/2020/11/26/RayTracing/</url>
+    <content><![CDATA[<p>光栅化不好处理全局的效果，比如有些地方光源无法直接打到，但是经过多次反射，光线会打到有些地方形成一块比较亮的地方，也许有些奇技淫巧可以处理这种东西，但是总归不是那么好。所以为了全局光照的效果，就有了光线追踪。</p>
+<a id="more"></a>
+<p>关于ray tracing这个概念，由于现在牛逼的东西越来越多，它所代表的东西与原来已经大有不同了，引用闫老师的定义，ray tracing是所有光线传播方法的一个大集合，像whitted-style ray tracing，path tracing，photon mapping等等都是其中的一部分，这一小节说的其实是whitted-style ray tracing，以前说ray tracing的时候，一般默认的都是这个。</p>
+<h3 id="Whitted-Style-Ray-Tracing"><a href="#Whitted-Style-Ray-Tracing" class="headerlink" title="Whitted-Style Ray Tracing"></a>Whitted-Style Ray Tracing</h3><h4 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h4><ul>
+<li><p>首先对我们考虑的光线进行几个假定</p>
+<p>1.光线沿着直线传播（不考虑它的波动性）</p>
+<p>2.光线之间无法碰撞</p>
+<p>3.光路可逆（这个算是光线本身的性质）</p>
+<p>通过第三点可以还原出光路，我们反过来从视点出发，从视点向近投影平面上的每一个像素发射一条光线，然后判断光线与场景中物体的交点。</p>
+<p>其实从眼睛出发的线与其说是光路，不如说我们的“视线路径”，我们的视线路径打到的点（反射也好，折射也好），如果没有被遮挡的话，可以用blinn-phong里面算shading point的方法，算出那一点的光照信息，然后从那一点开始，光线沿着我们的视线路径回到相应的像素，所有被打到的点上的光照信息合起来就是应该被显示到那个像素上的信息了。</p>
+</li>
+<li><p>操作过程</p>
+<p>从视点向每一个像素发射一条光线（下图是其中一条），找光线与物体最近的的交点，用光照模型（eg.blinn-phong）可以对这一点计算，得到对应像素的颜色。看光源与交点的连线有没有被物体挡住也可以判断阴影。</p>
+<p><img src="https://i.loli.net/2020/11/27/3B1rw2d97haJoxK.png" width="60%" height="60%"></p>
+<p>如果只停在这一步的话，效果和光栅化是一样的，都只算了一次直接光照，所以为了全局效果whitted-style ray tracing还会算其他间接光照，折射，反射这些。因为光路可逆，所以除了从光源一次反射到达视点的光线可以贡献颜色给相应的像素，同一条光路上后面的交点上出来的光线也可以沿着光路到达同样的像素，也可以提供一定的颜色信息。</p>
+<p><img src="https://i.loli.net/2020/11/27/B3uiTnlVbtDX1OY.png" width="70%" height="70%"></p>
+<p>一些点：</p>
+<p>这是一个递归的过程，会设置递归的终止条件，最大弹射次数这种。</p>
+<p>光线弹射能量肯定会损失，不然最后结果会过曝，用的方法很简单，就是每次损失百分之多少。</p>
+<p>视点出去的光线没有打到物体的话，返回背景色。</p>
+<p><a href="https://zhuanlan.zhihu.com/p/144403005">https://zhuanlan.zhihu.com/p/144403005</a> （还有伪代码）</p>
+</li>
+</ul>
+<h4 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h4><p>上面是大致的操作方法，具体实现的时候又有很多技术难点</p>
+<ul>
+<li><p>光线的表示方法</p>
+<p>ray is defined by its origin and a direction vector</p>
+<p>光线算是一条射线</p>
+<script type="math/tex; mode=display">
+\mathbf{r}(t)=\mathbf{o}+t \mathbf{d} \quad 0 \leq t<\infty</script><p><strong>o</strong> : origin</p>
+<p>t : “time”</p>
+<p><strong>d</strong> : direction</p>
+<p>t其实大体上代表了，光线与物体的那些交点的先后顺序，并不是平常所说的时间。</p>
+<p>对于某个确定的t来说，<strong>r</strong>其实就是一个点，但是在定义域内，所有的点就构成了线，求交点也相当于求某个t时的点。</p>
+</li>
+<li><p>光线与物体的求交</p>
+<p>一种简单的情况，与球体的求交</p>
+<script type="math/tex; mode=display">
+(\mathbf{o}+t \mathbf{d}-\mathbf{c})^{2}-R^{2}=0</script><p><strong>c</strong> : center</p>
+<p>R : 半径</p>
+<p>展开化简后就是一个关于t的一元二次方程，就可以解出t，得到相应的交点</p>
+<ul>
+<li><p>与隐式曲面求交</p>
+<script type="math/tex; mode=display">
+\begin{aligned} &\mathbf{p}: f(\mathbf{p})=0\\ &f(\mathbf{o}+t \mathbf{d})=0 \end{aligned}</script><p>一般隐式曲面都可以表示成：f(<strong>p</strong>)=0（<strong>p</strong>代表曲面上的一点），把光线的方程带进去，得到下面那个式子，解就行了，至于怎么把曲面的表达式转换成f(<strong>p</strong>)=0这种形式，目前没什么头绪？</p>
+<p>还有一个就是，这些式子里，点和向量都是加粗表示的，以往是向量和标量用加粗区分开来，点的表示也是一样要加粗吗，不过点的维度和向量是一样的，从这个角度好像还是挺说得通的。</p>
+</li>
+<li><p>与显式曲面求交</p>
+<p>图形学中，显示曲面其实才是常态，毕竟三角形的顶点数据是都有的。</p>
+<p>判断光线与显示曲面的交点，其实就是判断光线与三角形面的交点。那么就可以分为两步，第一步算出光线与三角形所在平面的交点，然后判断该电是否在三角形内（这个方法在光栅化里有说过）。</p>
+<p>显式平面表示：</p>
+<script type="math/tex; mode=display">
+\begin{aligned} &\mathbf{p}: (\mathbf{p} - \mathbf{p'}) \cdot \mathbf{N} = 0 \end{aligned}</script><p><strong>N</strong> : 法线</p>
+<p><strong>p’</strong> : 平面上一点</p>
+<p>同样的求出点以后，看点是否在三角形里面就可以判断光线是否与物体相交了。</p>
+<p>这样需要两步，有人想了个办法把它一步搞出来</p>
+<ul>
+<li><p>Moller Trumbore Algorithm</p>
+<p>把点用重心坐标的方式表示出来，然后把重心坐标和t解出来</p>
+<p><img src="https://i.loli.net/2020/11/27/7Fj5TAd8Zg2WkMq.png" width="70%" height="70%"></p>
+<p>因为<strong>O</strong>、<strong>D</strong>、<strong>P<sub>0</sub></strong>、<strong>P<sub>1</sub></strong>、<strong>P<sub>2</sub></strong>都有三个坐标，相当于可以列出来三个方程，那三个未知数t，b1，b2也很好求出来了</p>
+<p>结果判断：</p>
+<p>​    t为正—&gt;这很河里，没算反</p>
+<p>​    重心坐标都为正—&gt;点在三角形内</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>加速光线求交</p>
+<p>aabbs</p>
+<ul>
+<li>均匀空间划分 Uniform Spatial Partitions</li>
+<li>KD-Tree</li>
+<li>BVH</li>
 </ul>
 </li>
 </ul>
@@ -516,6 +602,50 @@ f(x,y,z)=x^{2}+y^{2}+z^{2}-1</script></li>
       </categories>
   </entry>
   <entry>
+    <title>Shading(Blinn-Phong Reflectance Model)</title>
+    <url>/2020/10/27/Shading/</url>
+    <content><![CDATA[<h4 id="Blinn-Phong-Reflectance-Model-反射模型"><a href="#Blinn-Phong-Reflectance-Model-反射模型" class="headerlink" title="Blinn-Phong Reflectance Model 反射模型"></a>Blinn-Phong Reflectance Model 反射模型</h4><p>是一个经验模型，并不完全准确，但相对简单</p>
+<p>光源照射会分成三个部分，一是Diffuse漫反射，二是Specular镜面反射（高光部分），三是环境光（各个方向乱七八糟经过多次反射打过来的光）</p>
+<a id="more"></a>
+<ul>
+<li><p>Diffuse 漫反射</p>
+<p>因为是漫反射，各个方向看到的光线能量强度都相同，所以与视角（view）方向无关，表示漫反射的公式里就只有光源方向 <strong>l</strong> 和 法线方向<strong>n</strong></p>
+<script type="math/tex; mode=display">
+L_{d} = k_{d}( I/r^{2})\max(0, \mathbf{n} \cdot \mathbf{l})</script><ul>
+<li>k<sub>d</sub>是漫反射系数，因为不同的材质对光线的吸收情况不同</li>
+<li><strong>n</strong> 和 <strong>l</strong> 点乘得出cos的结果以求得光线直着打到shading point上的能量强度</li>
+<li>max(0, <strong>n</strong> · <strong>l</strong>) 就是取0和 <strong>n</strong> · <strong>l</strong> 之间的最大值，光线从背着shading point的方向射过来的时候 <strong>n</strong> · <strong>l</strong> 会是个负值，而这种情况是将其视作没有意义的，因为我们只在考虑反射，没考虑折射之类的，所以 <strong>n</strong> · <strong>l</strong> 为负值时直接取0就好了。</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><p>Specular 镜面反射</p>
+<ul>
+<li>高光是只有你的视角方向对着镜面反射光的方向了才能看到的，所以反射光与视角的夹角会影响你看到的高光</li>
+<li>计算反射光与视角的夹角余弦相对来说比较麻烦，有聪明人发现了视角靠近反射光时，半程向量会靠近法线向量</li>
+<li>p用来控制高光大小，角度在增大时，余弦值其实下降的比较慢，就会造成视角与反射光相差很大时都可以看到很明显的高光，但高光一般就集中在一小片区域，视角偏差大一点就看不到了，所以加一个指数来加快它的下降速度，p一般取100~200</li>
+</ul>
+</li>
+</ul>
+<p>  <img src="https://i.loli.net/2020/10/27/QRLx16ZdOpVr4Go.png" alt="Specular.png"></p>
+<ul>
+<li><p>Ambient</p>
+<ul>
+<li>fake</li>
+<li>提升亮度</li>
+<li>精确计算需要用到全局光照</li>
+</ul>
+<script type="math/tex; mode=display">
+L_{a}=k_{a} I_{a}</script></li>
+</ul>
+<p>要得到最后的光照效果，把上面三种加起来就可以了</p>
+<script type="math/tex; mode=display">
+\begin{aligned} L &=L_{a}+L_{d}+L_{s} \\ &=k_{a} I_{a}+k_{d}\left(I / r^{2}\right) \max (0, \mathbf{n} \cdot \mathbf{l})+k_{s}\left(I / r^{2}\right) \max (0, \mathbf{n} \cdot \mathbf{h})^{p} \end{aligned}</script>]]></content>
+      <categories>
+        <category>CG</category>
+      </categories>
+  </entry>
+  <entry>
     <title>杂鱼</title>
     <url>/2020/10/18/%E6%9D%82%E9%B1%BC/</url>
     <content><![CDATA[<p>鱼塘里没有一只鱼，全是钩子。</p>
@@ -596,50 +726,6 @@ f(x,y,z)=x^{2}+y^{2}+z^{2}-1</script></li>
 </ul>
 <p><a href="https://zhuanlan.zhihu.com/p/144357517">https://zhuanlan.zhihu.com/p/144357517</a></p>
 ]]></content>
-      <categories>
-        <category>CG</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>Shading(Blinn-Phong Reflectance Model)</title>
-    <url>/2020/10/27/Shading/</url>
-    <content><![CDATA[<h4 id="Blinn-Phong-Reflectance-Model-反射模型"><a href="#Blinn-Phong-Reflectance-Model-反射模型" class="headerlink" title="Blinn-Phong Reflectance Model 反射模型"></a>Blinn-Phong Reflectance Model 反射模型</h4><p>是一个经验模型，并不完全准确，但相对简单</p>
-<p>光源照射会分成三个部分，一是Diffuse漫反射，二是Specular镜面反射（高光部分），三是环境光（各个方向乱七八糟经过多次反射打过来的光）</p>
-<a id="more"></a>
-<ul>
-<li><p>Diffuse 漫反射</p>
-<p>因为是漫反射，各个方向看到的光线能量强度都相同，所以与视角（view）方向无关，表示漫反射的公式里就只有光源方向 <strong>l</strong> 和 法线方向<strong>n</strong></p>
-<script type="math/tex; mode=display">
-L_{d} = k_{d}( I/r^{2})\max(0, \mathbf{n} \cdot \mathbf{l})</script><ul>
-<li>k<sub>d</sub>是漫反射系数，因为不同的材质对光线的吸收情况不同</li>
-<li><strong>n</strong> 和 <strong>l</strong> 点乘得出cos的结果以求得光线直着打到shading point上的能量强度</li>
-<li>max(0, <strong>n</strong> · <strong>l</strong>) 就是取0和 <strong>n</strong> · <strong>l</strong> 之间的最大值，光线从背着shading point的方向射过来的时候 <strong>n</strong> · <strong>l</strong> 会是个负值，而这种情况是将其视作没有意义的，因为我们只在考虑反射，没考虑折射之类的，所以 <strong>n</strong> · <strong>l</strong> 为负值时直接取0就好了。</li>
-</ul>
-</li>
-</ul>
-<ul>
-<li><p>Specular 镜面反射</p>
-<ul>
-<li>高光是只有你的视角方向对着镜面反射光的方向了才能看到的，所以反射光与视角的夹角会影响你看到的高光</li>
-<li>计算反射光与视角的夹角余弦相对来说比较麻烦，有聪明人发现了视角靠近反射光时，半程向量会靠近法线向量</li>
-<li>p用来控制高光大小，角度在增大时，余弦值其实下降的比较慢，就会造成视角与反射光相差很大时都可以看到很明显的高光，但高光一般就集中在一小片区域，视角偏差大一点就看不到了，所以加一个指数来加快它的下降速度，p一般取100~200</li>
-</ul>
-</li>
-</ul>
-<p>  <img src="https://i.loli.net/2020/10/27/QRLx16ZdOpVr4Go.png" alt="Specular.png"></p>
-<ul>
-<li><p>Ambient</p>
-<ul>
-<li>fake</li>
-<li>提升亮度</li>
-<li>精确计算需要用到全局光照</li>
-</ul>
-<script type="math/tex; mode=display">
-L_{a}=k_{a} I_{a}</script></li>
-</ul>
-<p>要得到最后的光照效果，把上面三种加起来就可以了</p>
-<script type="math/tex; mode=display">
-\begin{aligned} L &=L_{a}+L_{d}+L_{s} \\ &=k_{a} I_{a}+k_{d}\left(I / r^{2}\right) \max (0, \mathbf{n} \cdot \mathbf{l})+k_{s}\left(I / r^{2}\right) \max (0, \mathbf{n} \cdot \mathbf{h})^{p} \end{aligned}</script>]]></content>
       <categories>
         <category>CG</category>
       </categories>
