@@ -30,8 +30,10 @@
 <meta property="og:image" content="https://i.loli.net/2020/11/27/3B1rw2d97haJoxK.png">
 <meta property="og:image" content="https://i.loli.net/2020/11/27/B3uiTnlVbtDX1OY.png">
 <meta property="og:image" content="https://i.loli.net/2020/11/27/7Fj5TAd8Zg2WkMq.png">
+<meta property="og:image" content="https://i.loli.net/2020/11/27/z2RpviudjEs9PMC.png">
+<meta property="og:image" content="https://i.loli.net/2020/11/27/1f7TLSaEVACjtUP.png">
 <meta property="article:published_time" content="2020-11-26T04:15:29.000Z">
-<meta property="article:modified_time" content="2020-11-27T12:11:46.225Z">
+<meta property="article:modified_time" content="2020-11-27T12:16:12.591Z">
 <meta property="article:author" content="lorstyang">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="https://i.loli.net/2020/11/27/3B1rw2d97haJoxK.png">
@@ -217,7 +219,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-11-27 20:11:46" itemprop="dateModified" datetime="2020-11-27T20:11:46+08:00">2020-11-27</time>
+                <time title="修改时间：2020-11-27 20:16:12" itemprop="dateModified" datetime="2020-11-27T20:16:12+08:00">2020-11-27</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -313,7 +315,7 @@
 <p>隐式曲面不管他，就看显式曲面（原因前面有），虽然一步判断交点是否在三角形内的样子很靓仔，但是去遍历场景内所有三角形面的时候真的很狼狈。有时候一个场景成百上千万的三角形，再加上每个像素都要射出一支光线，用脚想都知道这样不太行，需要加速。</p>
 <p>最简单的方法跟之前光栅化的思想是一样的，搞个包围盒，先算光线与包围盒有没有交点，然后再看要不要与物体求交，当然这个包围盒是三维的，把它想象成三对平面其实会更好一点，因为算光线与包围盒的交点时，算的其实是光线与包围盒面所在平面的相交时的t。这样算有助于判断光线有没有穿过包围盒。</p>
 <p>先看二维的情况，三维无非就是二维的拓展</p>
-<p>图4</p>
+<p><img src="https://i.loli.net/2020/11/27/z2RpviudjEs9PMC.png" width="60%" height="60%"></p>
 <p>将面分为两对，x和y，每对 面 都会求出来两个值tmin，tmax，分别表示进入这对平面和出这对平面的t，t是有可能小于零的，就是射线反向延长与平面的交点，负的虽然没有实际意义，但是可以用来判断交点的先后进出顺序。</p>
 <p>这里其实可以得到一个东西，先只看光线进入包围盒面的情况，当光线经过了进入的最大点时（也就是tmin里最大的），才进入了盒子（即使包括t为负的那些“交点”），再看光线出包围盒的情况，当光线经过了出去的最小点时（也就是tmax里最小的），就出了包围盒。直观上来讲确实是这样，但是不太知道怎么解释？</p>
 <p>出入包围盒的t：t<sub>enter</sub> = max{tmin}, t<sub>exit</sub> = min{tmax}</p>
@@ -337,7 +339,7 @@
 <p>首先先找到整个场景的bounding box</p>
 <p>然后把它均匀的分成很多grids</p>
 <p>把有物体的格子标记出来</p>
-<p>图5</p>
+<p><img src="https://i.loli.net/2020/11/27/1f7TLSaEVACjtUP.png" width="60%" height="60%"></p>
 <p>再根据射出的光线找出所有与其相交的方格（如何光栅化一条线，虎书，bresenham算法），倘若方格中存储有物体，再进一步与方格中的物体求交。</p>
 <p>划分出来的格子太多或太少都不太好，在实际中效果不错的格子数量：</p>
 <p>​    cells ≈ C * objs</p>
