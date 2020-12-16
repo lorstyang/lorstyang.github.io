@@ -1,62 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <search>
   <entry>
-    <title>Games101: Transformation</title>
-    <url>/2020/10/19/Games101-Transformation/</url>
-    <content><![CDATA[<h3 id="仿射变换"><a href="#仿射变换" class="headerlink" title="仿射变换"></a>仿射变换</h3><ul>
-<li><p>仿射变换 = 线性变换 + 平移</p>
-</li>
-<li><p>线性变换包括 缩放，切变，旋转</p>
-<p>线性变换可以用一个矩阵表示，但是变换中有平移的时候，一个矩阵就表示不了了，为了解决这个问题，就引入了齐次坐标（懒惰是一种美德）</p>
-</li>
-</ul>
-<a id="more"></a>
-<h4 id="齐次坐标"><a href="#齐次坐标" class="headerlink" title="齐次坐标"></a>齐次坐标</h4><ul>
-<li><p>给原来的点/向量增加一个维度</p>
-<p>2D point (x, y) —&gt; (x, y, 1)</p>
-<p>2D vector (x, y) —&gt; (x, y, 0)</p>
-</li>
-<li><p>这样仿射变换就从原来的</p>
-<script type="math/tex; mode=display">
-\left[ \begin{matrix} x' \\ y' \end{matrix} \right] = \left[ \begin{matrix} a & b \\ c & d \end{matrix} \right]\left[ \begin{matrix} x \\ y \end{matrix} \right] + \left[ \begin{matrix} t_{x} \\ t_{y} \end{matrix} \right]</script><p>变成了</p>
-<script type="math/tex; mode=display">
-\left[ \begin{matrix} x' \\ y' \\ w' \end{matrix} \right] = \left[ \begin{matrix} a & b & t_{x} \\ c & d & t_{y} \\ 0 & 0 & 1 \end{matrix} \right]\left[ \begin{matrix} x \\ y \\ 1 \end{matrix} \right] = \left[ \begin{matrix} ax+by+t_{x} \\ cx+dy+t_{y} \\ 1 \end{matrix} \right]</script><p>这样，现在的变换矩阵不仅包含了原有的线性变换，还包括了平移（t<sub>x</sub>和t<sub>y</sub>）</p>
-</li>
-</ul>
-<p>之前的旋转默认都是绕原点转的，如果要绕任意点旋转，可以先把那个任意点平移到原点（物体也做同样的平移），然后绕原点旋转，再平移回来。</p>
-<ul>
-<li>3D中，绕任意经过原点的轴：Rodrigues’ Rotation Formula：<script type="math/tex; mode=display">
-\mathbf{R}(\mathbf{n}, \alpha)=\cos (\alpha) \mathbf{I}+(1-\cos (\alpha)) \mathbf{n} \mathbf{n}^{T}+\sin (\alpha)\left(\begin{array}{ccc} 0 & -n_{z} & n_{y} \\ n_{z} & 0 & -n_{x} \\ -n_{y} & n_{x} & 0 \end{array}\right)</script>如果要绕任意轴，而不一定经过原点，同样的思路，将该轴平移至经过原点，旋转完后再平移回去</li>
-</ul>
-<h3 id="MVP"><a href="#MVP" class="headerlink" title="MVP"></a>MVP</h3><ul>
-<li><p>Model transformation</p>
-<p>把物体从局部坐标系变换到世界坐标系，玩过建模软件的应该知道，你点物体，处于移动物体模式时，会有X，Y，Z三个方向的箭头，可以把那个当成物体的局部坐标系，然后用矩阵可以把局部坐标系里的物体的顶点坐标转换到世界坐标系。至于世界坐标系，就是整个场景的坐标系了。</p>
-</li>
-<li><p>View transformation</p>
-<p>闫老师是这样说的 Find a good ”angle“ to put the camera 很形象是吧。这一步是把世界坐标系转换到摄像机坐标系。摄像机坐标系就是把摄像机本身的局部坐标系与世界坐标系以某种方式重叠了起来，显而易见，如果世界坐标系里的物体不改变坐标的话，会导致摄像机里的内容发生变化（想象一下，摄像机转到了世界坐标系中心，而物体不动），所以世界空间中的物体也要做同样的变换，相当于把摄像机和物体看成一个整体，一起动，这个变换就是M<sub>view</sub>。前面所说的某种方式就是规定的摄像机的朝向之类的，一般来说是 位于原点，up at Y，look at -Z（约定俗成的，方便计算）。</p>
-<p>M<sub>view</sub>是通过求逆变换得到的，用到了正交矩阵的逆矩阵等于其转置矩阵，而旋转矩阵是正交矩阵。 </p>
-<p>摄像机从任意位置到原点，有旋转和平移两个操作，将其分开来看清楚一点，M<sub>view</sub> = R<sub>view</sub>T<sub>view</sub></p>
-<script type="math/tex; mode=display">
-T_{view} = \left[ \begin{matrix} 1 & 0 & 0 & -x_{e} \\ 0 & 1 & 0 & -y_{e} \\ 0 & 0 & 1 & -z_{e} \\ 0 & 0 & 0 & 1 \end{matrix}\right]</script><p>对于R<sub>view</sub>不好求，先求他的逆矩阵</p>
-<script type="math/tex; mode=display">
-R_{view}^{-1} = \left[ \begin{matrix} x_{g×t} & x_{t} & x_{-g} & 0 \\ y_{g×t} & y_{t} & y_{-g} & 0 \\ z_{g×t} & z_{t} & z_{-g} & 0 \\ 0 & 0 & 0 & 1 \end{matrix}\right]</script><p>因为R<sub>view</sub>的转置等于它的逆，所以R<sup>T</sup><sub>view</sub> = R<sup>-1</sup><sub>view</sub>，将R<sup>T</sup><sub>view</sub>再转置一下就得到了R<sub>view</sub>。即</p>
-<script type="math/tex; mode=display">
-R_{view} = \left[ \begin{matrix} x_{g×t} & y_{g×t} & z_{g×t} & 0 \\ x_{t} & y_{t} & z_{t} & 0 \\ x_{-g} & y_{-g} & z_{-g} & 0 \\ 0 & 0 & 0 & 1 \end{matrix}\right]</script></li>
-<li><p>Projection transform</p>
-<ul>
-<li>Orthographic projection 正交投影</li>
-<li>Perspective projection 透视投影（近大远小</li>
-</ul>
-<p>M<sub>persp</sub> = M<sub>ortho</sub> M<sub>persp-&gt;ortho</sub> </p>
-<p>M<sub>persp-&gt;ortho</sub> 将视锥体变成立方体，M<sub>ortho</sub> 将立方体变成[-1, 1]的正方体</p>
-</li>
-</ul>
-]]></content>
-      <categories>
-        <category>CG</category>
-      </categories>
-  </entry>
-  <entry>
     <title>Geometry</title>
     <url>/2020/11/08/Geometry/</url>
     <content><![CDATA[<h4 id="几何的表示方法"><a href="#几何的表示方法" class="headerlink" title="几何的表示方法"></a>几何的表示方法</h4><a id="more"></a>
@@ -171,6 +115,62 @@ f(x,y,z)=x^{2}+y^{2}+z^{2}-1</script></li>
 <li><p>其实可以看出来，所有的蓝色线条就组成了贝塞尔曲面，灰色线条是不在曲面上的</p>
 </li>
 </ul>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>CG</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>Games101: Transformation</title>
+    <url>/2020/10/19/Games101-Transformation/</url>
+    <content><![CDATA[<h3 id="仿射变换"><a href="#仿射变换" class="headerlink" title="仿射变换"></a>仿射变换</h3><ul>
+<li><p>仿射变换 = 线性变换 + 平移</p>
+</li>
+<li><p>线性变换包括 缩放，切变，旋转</p>
+<p>线性变换可以用一个矩阵表示，但是变换中有平移的时候，一个矩阵就表示不了了，为了解决这个问题，就引入了齐次坐标（懒惰是一种美德）</p>
+</li>
+</ul>
+<a id="more"></a>
+<h4 id="齐次坐标"><a href="#齐次坐标" class="headerlink" title="齐次坐标"></a>齐次坐标</h4><ul>
+<li><p>给原来的点/向量增加一个维度</p>
+<p>2D point (x, y) —&gt; (x, y, 1)</p>
+<p>2D vector (x, y) —&gt; (x, y, 0)</p>
+</li>
+<li><p>这样仿射变换就从原来的</p>
+<script type="math/tex; mode=display">
+\left[ \begin{matrix} x' \\ y' \end{matrix} \right] = \left[ \begin{matrix} a & b \\ c & d \end{matrix} \right]\left[ \begin{matrix} x \\ y \end{matrix} \right] + \left[ \begin{matrix} t_{x} \\ t_{y} \end{matrix} \right]</script><p>变成了</p>
+<script type="math/tex; mode=display">
+\left[ \begin{matrix} x' \\ y' \\ w' \end{matrix} \right] = \left[ \begin{matrix} a & b & t_{x} \\ c & d & t_{y} \\ 0 & 0 & 1 \end{matrix} \right]\left[ \begin{matrix} x \\ y \\ 1 \end{matrix} \right] = \left[ \begin{matrix} ax+by+t_{x} \\ cx+dy+t_{y} \\ 1 \end{matrix} \right]</script><p>这样，现在的变换矩阵不仅包含了原有的线性变换，还包括了平移（t<sub>x</sub>和t<sub>y</sub>）</p>
+</li>
+</ul>
+<p>之前的旋转默认都是绕原点转的，如果要绕任意点旋转，可以先把那个任意点平移到原点（物体也做同样的平移），然后绕原点旋转，再平移回来。</p>
+<ul>
+<li>3D中，绕任意经过原点的轴：Rodrigues’ Rotation Formula：<script type="math/tex; mode=display">
+\mathbf{R}(\mathbf{n}, \alpha)=\cos (\alpha) \mathbf{I}+(1-\cos (\alpha)) \mathbf{n} \mathbf{n}^{T}+\sin (\alpha)\left(\begin{array}{ccc} 0 & -n_{z} & n_{y} \\ n_{z} & 0 & -n_{x} \\ -n_{y} & n_{x} & 0 \end{array}\right)</script>如果要绕任意轴，而不一定经过原点，同样的思路，将该轴平移至经过原点，旋转完后再平移回去</li>
+</ul>
+<h3 id="MVP"><a href="#MVP" class="headerlink" title="MVP"></a>MVP</h3><ul>
+<li><p>Model transformation</p>
+<p>把物体从局部坐标系变换到世界坐标系，玩过建模软件的应该知道，你点物体，处于移动物体模式时，会有X，Y，Z三个方向的箭头，可以把那个当成物体的局部坐标系，然后用矩阵可以把局部坐标系里的物体的顶点坐标转换到世界坐标系。至于世界坐标系，就是整个场景的坐标系了。</p>
+</li>
+<li><p>View transformation</p>
+<p>闫老师是这样说的 Find a good ”angle“ to put the camera 很形象是吧。这一步是把世界坐标系转换到摄像机坐标系。摄像机坐标系就是把摄像机本身的局部坐标系与世界坐标系以某种方式重叠了起来，显而易见，如果世界坐标系里的物体不改变坐标的话，会导致摄像机里的内容发生变化（想象一下，摄像机转到了世界坐标系中心，而物体不动），所以世界空间中的物体也要做同样的变换，相当于把摄像机和物体看成一个整体，一起动，这个变换就是M<sub>view</sub>。前面所说的某种方式就是规定的摄像机的朝向之类的，一般来说是 位于原点，up at Y，look at -Z（约定俗成的，方便计算）。</p>
+<p>M<sub>view</sub>是通过求逆变换得到的，用到了正交矩阵的逆矩阵等于其转置矩阵，而旋转矩阵是正交矩阵。 </p>
+<p>摄像机从任意位置到原点，有旋转和平移两个操作，将其分开来看清楚一点，M<sub>view</sub> = R<sub>view</sub>T<sub>view</sub></p>
+<script type="math/tex; mode=display">
+T_{view} = \left[ \begin{matrix} 1 & 0 & 0 & -x_{e} \\ 0 & 1 & 0 & -y_{e} \\ 0 & 0 & 1 & -z_{e} \\ 0 & 0 & 0 & 1 \end{matrix}\right]</script><p>对于R<sub>view</sub>不好求，先求他的逆矩阵</p>
+<script type="math/tex; mode=display">
+R_{view}^{-1} = \left[ \begin{matrix} x_{g×t} & x_{t} & x_{-g} & 0 \\ y_{g×t} & y_{t} & y_{-g} & 0 \\ z_{g×t} & z_{t} & z_{-g} & 0 \\ 0 & 0 & 0 & 1 \end{matrix}\right]</script><p>因为R<sub>view</sub>的转置等于它的逆，所以R<sup>T</sup><sub>view</sub> = R<sup>-1</sup><sub>view</sub>，将R<sup>T</sup><sub>view</sub>再转置一下就得到了R<sub>view</sub>。即</p>
+<script type="math/tex; mode=display">
+R_{view} = \left[ \begin{matrix} x_{g×t} & y_{g×t} & z_{g×t} & 0 \\ x_{t} & y_{t} & z_{t} & 0 \\ x_{-g} & y_{-g} & z_{-g} & 0 \\ 0 & 0 & 0 & 1 \end{matrix}\right]</script></li>
+<li><p>Projection transform</p>
+<ul>
+<li>Orthographic projection 正交投影</li>
+<li>Perspective projection 透视投影（近大远小</li>
+</ul>
+<p>M<sub>persp</sub> = M<sub>ortho</sub> M<sub>persp-&gt;ortho</sub> </p>
+<p>M<sub>persp-&gt;ortho</sub> 将视锥体变成立方体，M<sub>ortho</sub> 将立方体变成[-1, 1]的正方体</p>
 </li>
 </ul>
 ]]></content>
@@ -361,7 +361,7 @@ M_{viewport} = \left[ \begin{matrix} width/2 & 0 & 0 & width/2 \\ 0 & height/2 &
 <p>一般会用Radiant flux来描述光线强度（现实中用灯泡多少W来描述灯泡亮度）</p>
 </li>
 <li><p>Radiant intensity (辐射强度)</p>
-<p>Definition: The radiant (luminous) intensity is the power per unit solid angle  emitted by a point light source.</p>
+<p>Definition: The radiant (luminous) intensity is the power per unit solid angle emitted by a point light source.</p>
 <script type="math/tex; mode=display">
 I(\omega) = \frac{\mathrm{d} \Phi}{\mathrm{d} \omega}</script><p>[W/sr] [lm/sr = cd = candela (坎德拉)] sr是立体角的单位</p>
 <p>单位立体角的Radiant flux(也就是功率)，结合前面的，可以知道这个可以代表某个方向上的光线强度</p>
@@ -384,10 +384,56 @@ I(\omega) = \frac{\mathrm{d} \Phi}{\mathrm{d} \omega}</script><p>[W/sr] [lm/sr =
 I = \frac{\phi}{4\pi}</script><p>这里默认点光源是各向同性的(Isotropic)，每个方向上的辐射强度都一样，如果不是各向同性的，I是关于ω的函数，即I(ω)，积分出来的结果是不同的。</p>
 </li>
 <li><p>irradiance</p>
+<p>Definition:  The irradiance is the power per unit area incident on a surface point.</p>
+<script type="math/tex; mode=display">
+E(\mathbf{x}) \equiv \frac{\mathrm{d} \Phi(\mathbf{x})}{\mathrm{d} A}</script><p>[W/m<sup>2</sup>] [lm/m<sup>2</sup> = lux]</p>
+<p>单位面积的辐射强度</p>
+<ul>
+<li><p>因为是单位面积上的辐射强度，所以光线与平面不垂直的时候需要乘上一个cosθ，这与之前blinn-phong里的lambert’s law（计算光线强度时要乘上cosθ）是一致的，配合图会更好理解，可以看PPT或者别的什么，懒得放了(×</p>
+<p>eg.地球的四季就是很好理解的例子</p>
 </li>
-<li><p>radiance</p>
+<li><p>距离越远，光线强度会越弱</p>
+<p>eg.假设光源是点光源，功率固定，则以光源为中心，等距离上接收光线的为球形面积，可以很容易得出，距离越远光源照射的面积越大，根据式子，irradiance也就越小</p>
 </li>
 </ul>
+</li>
+<li><p>radiance</p>
+<p>Definition: The radiance (luminance) is the power emitted, reflected, transmitted or received by a surface, per unit solid angle, per projected unit area. </p>
+<script type="math/tex; mode=display">
+L(\mathrm{p}, \omega) \equiv \frac{\mathrm{d}^{2} \Phi(\mathrm{p}, \omega)}{\mathrm{d} \omega \mathrm{d} A \cos \theta}</script><p>单位立体角，单位面积上的辐射强度，p是点</p>
+<p>就是在irradiance的基础上又对立体角进行了一次微分，可以理解为某个方向上光线的辐射强度</p>
+<p>与irradiance不同，radiance是有方向的</p>
+<p>这里下面有一个cosθ的原因是radiance定义的是单位垂直面积，而非单位照射面积，这一点有点不好理解，写一下自己的理解，首先为什么要这么定义，radiance关键点并不是在那个打到的面积元上，而更多的是为了表示某一束光线本身的能量（作为一束光线，它有一个方向，并且会打到某一个点上，然后将自己的能量传递到那个点），而且radiance是有方向的，所以是单位垂直面积。极端点说，单位垂直面积就是光束本身的横切面。然后是第二个问题，为什么不单独另设一个dA’或者dB什么的表示垂直面积的微分，而要写成dAcosθ的形式，这样写可以让radiance与irradiance联系起来，dA代表的是同一个意思，就那个面积微元，但是乘上cosθ就有了radiance定义的效果。</p>
+<p>还有两种解释方式</p>
+<ul>
+<li>Irradiance per solid angle</li>
+<li>Intensity per projected unit area</li>
+</ul>
+<p>Incident Radiance 和 Exiting Radiance</p>
+<p>这两个和上面两种是对应的</p>
+<ul>
+<li><p>Incident Radiance</p>
+<p>Incident radiance is the irradiance per unit solid angle arriving at the surface. </p>
+<p>irradiance是单位表面接收的辐射强度，所以这种说法就是某个方向上的单位表面接收的光线</p>
+<script type="math/tex; mode=display">
+L(\mathrm{p}, \omega)=\frac{\mathrm{d} E(\mathrm{p})}{\mathrm{d} \omega \cos \theta}</script></li>
+<li><p>Exiting Radiance</p>
+<p>Exiting surface radiance is the intensity per unit projected area leaving the surface. </p>
+<p>intensity是光源在某个方向的辐射强度，所以这种说法就是</p>
+<p>单位表面在某个方向上辐射强度（这个单位表面是光源）</p>
+<script type="math/tex; mode=display">
+L(\mathrm{p}, \omega)=\frac{\mathrm{d} I(\mathrm{p}, \omega)}{\mathrm{d} A \cos \theta}</script></li>
+</ul>
+</li>
+</ul>
+<p>  再看Incident Radiance的那个式子</p>
+<script type="math/tex; mode=display">
+  L(\mathrm{p}, \omega)=\frac{\mathrm{d} E(\mathrm{p})}{\mathrm{d} \omega \cos \theta}</script><p>  推导一下</p>
+<script type="math/tex; mode=display">
+  \begin{aligned} d E(\mathrm{p}, \omega) &=L_{i}(\mathrm{p}, \omega) \cos \theta \mathrm{d} \omega \\ E(\mathrm{p}) &=\int_{H^{2}} L_{i}(\mathrm{p}, \omega) \cos \theta \mathrm{d} \omega \end{aligned}</script><p>  积分域H<sup>2</sup>是半球面 E(p)是点p的irradiance</p>
+<p>  可以看出，点p的irradiance等于半球上各个方向的radiance的积分</p>
+<p>  其物理意义便是 一个点所接收到的辐射强度(irradiance)，由所有不同方向的入射光线辐射强度(radiance)共同累加得到。其实在学习之前对此应该就有个大概的设想了，大抵不不过如此，但我们确实用数学公式把它表示出来了，这一点是十分值得庆幸的。</p>
+<p>  这里也可以解释那个cosθ，因为L<sub>i</sub>(p, w)是垂直半球面上的辐射强度，而p点那个面积元是有方向的，那再乘上一个cosθ，就刚好是该处的辐射强度。</p>
 ]]></content>
       <categories>
         <category>CG</category>
@@ -567,6 +613,50 @@ I = \frac{\phi}{4\pi}</script><p>这里默认点光源是各向同性的(Isotrop
       </categories>
   </entry>
   <entry>
+    <title>Shading(Blinn-Phong Reflectance Model)</title>
+    <url>/2020/10/27/Shading/</url>
+    <content><![CDATA[<h4 id="Blinn-Phong-Reflectance-Model-反射模型"><a href="#Blinn-Phong-Reflectance-Model-反射模型" class="headerlink" title="Blinn-Phong Reflectance Model 反射模型"></a>Blinn-Phong Reflectance Model 反射模型</h4><p>是一个经验模型，并不完全准确，但相对简单</p>
+<p>光源照射会分成三个部分，一是Diffuse漫反射，二是Specular镜面反射（高光部分），三是环境光（各个方向乱七八糟经过多次反射打过来的光）</p>
+<a id="more"></a>
+<ul>
+<li><p>Diffuse 漫反射</p>
+<p>因为是漫反射，各个方向看到的光线能量强度都相同，所以与视角（view）方向无关，表示漫反射的公式里就只有光源方向 <strong>l</strong> 和 法线方向<strong>n</strong></p>
+<script type="math/tex; mode=display">
+L_{d} = k_{d}( I/r^{2})\max(0, \mathbf{n} \cdot \mathbf{l})</script><ul>
+<li>k<sub>d</sub>是漫反射系数，因为不同的材质对光线的吸收情况不同</li>
+<li><strong>n</strong> 和 <strong>l</strong> 点乘得出cos的结果以求得光线直着打到shading point上的能量强度</li>
+<li>max(0, <strong>n</strong> · <strong>l</strong>) 就是取0和 <strong>n</strong> · <strong>l</strong> 之间的最大值，光线从背着shading point的方向射过来的时候 <strong>n</strong> · <strong>l</strong> 会是个负值，而这种情况是将其视作没有意义的，因为我们只在考虑反射，没考虑折射之类的，所以 <strong>n</strong> · <strong>l</strong> 为负值时直接取0就好了。</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><p>Specular 镜面反射</p>
+<ul>
+<li>高光是只有你的视角方向对着镜面反射光的方向了才能看到的，所以反射光与视角的夹角会影响你看到的高光</li>
+<li>计算反射光与视角的夹角余弦相对来说比较麻烦，有聪明人发现了视角靠近反射光时，半程向量会靠近法线向量</li>
+<li>p用来控制高光大小，角度在增大时，余弦值其实下降的比较慢，就会造成视角与反射光相差很大时都可以看到很明显的高光，但高光一般就集中在一小片区域，视角偏差大一点就看不到了，所以加一个指数来加快它的下降速度，p一般取100~200</li>
+</ul>
+</li>
+</ul>
+<p>  <img src="https://i.loli.net/2020/10/27/QRLx16ZdOpVr4Go.png" alt="Specular.png"></p>
+<ul>
+<li><p>Ambient</p>
+<ul>
+<li>fake</li>
+<li>提升亮度</li>
+<li>精确计算需要用到全局光照</li>
+</ul>
+<script type="math/tex; mode=display">
+L_{a}=k_{a} I_{a}</script></li>
+</ul>
+<p>要得到最后的光照效果，把上面三种加起来就可以了</p>
+<script type="math/tex; mode=display">
+\begin{aligned} L &=L_{a}+L_{d}+L_{s} \\ &=k_{a} I_{a}+k_{d}\left(I / r^{2}\right) \max (0, \mathbf{n} \cdot \mathbf{l})+k_{s}\left(I / r^{2}\right) \max (0, \mathbf{n} \cdot \mathbf{h})^{p} \end{aligned}</script>]]></content>
+      <categories>
+        <category>CG</category>
+      </categories>
+  </entry>
+  <entry>
     <title>Ray Tracing</title>
     <url>/2020/11/26/RayTracing/</url>
     <content><![CDATA[<p>光栅化不好处理全局的效果，比如有些地方光源无法直接打到，但是经过多次反射，光线会打到有些地方形成一块比较亮的地方，也许有些奇技淫巧可以处理这种东西，但是总归不是那么好。所以为了全局光照的效果，就有了光线追踪。</p>
@@ -714,6 +804,68 @@ I = \frac{\phi}{4\pi}</script><p>这里默认点光源是各向同性的(Isotrop
       </categories>
   </entry>
   <entry>
+    <title>杂鱼</title>
+    <url>/2020/10/18/%E6%9D%82%E9%B1%BC/</url>
+    <content><![CDATA[<p>鱼塘里没有一只鱼，全是钩子。</p>
+]]></content>
+      <categories>
+        <category>什么玩意儿</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>Q</title>
+    <url>/2020/10/18/%E7%AC%AC%E4%B8%80%E7%AF%87/</url>
+    <content><![CDATA[<h1 id="Q"><a href="#Q" class="headerlink" title="Q"></a>Q</h1><p>1.COM对象（接口）为什么不能new？</p>
+<p>2.超级采样(supersampling)和多重采样(multisampling)</p>
+<p>​    超级采样时将四个子像素的颜色都计算了一遍，然后取得平均值，得到该像素的颜色；</p>
+<p>​    而多重采样只计算了该像素的颜色，通过其他方法算出了平均值，从而得到了该像素的最终颜色。【这里的其他方法简单的来说是基于子像素的可见性（基于子像素的深度/模板测试）和范围（子像素的中心在三角形之内还是之外）】</p>
+<a id="more"></a>
+<p>3.<strong>由于<code>XMFLOAT3</code>等这些用于存储的类型是不能直接用到指令集加速的。要想进行向量的运算，就需要从用于存储的变量，通过读取函数，将数据读入到<code>XMVECTOR</code></strong></p>
+<p>4.对x86平台，XMVECTOR的定义如下：    // XMMATRIX则是一组(4个) XMVECTOR<br><code>typedef __m128 XMVECTOR;</code></p>
+<p>由于__m128在内存中需要严格的16 byte对齐，因此并不建议直接在程序中使用这两种类型保存数据，</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line">Class Camera</span><br><span class="line">&#123;</span><br><span class="line">      XMVECTOR position;</span><br><span class="line">      XMMATRIX viewMatrix;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面的代码基本上不会成功运行，32位下new并不保证16byte对齐，而且由于类成员布局的关系，其中的XMVECTOR也不一定是16byte对齐，访问以上数据，程序可能直接崩溃。因此，DXM定义了大量用来储存数据的类型，比如XMFLOAT4,XMFLOAT3,XMFLOAT4X4等。</p>
+<p>既然__m128需要16byte对齐，那为什么在分配内存的时候，不能直接确定好分配给XMVECTOR 16byte的内存？</p>
+<p>5.图片的放大和缩小</p>
+<p>放大很好搞，按比例用一样的颜色填充就行了，也就是做个插值，但也会导致太大了会变得马赛克</p>
+<p>缩小要丢弃一些像素，一般用的是mipmap，然后找到最接近目的大小的mipmap等级，再进行插值。（按道理是最接近但小于的目标大小的等级，因为后续插值相当于放大）</p>
+<p>.* : 操作放大缩小的叫过滤器</p>
+<p>6.纹理坐标以及采样</p>
+<p>纹理（贴图）坐标，即UV坐标</p>
+<p>纹理在计算机中就是一堆数据，那纹理坐标又是个什么玩意？    因为我们在给物体做纹理时，相当于把一张图片贴在了物体上，这张图由很多纹理像素（texel）构成，那纹理其实就是一个二维数组，纹理坐标（u，v）用来确定纹理像素的位置。【纹理像素（texel）也称纹素与像素相似但并不完全等价】</p>
+<p>玩家们所谓的贴图是什么？ - Focux的回答 - 知乎 <a href="https://www.zhihu.com/question/319059045/answer/1286403304">https://www.zhihu.com/question/319059045/answer/1286403304</a>  说的很详细</p>
+<p>相关资料<a href="https://blog.csdn.net/u014800094/article/details/55224541">https://blog.csdn.net/u014800094/article/details/55224541</a></p>
+<p>7.交换链<br><a href="https://blog.csdn.net/sinat_24229853/article/details/46884833">https://blog.csdn.net/sinat_24229853/article/details/46884833</a></p>
+<p><a href="https://gavinkg.github.io/ILearnVulkanFromScratch-CN/mdroot/%E6%A6%82%E5%BF%B5%E6%B1%87%E6%80%BB/%E4%BA%A4%E6%8D%A2%E9%93%BE.html">https://gavinkg.github.io/ILearnVulkanFromScratch-CN/mdroot/%E6%A6%82%E5%BF%B5%E6%B1%87%E6%80%BB/%E4%BA%A4%E6%8D%A2%E9%93%BE.html</a><br>双重缓冲其实也存在问题，上面链接就说了，渲染速度较vblank快的话，会有可感知的延迟造成，其实在我的理解里，准确来说应该是vblank太慢了（刷新过慢）导致的延迟，<br>因为所谓延迟就是一帧画面渲染好了之后，它过了一段时间才被显示出来，仔细想想其实问题是出在刷新太慢了上面，如果刷新频率符合人眼的习惯，即使他渲染速度再快，<br>只要我在人眼习惯的频率上把它显示出来，也不会出现延迟，最多会有部分资源被浪费掉（渲染好了不刷新导致设备闲置不能进行下一帧的渲染）。</p>
+<p>那同理可以很容易推出渲染速度较慢的话，就会造成卡顿，前台缓冲区显示后，后台没渲染完，导致下一帧画面显示的还是原前台缓冲区的东西，呈现出来的结果就是卡顿。</p>
+<p>8.视图（view）就是描述符（descriptor），它告诉我们资源如何使用，相当于一个中间层</p>
+<p>9.任何 Direct3D 程序的最后一件事情是清理并且释放你所创建的对象，你必须释放这些对象将资源归还系统进行再利用<br>COM对象持有一个引用计数，告诉系统什么时候将它从内存中删除是安全的。通过使用 Release函数，将会减少对象的引用数，当引用计数为 0 时，系统将对象删除以便回收再利用。<br>在对象调用 Release 函数之前总是检查确保对象非 NULL，可以减少由于无效指针导致你的游戏由于未 定义行为所产生的崩溃</p>
+<p>引用技术的初始值是多少？是调用一次release就变为0了吗？</p>
+<p>10.ClearRenderTargetView说是清除屏幕，实际上是用一种颜色覆盖掉整个屏幕<br>其实有点讨厌这样的概念，总感觉很冗杂，函数名是清除渲染目标视图，参数传进去缓冲区（即渲染目标，一般是后台缓冲区，因为后台用来渲染，前台用来显示），虽然view实际上就是类似于target的引用或者说是它的一个中间层，这样是可以理解它具体指的啥，但看起来总有点别扭</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="keyword">float</span> clearColor[<span class="number">4</span>] = &#123; <span class="number">0.0f</span>, <span class="number">0.0f</span>, <span class="number">0.25f</span>, <span class="number">1.0f</span> &#125;; </span><br><span class="line">d3dContext_-&gt;ClearRenderTargetView( backBufferTarget_, clearColor ); </span><br><span class="line"></span><br><span class="line">swapChain_-&gt;Present( <span class="number">0</span>, <span class="number">0</span> );</span><br></pre></td></tr></table></figure>
+<p>11.DESC就是（description）描述符的缩写，名字里带这个的都是描述符，也就是视图。</p>
+<h1 id="XJUN"><a href="#XJUN" class="headerlink" title="XJUN"></a>XJUN</h1><h2 id="02-rendering-a-triangle"><a href="#02-rendering-a-triangle" class="headerlink" title="02 rendering a triangle"></a>02 rendering a triangle</h2><p>设置三角形顶点时，顶点的顺序需要按顺时针顺序给（可自行查找why），但图元类型为trianglestrip时，第二个三角形的点的顺序可以为逆时针，这是为什么？</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">//draw rect with 4 vertexes</span></span><br><span class="line">		&#123; XMFLOAT3(<span class="number">-0.5f</span>, <span class="number">-0.5f</span>, <span class="number">0.0f</span>), XMFLOAT4(<span class="number">0.0f</span>, <span class="number">1.0f</span>, <span class="number">0.0f</span>, <span class="number">1.0f</span>) &#125;,</span><br><span class="line">		&#123; XMFLOAT3(<span class="number">-0.5f</span>, <span class="number">0.5f</span>, <span class="number">0.0f</span>), XMFLOAT4(<span class="number">0.0f</span>, <span class="number">0.0f</span>, <span class="number">1.0f</span>, <span class="number">1.0f</span>) &#125;,</span><br><span class="line">		&#123; XMFLOAT3(<span class="number">0.5f</span>, <span class="number">-0.5f</span>, <span class="number">0.0f</span>), XMFLOAT4(<span class="number">1.0f</span>, <span class="number">0.0f</span>, <span class="number">0.0f</span>, <span class="number">1.0f</span>) &#125;,</span><br><span class="line">		&#123; XMFLOAT3(<span class="number">0.5f</span>, <span class="number">0.5f</span>, <span class="number">0.0f</span>), XMFLOAT4(<span class="number">0.0f</span>, <span class="number">0.0f</span>, <span class="number">1.0f</span>, <span class="number">1.0f</span>) &#125;</span><br></pre></td></tr></table></figure>
+<p>(-0.5f, -0.5f, 0.0f)—&gt;(-0.5f, 0.5f, 0.0f)—&gt;(0.5f, -0.5f, 0.0f) 是顺时针的</p>
+<p>但 (-0.5f, 0.5f, 0.0f)—&gt;(0.5f, -0.5f, 0.0f)—&gt;(0.5f, 0.5f, 0.0f) 是逆时针的</p>
+<p>见龙书P149</p>
+<h2 id="06-Mouse-and-Keyboard"><a href="#06-Mouse-and-Keyboard" class="headerlink" title="06 Mouse and Keyboard"></a>06 Mouse and Keyboard</h2><p>对于瞬时状态，比如按鼠标，就按照接收的事件次数来处理，但对于会保持一段时间的状态比如滚轮或按着一个键，就需要获取两个状态一个state，一个laststate(上一帧状态)，通过两者之间的时间差来改变状态。</p>
+<h2 id="07-Lighting"><a href="#07-Lighting" class="headerlink" title="07 Lighting"></a>07 Lighting</h2><p>做XJUN的作业时，第三个通过滚轮改变汇聚强度做是做出来了，但是在另外两种光照模型下也会触发，暂时还没找到解决办法<br>我最开始是以为改变光照强度，那样又该如何做？<br>4(不太懂这题是啥意思，看起来不难),5,7还没做出来，其他都比较简单。</p>
+<h1 id="points"><a href="#points" class="headerlink" title="points"></a>points</h1><h2 id="一些改进"><a href="#一些改进" class="headerlink" title="一些改进"></a>一些改进</h2><p>从Windows 8开始，DirectX不再是您下载和安装的单独SDK；相反，DirectX随操作系统一起提供，并通过Windows Update进行更新。 此外，D3DX库已被弃用，Windows不附带，现在XNA Math库的名称为DirectX Math。 另外，从Visual Studio 2015开始，dxerr.lib不再与Visual Studio 2015兼容。</p>
+<h2 id="修改全屏模式"><a href="#修改全屏模式" class="headerlink" title="修改全屏模式"></a>修改全屏模式</h2><p>为什么要修改窗口使其没有背景？</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// wc.hbrBackground =（HBRUSH）COLOR_WINDOW;</span></span><br></pre></td></tr></table></figure>
+<p>教程给出的解释是这样的：<strong>Doing this leaves the background color untouched, which means it won’t be visible as a window for a second or two before the game starts (important to making your game look professional).</strong></p>
+<p>机翻果然有点问题…我理解了一下，大概就是说游戏在刚开始的时候，也就是从窗口变成全屏的时候，会显示出窗口的（背景）颜色，因为游戏本质上是一个程序，打开的时候就是一窗口的模式打开的，这样做就可以避免掉显示出窗口的颜色。</p>
+<p>窗口背景颜色：顾名思义，就是一个窗口里面那个背景板的颜色。</p>
+<h2 id="XMVector2Dot的返回值"><a href="#XMVector2Dot的返回值" class="headerlink" title="XMVector2Dot的返回值"></a>XMVector2Dot的返回值</h2><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function">XMVECTOR XM_CALLCONV <span class="title">XMVector2Dot</span><span class="params">(FXMVECTOR V1, FXMVECTOR V2)</span></span>;		<span class="comment">// 每个分量都是V1.x * V2.x + V1.y * V2.y</span></span><br></pre></td></tr></table></figure>
+<p>返回一个向量，向量的每一分量的值都是v1和v2的点积。</p>
+<p>很奇特，也让人很迷惑的操作…… I need a reason.      叉积也是，不知道在干嘛。。</p>
+]]></content>
+      <categories>
+        <category>CG</category>
+      </categories>
+  </entry>
+  <entry>
     <title>Applications of textures</title>
     <url>/2020/11/07/Shading-3/</url>
     <content><![CDATA[<p>纹理的应用很多，远不止作为反射系数来表现出不同的颜色</p>
@@ -784,112 +936,6 @@ I = \frac{\phi}{4\pi}</script><p>这里默认点光源是各向同性的(Isotrop
 </li>
 </ul>
 <p><a href="https://zhuanlan.zhihu.com/p/144357517">https://zhuanlan.zhihu.com/p/144357517</a></p>
-]]></content>
-      <categories>
-        <category>CG</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>Shading(Blinn-Phong Reflectance Model)</title>
-    <url>/2020/10/27/Shading/</url>
-    <content><![CDATA[<h4 id="Blinn-Phong-Reflectance-Model-反射模型"><a href="#Blinn-Phong-Reflectance-Model-反射模型" class="headerlink" title="Blinn-Phong Reflectance Model 反射模型"></a>Blinn-Phong Reflectance Model 反射模型</h4><p>是一个经验模型，并不完全准确，但相对简单</p>
-<p>光源照射会分成三个部分，一是Diffuse漫反射，二是Specular镜面反射（高光部分），三是环境光（各个方向乱七八糟经过多次反射打过来的光）</p>
-<a id="more"></a>
-<ul>
-<li><p>Diffuse 漫反射</p>
-<p>因为是漫反射，各个方向看到的光线能量强度都相同，所以与视角（view）方向无关，表示漫反射的公式里就只有光源方向 <strong>l</strong> 和 法线方向<strong>n</strong></p>
-<script type="math/tex; mode=display">
-L_{d} = k_{d}( I/r^{2})\max(0, \mathbf{n} \cdot \mathbf{l})</script><ul>
-<li>k<sub>d</sub>是漫反射系数，因为不同的材质对光线的吸收情况不同</li>
-<li><strong>n</strong> 和 <strong>l</strong> 点乘得出cos的结果以求得光线直着打到shading point上的能量强度</li>
-<li>max(0, <strong>n</strong> · <strong>l</strong>) 就是取0和 <strong>n</strong> · <strong>l</strong> 之间的最大值，光线从背着shading point的方向射过来的时候 <strong>n</strong> · <strong>l</strong> 会是个负值，而这种情况是将其视作没有意义的，因为我们只在考虑反射，没考虑折射之类的，所以 <strong>n</strong> · <strong>l</strong> 为负值时直接取0就好了。</li>
-</ul>
-</li>
-</ul>
-<ul>
-<li><p>Specular 镜面反射</p>
-<ul>
-<li>高光是只有你的视角方向对着镜面反射光的方向了才能看到的，所以反射光与视角的夹角会影响你看到的高光</li>
-<li>计算反射光与视角的夹角余弦相对来说比较麻烦，有聪明人发现了视角靠近反射光时，半程向量会靠近法线向量</li>
-<li>p用来控制高光大小，角度在增大时，余弦值其实下降的比较慢，就会造成视角与反射光相差很大时都可以看到很明显的高光，但高光一般就集中在一小片区域，视角偏差大一点就看不到了，所以加一个指数来加快它的下降速度，p一般取100~200</li>
-</ul>
-</li>
-</ul>
-<p>  <img src="https://i.loli.net/2020/10/27/QRLx16ZdOpVr4Go.png" alt="Specular.png"></p>
-<ul>
-<li><p>Ambient</p>
-<ul>
-<li>fake</li>
-<li>提升亮度</li>
-<li>精确计算需要用到全局光照</li>
-</ul>
-<script type="math/tex; mode=display">
-L_{a}=k_{a} I_{a}</script></li>
-</ul>
-<p>要得到最后的光照效果，把上面三种加起来就可以了</p>
-<script type="math/tex; mode=display">
-\begin{aligned} L &=L_{a}+L_{d}+L_{s} \\ &=k_{a} I_{a}+k_{d}\left(I / r^{2}\right) \max (0, \mathbf{n} \cdot \mathbf{l})+k_{s}\left(I / r^{2}\right) \max (0, \mathbf{n} \cdot \mathbf{h})^{p} \end{aligned}</script>]]></content>
-      <categories>
-        <category>CG</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>杂鱼</title>
-    <url>/2020/10/18/%E6%9D%82%E9%B1%BC/</url>
-    <content><![CDATA[<p>鱼塘里没有一只鱼，全是钩子。</p>
-]]></content>
-      <categories>
-        <category>什么玩意儿</category>
-      </categories>
-  </entry>
-  <entry>
-    <title>Q</title>
-    <url>/2020/10/18/%E7%AC%AC%E4%B8%80%E7%AF%87/</url>
-    <content><![CDATA[<h1 id="Q"><a href="#Q" class="headerlink" title="Q"></a>Q</h1><p>1.COM对象（接口）为什么不能new？</p>
-<p>2.超级采样(supersampling)和多重采样(multisampling)</p>
-<p>​    超级采样时将四个子像素的颜色都计算了一遍，然后取得平均值，得到该像素的颜色；</p>
-<p>​    而多重采样只计算了该像素的颜色，通过其他方法算出了平均值，从而得到了该像素的最终颜色。【这里的其他方法简单的来说是基于子像素的可见性（基于子像素的深度/模板测试）和范围（子像素的中心在三角形之内还是之外）】</p>
-<a id="more"></a>
-<p>3.<strong>由于<code>XMFLOAT3</code>等这些用于存储的类型是不能直接用到指令集加速的。要想进行向量的运算，就需要从用于存储的变量，通过读取函数，将数据读入到<code>XMVECTOR</code></strong></p>
-<p>4.对x86平台，XMVECTOR的定义如下：    // XMMATRIX则是一组(4个) XMVECTOR<br><code>typedef __m128 XMVECTOR;</code></p>
-<p>由于__m128在内存中需要严格的16 byte对齐，因此并不建议直接在程序中使用这两种类型保存数据，</p>
-<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line">Class Camera</span><br><span class="line">&#123;</span><br><span class="line">      XMVECTOR position;</span><br><span class="line">      XMMATRIX viewMatrix;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
-<p>上面的代码基本上不会成功运行，32位下new并不保证16byte对齐，而且由于类成员布局的关系，其中的XMVECTOR也不一定是16byte对齐，访问以上数据，程序可能直接崩溃。因此，DXM定义了大量用来储存数据的类型，比如XMFLOAT4,XMFLOAT3,XMFLOAT4X4等。</p>
-<p>既然__m128需要16byte对齐，那为什么在分配内存的时候，不能直接确定好分配给XMVECTOR 16byte的内存？</p>
-<p>5.图片的放大和缩小</p>
-<p>放大很好搞，按比例用一样的颜色填充就行了，也就是做个插值，但也会导致太大了会变得马赛克</p>
-<p>缩小要丢弃一些像素，一般用的是mipmap，然后找到最接近目的大小的mipmap等级，再进行插值。（按道理是最接近但小于的目标大小的等级，因为后续插值相当于放大）</p>
-<p>.* : 操作放大缩小的叫过滤器</p>
-<p>6.纹理坐标以及采样</p>
-<p>纹理（贴图）坐标，即UV坐标</p>
-<p>纹理在计算机中就是一堆数据，那纹理坐标又是个什么玩意？    因为我们在给物体做纹理时，相当于把一张图片贴在了物体上，这张图由很多纹理像素（texel）构成，那纹理其实就是一个二维数组，纹理坐标（u，v）用来确定纹理像素的位置。【纹理像素（texel）也称纹素与像素相似但并不完全等价】</p>
-<p>玩家们所谓的贴图是什么？ - Focux的回答 - 知乎 <a href="https://www.zhihu.com/question/319059045/answer/1286403304">https://www.zhihu.com/question/319059045/answer/1286403304</a>  说的很详细</p>
-<p>相关资料<a href="https://blog.csdn.net/u014800094/article/details/55224541">https://blog.csdn.net/u014800094/article/details/55224541</a></p>
-<p>7.交换链<br><a href="https://blog.csdn.net/sinat_24229853/article/details/46884833">https://blog.csdn.net/sinat_24229853/article/details/46884833</a></p>
-<p><a href="https://gavinkg.github.io/ILearnVulkanFromScratch-CN/mdroot/%E6%A6%82%E5%BF%B5%E6%B1%87%E6%80%BB/%E4%BA%A4%E6%8D%A2%E9%93%BE.html">https://gavinkg.github.io/ILearnVulkanFromScratch-CN/mdroot/%E6%A6%82%E5%BF%B5%E6%B1%87%E6%80%BB/%E4%BA%A4%E6%8D%A2%E9%93%BE.html</a><br>双重缓冲其实也存在问题，上面链接就说了，渲染速度较vblank快的话，会有可感知的延迟造成，其实在我的理解里，准确来说应该是vblank太慢了（刷新过慢）导致的延迟，<br>因为所谓延迟就是一帧画面渲染好了之后，它过了一段时间才被显示出来，仔细想想其实问题是出在刷新太慢了上面，如果刷新频率符合人眼的习惯，即使他渲染速度再快，<br>只要我在人眼习惯的频率上把它显示出来，也不会出现延迟，最多会有部分资源被浪费掉（渲染好了不刷新导致设备闲置不能进行下一帧的渲染）。</p>
-<p>那同理可以很容易推出渲染速度较慢的话，就会造成卡顿，前台缓冲区显示后，后台没渲染完，导致下一帧画面显示的还是原前台缓冲区的东西，呈现出来的结果就是卡顿。</p>
-<p>8.视图（view）就是描述符（descriptor），它告诉我们资源如何使用，相当于一个中间层</p>
-<p>9.任何 Direct3D 程序的最后一件事情是清理并且释放你所创建的对象，你必须释放这些对象将资源归还系统进行再利用<br>COM对象持有一个引用计数，告诉系统什么时候将它从内存中删除是安全的。通过使用 Release函数，将会减少对象的引用数，当引用计数为 0 时，系统将对象删除以便回收再利用。<br>在对象调用 Release 函数之前总是检查确保对象非 NULL，可以减少由于无效指针导致你的游戏由于未 定义行为所产生的崩溃</p>
-<p>引用技术的初始值是多少？是调用一次release就变为0了吗？</p>
-<p>10.ClearRenderTargetView说是清除屏幕，实际上是用一种颜色覆盖掉整个屏幕<br>其实有点讨厌这样的概念，总感觉很冗杂，函数名是清除渲染目标视图，参数传进去缓冲区（即渲染目标，一般是后台缓冲区，因为后台用来渲染，前台用来显示），虽然view实际上就是类似于target的引用或者说是它的一个中间层，这样是可以理解它具体指的啥，但看起来总有点别扭</p>
-<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="keyword">float</span> clearColor[<span class="number">4</span>] = &#123; <span class="number">0.0f</span>, <span class="number">0.0f</span>, <span class="number">0.25f</span>, <span class="number">1.0f</span> &#125;; </span><br><span class="line">d3dContext_-&gt;ClearRenderTargetView( backBufferTarget_, clearColor ); </span><br><span class="line"></span><br><span class="line">swapChain_-&gt;Present( <span class="number">0</span>, <span class="number">0</span> );</span><br></pre></td></tr></table></figure>
-<p>11.DESC就是（description）描述符的缩写，名字里带这个的都是描述符，也就是视图。</p>
-<h1 id="XJUN"><a href="#XJUN" class="headerlink" title="XJUN"></a>XJUN</h1><h2 id="02-rendering-a-triangle"><a href="#02-rendering-a-triangle" class="headerlink" title="02 rendering a triangle"></a>02 rendering a triangle</h2><p>设置三角形顶点时，顶点的顺序需要按顺时针顺序给（可自行查找why），但图元类型为trianglestrip时，第二个三角形的点的顺序可以为逆时针，这是为什么？</p>
-<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">//draw rect with 4 vertexes</span></span><br><span class="line">		&#123; XMFLOAT3(<span class="number">-0.5f</span>, <span class="number">-0.5f</span>, <span class="number">0.0f</span>), XMFLOAT4(<span class="number">0.0f</span>, <span class="number">1.0f</span>, <span class="number">0.0f</span>, <span class="number">1.0f</span>) &#125;,</span><br><span class="line">		&#123; XMFLOAT3(<span class="number">-0.5f</span>, <span class="number">0.5f</span>, <span class="number">0.0f</span>), XMFLOAT4(<span class="number">0.0f</span>, <span class="number">0.0f</span>, <span class="number">1.0f</span>, <span class="number">1.0f</span>) &#125;,</span><br><span class="line">		&#123; XMFLOAT3(<span class="number">0.5f</span>, <span class="number">-0.5f</span>, <span class="number">0.0f</span>), XMFLOAT4(<span class="number">1.0f</span>, <span class="number">0.0f</span>, <span class="number">0.0f</span>, <span class="number">1.0f</span>) &#125;,</span><br><span class="line">		&#123; XMFLOAT3(<span class="number">0.5f</span>, <span class="number">0.5f</span>, <span class="number">0.0f</span>), XMFLOAT4(<span class="number">0.0f</span>, <span class="number">0.0f</span>, <span class="number">1.0f</span>, <span class="number">1.0f</span>) &#125;</span><br></pre></td></tr></table></figure>
-<p>(-0.5f, -0.5f, 0.0f)—&gt;(-0.5f, 0.5f, 0.0f)—&gt;(0.5f, -0.5f, 0.0f) 是顺时针的</p>
-<p>但 (-0.5f, 0.5f, 0.0f)—&gt;(0.5f, -0.5f, 0.0f)—&gt;(0.5f, 0.5f, 0.0f) 是逆时针的</p>
-<p>见龙书P149</p>
-<h2 id="06-Mouse-and-Keyboard"><a href="#06-Mouse-and-Keyboard" class="headerlink" title="06 Mouse and Keyboard"></a>06 Mouse and Keyboard</h2><p>对于瞬时状态，比如按鼠标，就按照接收的事件次数来处理，但对于会保持一段时间的状态比如滚轮或按着一个键，就需要获取两个状态一个state，一个laststate(上一帧状态)，通过两者之间的时间差来改变状态。</p>
-<h2 id="07-Lighting"><a href="#07-Lighting" class="headerlink" title="07 Lighting"></a>07 Lighting</h2><p>做XJUN的作业时，第三个通过滚轮改变汇聚强度做是做出来了，但是在另外两种光照模型下也会触发，暂时还没找到解决办法<br>我最开始是以为改变光照强度，那样又该如何做？<br>4(不太懂这题是啥意思，看起来不难),5,7还没做出来，其他都比较简单。</p>
-<h1 id="points"><a href="#points" class="headerlink" title="points"></a>points</h1><h2 id="一些改进"><a href="#一些改进" class="headerlink" title="一些改进"></a>一些改进</h2><p>从Windows 8开始，DirectX不再是您下载和安装的单独SDK；相反，DirectX随操作系统一起提供，并通过Windows Update进行更新。 此外，D3DX库已被弃用，Windows不附带，现在XNA Math库的名称为DirectX Math。 另外，从Visual Studio 2015开始，dxerr.lib不再与Visual Studio 2015兼容。</p>
-<h2 id="修改全屏模式"><a href="#修改全屏模式" class="headerlink" title="修改全屏模式"></a>修改全屏模式</h2><p>为什么要修改窗口使其没有背景？</p>
-<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// wc.hbrBackground =（HBRUSH）COLOR_WINDOW;</span></span><br></pre></td></tr></table></figure>
-<p>教程给出的解释是这样的：<strong>Doing this leaves the background color untouched, which means it won’t be visible as a window for a second or two before the game starts (important to making your game look professional).</strong></p>
-<p>机翻果然有点问题…我理解了一下，大概就是说游戏在刚开始的时候，也就是从窗口变成全屏的时候，会显示出窗口的（背景）颜色，因为游戏本质上是一个程序，打开的时候就是一窗口的模式打开的，这样做就可以避免掉显示出窗口的颜色。</p>
-<p>窗口背景颜色：顾名思义，就是一个窗口里面那个背景板的颜色。</p>
-<h2 id="XMVector2Dot的返回值"><a href="#XMVector2Dot的返回值" class="headerlink" title="XMVector2Dot的返回值"></a>XMVector2Dot的返回值</h2><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function">XMVECTOR XM_CALLCONV <span class="title">XMVector2Dot</span><span class="params">(FXMVECTOR V1, FXMVECTOR V2)</span></span>;		<span class="comment">// 每个分量都是V1.x * V2.x + V1.y * V2.y</span></span><br></pre></td></tr></table></figure>
-<p>返回一个向量，向量的每一分量的值都是v1和v2的点积。</p>
-<p>很奇特，也让人很迷惑的操作…… I need a reason.      叉积也是，不知道在干嘛。。</p>
 ]]></content>
       <categories>
         <category>CG</category>
