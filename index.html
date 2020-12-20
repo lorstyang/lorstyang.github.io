@@ -203,7 +203,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2020-12-20 18:42:39 / 修改时间：20:14:32" itemprop="dateCreated datePublished" datetime="2020-12-20T18:42:39+08:00">2020-12-20</time>
+              <time title="创建时间：2020-12-20 18:42:39 / 修改时间：20:15:48" itemprop="dateCreated datePublished" datetime="2020-12-20T18:42:39+08:00">2020-12-20</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -227,36 +227,14 @@
 
       
           <p>上一部分乱七八糟的弄了那么多东西，搞出了渲染方程，要把这东西实际用上，就要涉及到蒙特卡洛积分了</p>
-<h4 id="蒙特卡洛积分"><a href="#蒙特卡洛积分" class="headerlink" title="蒙特卡洛积分"></a>蒙特卡洛积分</h4><ul>
-<li><p>前置知识是概率论</p>
-</li>
-<li><p>我们用的积分基本上都是黎曼积分：分解为很多矩形积分（二维曲线那个）</p>
-<p>但有时候解析式求不出来，黎曼积分就没办法做了，需要用蒙特卡洛来估计复杂定积分的值</p>
-<p>蒙特卡洛积分是指用蒙特卡洛法来估计积分，蒙特卡洛是一类算法的统称，估计积分只是其中的一个应用（不过把他当做一种积分方法好像也没什么问题）</p>
-</li>
-<li><p>蒙特卡洛积分直观上的解释大概就是 你先随便找一点x<sub>i</sub>，得到f(x<sub>i</sub>)，然后用(b-a)*f(x<sub>i</sub>)当做这个曲线围住的面积，然后采样很多点，把得到的面积平均一下，作为积分的近似值</p>
-<p><img src="https://i.loli.net/2020/12/20/5bvNS4nWHjpJxOl.png" width="50%" height="50%"></p>
-</li>
-<li><p>具体做法</p>
-<p>$\int_{b}^{a} f(x) dx$    计算的定积分</p>
-<p>X~i~ ~ p(x)    随机变量及PDF（概率密度函数）</p>
-<p>则</p>
-<p>积分近似为</p>
-<script type="math/tex; mode=display">
-F_{N}=\frac{1}{N} \sum_{i=1}^{N} \frac{f\left(X_{i}\right)}{p\left(X_{i}\right)}</script><p>别问为什么要除以PDF，问就是不知道(X</p>
-<p>其实可以去看看<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/146144853">这个</a>，感觉上这是一个逆推出来的玩意，需要的做的是验证它的正确性（链接文章里有对它的验证），所以 用就完事了</p>
-<p>均匀采样的情况下，即p(x) = 1/(b-a)，此时</p>
-<script type="math/tex; mode=display">
-F_{N}=\frac{b-a}{N} \sum_{i=1}^{N} f\left(X_{i}\right)</script><p>任何一个积分的近似值都可以计算</p>
-<script type="math/tex; mode=display">
-\int f(x) \mathrm{d} x=\frac{1}{N} \sum_{i=1}^{N} \frac{f\left(X_{i}\right)}{p\left(X_{i}\right)} \quad X_{i} \sim p(x)</script><ul>
-<li>N为采样数 采样越多，结果越准</li>
-<li>不用关心积分域，积分域包含在了PDF里</li>
-<li>在x上采样就要在x上积分</li>
-</ul>
-</li>
-</ul>
-<h4 id="路径追踪-Path-Tracing"><a href="#路径追踪-Path-Tracing" class="headerlink" title="路径追踪 Path Tracing"></a>路径追踪 Path Tracing</h4>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/12/20/RayTracing-3/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 

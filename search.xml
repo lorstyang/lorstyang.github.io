@@ -346,6 +346,7 @@ f(x,y,z)=x^{2}+y^{2}+z^{2}-1</script></li>
     <title>蒙特卡洛路径追踪</title>
     <url>/2020/12/20/RayTracing-3/</url>
     <content><![CDATA[<p>上一部分乱七八糟的弄了那么多东西，搞出了渲染方程，要把这东西实际用上，就要涉及到蒙特卡洛积分了</p>
+<a id="more"></a>
 <h4 id="蒙特卡洛积分"><a href="#蒙特卡洛积分" class="headerlink" title="蒙特卡洛积分"></a>蒙特卡洛积分</h4><ul>
 <li><p>前置知识是概率论</p>
 </li>
