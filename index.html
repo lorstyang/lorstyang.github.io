@@ -203,7 +203,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2020-12-25 13:21:29 / 修改时间：13:24:20" itemprop="dateCreated datePublished" datetime="2020-12-25T13:21:29+08:00">2020-12-25</time>
+              <time title="创建时间：2020-12-25 13:21:29 / 修改时间：13:26:24" itemprop="dateCreated datePublished" datetime="2020-12-25T13:21:29+08:00">2020-12-25</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -226,62 +226,16 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <h3 id="STL-Application"><a href="#STL-Application" class="headerlink" title="STL Application"></a>STL Application</h3><ul>
-<li><p>STL六大Components</p>
-<p>容器（Containers）</p>
-<p>分配器（Allocators）</p>
-<p>算法（Algorithms）</p>
-<p>迭代器（Iterators）</p>
-<p>适配器（Adapters）</p>
-<p>仿函数（Functors/Function object）</p>
-<h4 id="array"><a href="#array" class="headerlink" title="array"></a>array</h4><p>数组</p>
-<h4 id="vector"><a href="#vector" class="headerlink" title="vector"></a>vector</h4><ul>
-<li><p>内存分配时，是两倍两倍的分</p>
-<p>pushback进来一个元素时，先分一个单位内存</p>
-<p>push第二个的时候，vector分配两个</p>
-<p>push第三个的时候，该vector占用的变为四个(capacity)，但实际上只有3个元素(size）</p>
-<p>…</p>
-<p>tips：这个内存成长的过程是非常缓慢的，因为你不可能在当前的地方再扩展一倍的内存，而是需要去其他地方再找一个两倍大小的内存区域，然后把数据一个个搬过去</p>
-</li>
-</ul>
-<h4 id="list"><a href="#list" class="headerlink" title="list"></a>list</h4><ul>
-<li><p>list</p>
-<p>双向</p>
-</li>
-<li><p>forward_list </p>
-<p>单向</p>
-<p>与其他容器不同，没有push_back，只有push_front</p>
-</li>
-<li><p>slist</p>
-<p>单向 push_front</p>
-<p>非标准库 GNU带的（C++11里没有）</p>
-</li>
-</ul>
-<font color = 'red'>max_size()? 为什么会有这么个东西，deque也有这个</font>
-
-<h4 id="deque"><a href="#deque" class="headerlink" title="deque"></a>deque</h4><ul>
-<li><p>双向</p>
-</li>
-<li><p>分段，由很多buffer组成</p>
-</li>
-<li><p>每一个buffer内部是连续的，但段与段之间的并不连续，我们需要制造段与段之间连续的假象，<font color = 'red'>那么如何实现这个假象？</font></p>
-<p>这个假象就是 假如你顺着去遍历，一个buffer到头了，再加1，要到下一个连着的buffer的第一个单元</p>
-</li>
-<li><p>扩充时，每次扩充一个buffer，两端都可以扩充</p>
-</li>
-</ul>
-<p><strong>图</strong></p>
-<h4 id="stack-amp-queue"><a href="#stack-amp-queue" class="headerlink" title="stack &amp; queue"></a>stack &amp; queue</h4><ul>
-<li>stack和queue都是基于deque实现的，就放在一起算了</li>
-<li>stack同一端进出，queue一端进另一端出</li>
-<li>技术上stack和queue是adapter，不过作为容器也没什么问题</li>
-</ul>
-<h4 id="5"><a href="#5" class="headerlink" title="5"></a>5</h4><h4 id="一些点"><a href="#一些点" class="headerlink" title="一些点"></a>一些点</h4><ul>
-<li>有些时候，标准库会和容器有一样的函数，比如sort，标准库（全局的）有，容器也有，这种时候尽量用容器自带的函数，自带的会快一点，<font color = 'red'>原因要看源代码</font>，估计是和容器特性有关。</li>
-</ul>
-</li>
-</ul>
-
+          <p>复习基础</p>
+<p>看的是侯捷老师的课</p>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/12/25/cppadvanced/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 

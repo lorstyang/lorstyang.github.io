@@ -985,7 +985,10 @@ L_{a}=k_{a} I_{a}</script></li>
   <entry>
     <title>cppSTL1</title>
     <url>/2020/12/25/cppadvanced/</url>
-    <content><![CDATA[<h3 id="STL-Application"><a href="#STL-Application" class="headerlink" title="STL Application"></a>STL Application</h3><ul>
+    <content><![CDATA[<p>复习基础</p>
+<p>看的是侯捷老师的课</p>
+<a id="more"></a>
+<h3 id="STL-Application"><a href="#STL-Application" class="headerlink" title="STL Application"></a>STL Application</h3><ul>
 <li><p>STL六大Components</p>
 <p>容器（Containers）</p>
 <p>分配器（Allocators）</p>
