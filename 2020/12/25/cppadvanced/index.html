@@ -20,15 +20,19 @@
     var CONFIG = {"hostname":"example.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta property="og:type" content="website">
-<meta property="og:title" content="lorstyang">
-<meta property="og:url" content="http://example.com/archives/2020/10/index.html">
+  <meta name="description" content="STL Application STL六大Components 容器（Containers） 分配器（Allocators） 算法（Algorithms） 迭代器（Iterators） 适配器（Adapters） 仿函数（Functors&#x2F;Function object） array数组 vector 内存分配时，是两倍两倍的分 pushback进来一个元素时，先分一个单位内存 push第二个的时">
+<meta property="og:type" content="article">
+<meta property="og:title" content="cppSTL1">
+<meta property="og:url" content="http://example.com/2020/12/25/cppadvanced/index.html">
 <meta property="og:site_name" content="lorstyang">
+<meta property="og:description" content="STL Application STL六大Components 容器（Containers） 分配器（Allocators） 算法（Algorithms） 迭代器（Iterators） 适配器（Adapters） 仿函数（Functors&#x2F;Function object） array数组 vector 内存分配时，是两倍两倍的分 pushback进来一个元素时，先分一个单位内存 push第二个的时">
 <meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-12-25T05:21:29.000Z">
+<meta property="article:modified_time" content="2020-12-25T05:24:20.332Z">
 <meta property="article:author" content="lorstyang">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="http://example.com/archives/2020/10/">
+<link rel="canonical" href="http://example.com/2020/12/25/cppadvanced/">
 
 
 <script id="page-configurations">
@@ -36,12 +40,12 @@
   CONFIG.page = {
     sidebar: "",
     isHome : false,
-    isPost : false,
+    isPost : true,
     lang   : 'zh-CN'
   };
 </script>
 
-  <title>归档 | lorstyang</title>
+  <title>cppSTL1 | lorstyang</title>
   
 
 
@@ -172,150 +176,140 @@
         <div class="content-wrap">
           
 
-          <div class="content archive">
+          <div class="content post posts-expand">
             
 
+    
   
   
-  
-  <div class="post-block">
-    <div class="posts-collapse">
-      <div class="collection-title">
-        <span class="collection-header">嗯..! 目前共计 14 篇日志。 继续努力。</span>
-      </div>
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/12/25/cppadvanced/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpg">
+      <meta itemprop="name" content="lorstyang">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="lorstyang">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          cppSTL1
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-12-25 13:21:29 / 修改时间：13:24:20" itemprop="dateCreated datePublished" datetime="2020-12-25T13:21:29+08:00">2020-12-25</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/cpp/" itemprop="url" rel="index"><span itemprop="name">cpp</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
 
       
-    <div class="collection-year">
-      <span class="collection-header">2020</span>
-    </div>
+        <h3 id="STL-Application"><a href="#STL-Application" class="headerlink" title="STL Application"></a>STL Application</h3><ul>
+<li><p>STL六大Components</p>
+<p>容器（Containers）</p>
+<p>分配器（Allocators）</p>
+<p>算法（Algorithms）</p>
+<p>迭代器（Iterators）</p>
+<p>适配器（Adapters）</p>
+<p>仿函数（Functors/Function object）</p>
+<h4 id="array"><a href="#array" class="headerlink" title="array"></a>array</h4><p>数组</p>
+<h4 id="vector"><a href="#vector" class="headerlink" title="vector"></a>vector</h4><ul>
+<li><p>内存分配时，是两倍两倍的分</p>
+<p>pushback进来一个元素时，先分一个单位内存</p>
+<p>push第二个的时候，vector分配两个</p>
+<p>push第三个的时候，该vector占用的变为四个(capacity)，但实际上只有3个元素(size）</p>
+<p>…</p>
+<p>tips：这个内存成长的过程是非常缓慢的，因为你不可能在当前的地方再扩展一倍的内存，而是需要去其他地方再找一个两倍大小的内存区域，然后把数据一个个搬过去</p>
+</li>
+</ul>
+<h4 id="list"><a href="#list" class="headerlink" title="list"></a>list</h4><ul>
+<li><p>list</p>
+<p>双向</p>
+</li>
+<li><p>forward_list </p>
+<p>单向</p>
+<p>与其他容器不同，没有push_back，只有push_front</p>
+</li>
+<li><p>slist</p>
+<p>单向 push_front</p>
+<p>非标准库 GNU带的（C++11里没有）</p>
+</li>
+</ul>
+<font color = 'red'>max_size()? 为什么会有这么个东西，deque也有这个</font>
 
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2020-10-31T10:20:32+08:00"
-              content="2020-10-31">
-          10-31
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2020/10/31/Shading-2/" itemprop="url">
-            <span itemprop="name">Shading(续)</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2020-10-27T12:07:32+08:00"
-              content="2020-10-27">
-          10-27
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2020/10/27/Shading/" itemprop="url">
-            <span itemprop="name">Shading(Blinn-Phong Reflectance Model)</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2020-10-22T10:31:11+08:00"
-              content="2020-10-22">
-          10-22
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2020/10/22/Rasterization/" itemprop="url">
-            <span itemprop="name">Rasterization</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2020-10-19T18:58:07+08:00"
-              content="2020-10-19">
-          10-19
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2020/10/19/Games101-Transformation/" itemprop="url">
-            <span itemprop="name">Games101: Transformation</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2020-10-18T20:57:01+08:00"
-              content="2020-10-18">
-          10-18
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2020/10/18/%E6%9D%82%E9%B1%BC/" itemprop="url">
-            <span itemprop="name">杂鱼</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2020-10-18T15:59:19+08:00"
-              content="2020-10-18">
-          10-18
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2020/10/18/%E7%AC%AC%E4%B8%80%E7%AF%87/" itemprop="url">
-            <span itemprop="name">Q</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-
+<h4 id="deque"><a href="#deque" class="headerlink" title="deque"></a>deque</h4><ul>
+<li><p>双向</p>
+</li>
+<li><p>分段，由很多buffer组成</p>
+</li>
+<li><p>每一个buffer内部是连续的，但段与段之间的并不连续，我们需要制造段与段之间连续的假象，<font color = 'red'>那么如何实现这个假象？</font></p>
+<p>这个假象就是 假如你顺着去遍历，一个buffer到头了，再加1，要到下一个连着的buffer的第一个单元</p>
+</li>
+<li><p>扩充时，每次扩充一个buffer，两端都可以扩充</p>
+</li>
+</ul>
+<p><strong>图</strong></p>
+<h4 id="stack-amp-queue"><a href="#stack-amp-queue" class="headerlink" title="stack &amp; queue"></a>stack &amp; queue</h4><ul>
+<li>stack和queue都是基于deque实现的，就放在一起算了</li>
+<li>stack同一端进出，queue一端进另一端出</li>
+<li>技术上stack和queue是adapter，不过作为容器也没什么问题</li>
+</ul>
+<h4 id="5"><a href="#5" class="headerlink" title="5"></a>5</h4><h4 id="一些点"><a href="#一些点" class="headerlink" title="一些点"></a>一些点</h4><ul>
+<li>有些时候，标准库会和容器有一样的函数，比如sort，标准库（全局的）有，容器也有，这种时候尽量用容器自带的函数，自带的会快一点，<font color = 'red'>原因要看源代码</font>，估计是和容器特性有关。</li>
+</ul>
+</li>
+</ul>
 
     </div>
-  </div>
-  
-  
-  
 
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/12/22/bug/" rel="prev" title="令人摸不着头脑">
+      <i class="fa fa-chevron-left"></i> 令人摸不着头脑
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
   
 
 
@@ -368,6 +362,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#STL-Application"><span class="nav-number">1.</span> <span class="nav-text">STL Application</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#array"><span class="nav-number">1.1.</span> <span class="nav-text">array</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#vector"><span class="nav-number">1.2.</span> <span class="nav-text">vector</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#list"><span class="nav-number">1.3.</span> <span class="nav-text">list</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#deque"><span class="nav-number">1.4.</span> <span class="nav-text">deque</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#stack-amp-queue"><span class="nav-number">1.5.</span> <span class="nav-text">stack &amp; queue</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#5"><span class="nav-number">1.6.</span> <span class="nav-text">5</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%80%E4%BA%9B%E7%82%B9"><span class="nav-number">1.7.</span> <span class="nav-text">一些点</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
