@@ -1058,7 +1058,7 @@ L_{a}=k_{a} I_{a}</script></li>
 <li>没有multi的不能重复，带了multi的可以重复，这个重复实际上指的是key，set因为key和value是一个东西，不用太在意，但map就需要区分开来了</li>
 <li>带unordered的，内部实现是用的hashtable，不带用的是红黑树</li>
 </ul>
-<h5 id="一些点"><a href="#一些点" class="headerlink" title="一些点"></a>一些点</h5><ul>
+<h4 id="一些点"><a href="#一些点" class="headerlink" title="一些点"></a>一些点</h4><ul>
 <li>有些时候，标准库会和容器有一样的函数，比如sort，标准库（全局的）有，容器也有，这种时候尽量用容器自带的函数，自带的会快一点，<font color = 'red'>原因要看源代码</font>，估计是和容器特性有关。</li>
 <li>set里面key就是value，value就是key，而map是分开的（这种说法感觉怪怪的，set里面的元素不就单有一个值吗）</li>
 <li>红色部分后续会有讲解</li>
