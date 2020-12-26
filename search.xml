@@ -505,7 +505,7 @@ f(x,y,z)=x^{2}+y^{2}+z^{2}-1</script></li>
 </li>
 <li><p>具体做法</p>
 <p>$\int_{b}^{a} f(x) dx$    计算的定积分</p>
-<p>X~i~ ~ p(x)    随机变量及PDF（概率密度函数）</p>
+<p>X<sub>i</sub> ~ p(x)    随机变量及PDF（概率密度函数）</p>
 <p>则</p>
 <p>积分近似为</p>
 <script type="math/tex; mode=display">
