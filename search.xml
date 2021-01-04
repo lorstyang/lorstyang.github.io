@@ -1134,7 +1134,8 @@ L_{a}=k_{a} I_{a}</script></li>
   <entry>
     <title>cppSTL2-allocator</title>
     <url>/2021/01/01/cppSTL2/</url>
-    <content><![CDATA[<h3 id="分配器allocators"><a href="#分配器allocators" class="headerlink" title="分配器allocators"></a>分配器allocators</h3><ul>
+    <content><![CDATA[<a id="more"></a>
+<h3 id="分配器allocators"><a href="#分配器allocators" class="headerlink" title="分配器allocators"></a>分配器allocators</h3><ul>
 <li><p>所有的分配动作，最终都会到malloc上</p>
 <p>分配与删除大致顺序</p>
 <p>allocate-&gt;operator new-&gt;malloc-&gt;根据平台调用系统函数-&gt;获得内存</p>
