@@ -30,10 +30,10 @@
 </ul>
 <h3 id="MVP"><a href="#MVP" class="headerlink" title="MVP"></a>MVP</h3><ul>
 <li><p>Model transformation</p>
-<p>把物体从局部坐标系变换到世界坐标系，玩过建模软件的应该知道，你点物体，处于移动物体模式时，会有X，Y，Z三个方向的箭头，可以把那个当成物体的局部坐标系，然后用矩阵可以把局部坐标系里的物体的顶点坐标转换到世界坐标系。至于世界坐标系，就是整个场景的坐标系了。</p>
+<p>把物体从局部坐标系变换到世界坐标系，玩过建模软件的应该知道，你选中物体时，会有X，Y，Z三个方向的箭头，可以把那个当成物体的局部坐标系，然后用矩阵可以把局部坐标系里的物体的顶点坐标转换到世界坐标系。至于世界坐标系，就是整个场景的坐标系了。</p>
 </li>
 <li><p>View transformation</p>
-<p>闫老师是这样说的 Find a good ”angle“ to put the camera 很形象是吧。这一步是把世界坐标系转换到摄像机坐标系。摄像机坐标系就是把摄像机本身的局部坐标系与世界坐标系以某种方式重叠了起来，显而易见，如果世界坐标系里的物体不改变坐标的话，会导致摄像机里的内容发生变化（想象一下，摄像机转到了世界坐标系中心，而物体不动），所以世界空间中的物体也要做同样的变换，相当于把摄像机和物体看成一个整体，一起动，这个变换就是M<sub>view</sub>。前面所说的某种方式就是规定的摄像机的朝向之类的，一般来说是 位于原点，up at Y，look at -Z（约定俗成的，方便计算）。</p>
+<p>闫老师是这样说的 Find a good ”angle“ to put the camera 很形象是吧。这一步是从世界坐标系转换到摄像机坐标系。摄像机的位置之类的，一般来说是 位于原点，up at Y，look at -Z（约定俗成）。</p>
 <p>M<sub>view</sub>是通过求逆变换得到的，用到了正交矩阵的逆矩阵等于其转置矩阵，而旋转矩阵是正交矩阵。 </p>
 <p>摄像机从任意位置到原点，有旋转和平移两个操作，将其分开来看清楚一点，M<sub>view</sub> = R<sub>view</sub>T<sub>view</sub></p>
 <script type="math/tex; mode=display">
@@ -41,16 +41,23 @@ T_{view} = \left[ \begin{matrix} 1 & 0 & 0 & -x_{e} \\ 0 & 1 & 0 & -y_{e} \\ 0 &
 <script type="math/tex; mode=display">
 R_{view}^{-1} = \left[ \begin{matrix} x_{g×t} & x_{t} & x_{-g} & 0 \\ y_{g×t} & y_{t} & y_{-g} & 0 \\ z_{g×t} & z_{t} & z_{-g} & 0 \\ 0 & 0 & 0 & 1 \end{matrix}\right]</script><p>因为R<sub>view</sub>的转置等于它的逆，所以R<sup>T</sup><sub>view</sub> = R<sup>-1</sup><sub>view</sub>，将R<sup>T</sup><sub>view</sub>再转置一下就得到了R<sub>view</sub>。即</p>
 <script type="math/tex; mode=display">
-R_{view} = \left[ \begin{matrix} x_{g×t} & y_{g×t} & z_{g×t} & 0 \\ x_{t} & y_{t} & z_{t} & 0 \\ x_{-g} & y_{-g} & z_{-g} & 0 \\ 0 & 0 & 0 & 1 \end{matrix}\right]</script></li>
-<li><p>Projection transform</p>
+R_{view} = \left[ \begin{matrix} x_{g×t} & y_{g×t} & z_{g×t} & 0 \\ x_{t} & y_{t} & z_{t} & 0 \\ x_{-g} & y_{-g} & z_{-g} & 0 \\ 0 & 0 & 0 & 1 \end{matrix}\right]</script><p>其实这一步更多的应该叫camera transformation</p>
+</li>
+<li><p>Projection transformation</p>
 <ul>
 <li>Orthographic projection 正交投影</li>
 <li>Perspective projection 透视投影（近大远小</li>
 </ul>
 <p>M<sub>persp</sub> = M<sub>ortho</sub> M<sub>persp-&gt;ortho</sub> </p>
-<p>M<sub>persp-&gt;ortho</sub> 将视锥体变成立方体，M<sub>ortho</sub> 将立方体变成[-1, 1]的正方体</p>
+<p>M<sub>persp-&gt;ortho</sub> 将视锥体变成立方体，M<sub>ortho</sub> 做正交投影到[-1, 1]^3上，z值保留（之后zbuffer要用）</p>
+</li>
+<li><p>viewport transformation</p>
+<p>将[-1, 1]\^2（立方体的x，y平面）映射到平面分辨率大小</p>
+<p>[-1,1]\^2 —&gt; [0,width]*[0,height]</p>
 </li>
 </ul>
+<p><img src="https://i.loli.net/2021/01/20/cX3tHFBGQO4A1eu.jpg" width="80%" height="80%"></p>
+<p>图片来自<a href="https://zhuanlan.zhihu.com/p/144329075">这里</a></p>
 ]]></content>
       <categories>
         <category>CG</category>
