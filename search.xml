@@ -1266,4 +1266,37 @@ C_{o} = C_{s}^{'} + (1-\alpha_{s})C_{d}</script><p>Premultiplied Alpha 后的像
         <category>Shader</category>
       </categories>
   </entry>
+  <entry>
+    <title>unity Shader</title>
+    <url>/2021/02/20/Shader%E6%95%88%E6%9E%9C/</url>
+    <content><![CDATA[<p>一些shader实现的效果</p>
+<a id="more"></a>
+<p>NormalMap：</p>
+<p><img src="https://i.loli.net/2021/01/30/BcDrypZK2oRQHF1.png" alt="31NEIM9_TLMU~_C6E_0PJ_G.png"></p>
+<p>RampMap：</p>
+<p><img src="https://i.loli.net/2021/01/30/QL8EuS7XnGtyIpH.png" alt="~V3VRCPP_FE3_5OL~4N4S57.png"></p>
+<p>Specular Mask Texture：</p>
+<p><img src="https://i.loli.net/2021/01/30/QZsEnxfdCoSpG9H.png" alt="4_YR3~W_~_A`634H06_H5D6.png"></p>
+<p>Alpha Test：</p>
+<p><img src="https://i.loli.net/2021/01/30/m3zLNjW4caH6CkI.png" alt="GQJ~_ACS_G_P75YWC~NTLM5.png"></p>
+<p>Alpha Blend：</p>
+<p><img src="https://i.loli.net/2021/01/30/YosGVT2RlBFS7DJ.png" alt="HYR2@5V_WTTFRFGOA@ZJO0V.png"></p>
+<p><img src="https://i.loli.net/2021/01/30/GSUT35H1dIea8su.png" alt="F`_N_9R_6K_@OXJ4R_S15`3.png"></p>
+<p><img src="https://i.loli.net/2021/01/30/Ndue24AEBjCUrVS.png" alt="L04Z@0EAMU3UPVUM_0T@L1P.png"></p>
+<p>ShadowMap：</p>
+<p><img src="https://i.loli.net/2021/02/20/5BNkogY8XrhfjU4.png" alt="9___Z9DXRE5_2JSRAY_@_MY_1_.png"></p>
+<p>屏幕后处理描边：</p>
+<p><img src="https://i.loli.net/2021/02/20/Vn2YfspDJGrviqm.png" alt="NI260N___LVY~SF__O@C@SO_1_.png"></p>
+<p>全局雾效：</p>
+<p><img src="https://i.loli.net/2021/02/20/rLDnUS7bXjxFOaG.png" alt="TVV_OQXT_K_LZPB_VT_E5F4_1_.png"></p>
+<p>NPR：</p>
+<p><img src="https://i.loli.net/2021/02/20/LgBEeR1fXKcaJUV.png" alt="QU_____MQ@JKN__C@CZ__H8_1_.png"></p>
+<p><img src="https://i.loli.net/2021/02/20/2n7eQtUKkdRT8CI.png" alt="H`O__I@_@6VIE@FNU6__4_0_1_.png"></p>
+<p>利用噪声纹理实现水波效果：</p>
+<p><img src="https://i.loli.net/2021/02/20/AF6Lz31JSa2w7tM.gif" alt="water1_1_.gif"></p>
+]]></content>
+      <categories>
+        <category>CG</category>
+      </categories>
+  </entry>
 </search>
