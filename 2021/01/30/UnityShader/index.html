@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="unity shader入门精要">
+<meta property="og:type" content="article">
+<meta property="og:title" content="UnityShader">
+<meta property="og:url" content="http://example.com/2021/01/30/UnityShader/index.html">
+<meta property="og:site_name" content="lorstyang">
+<meta property="og:description" content="unity shader入门精要">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://i.loli.net/2021/01/30/BcDrypZK2oRQHF1.png">
+<meta property="og:image" content="https://i.loli.net/2021/01/30/QL8EuS7XnGtyIpH.png">
+<meta property="og:image" content="https://i.loli.net/2021/01/30/QZsEnxfdCoSpG9H.png">
+<meta property="og:image" content="https://i.loli.net/2021/01/30/m3zLNjW4caH6CkI.png">
+<meta property="og:image" content="https://i.loli.net/2021/01/30/YosGVT2RlBFS7DJ.png">
+<meta property="og:image" content="https://i.loli.net/2021/01/30/GSUT35H1dIea8su.png">
+<meta property="og:image" content="https://i.loli.net/2021/01/30/Ndue24AEBjCUrVS.png">
+<meta property="article:published_time" content="2021-01-30T05:36:30.000Z">
+<meta property="article:modified_time" content="2021-01-30T05:41:03.480Z">
+<meta property="article:author" content="lorstyang">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.loli.net/2021/01/30/BcDrypZK2oRQHF1.png">
+
+<link rel="canonical" href="http://example.com/2021/01/30/UnityShader/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>UnityShader | lorstyang</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">lorstyang</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2021/01/30/UnityShader/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpg">
+      <meta itemprop="name" content="lorstyang">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="lorstyang">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          UnityShader
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2021-01-30 13:36:30 / 修改时间：13:41:03" itemprop="dateCreated datePublished" datetime="2021-01-30T13:36:30+08:00">2021-01-30</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Shader/" itemprop="url" rel="index"><span itemprop="name">Shader</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>unity shader入门精要</p>
+<a id="more"></a>
+<h1 id="学习"><a href="#学习" class="headerlink" title="学习"></a>学习</h1><h2 id="UnpackNormal"><a href="#UnpackNormal" class="headerlink" title="UnpackNormal"></a>UnpackNormal</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">fixed3 tangentNormal;</span><br><span class="line"><span class="comment">// tangentNormal.xy = (packedNormal.wy * 2 - 1) * _BumpScale;</span></span><br><span class="line"><span class="comment">////rgb[0, 1] --&gt; normal[-1, 1] + _BumpScale</span></span><br><span class="line"><span class="comment">// tangentNormal.z = sqrt(1.0 - saturate(dot(tangentNormal.xy, tangentNormal.xy)));</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// if mark the texture as &quot;Normal map&quot;, and use the built-in funciton</span></span><br><span class="line">tangentNormal = UnpackNormal(packedNormal);</span><br><span class="line">tangentNormal.xy *= _BumpScale;</span><br><span class="line">tangentNormal.z = <span class="built_in">sqrt</span>(<span class="number">1.0</span> - saturate(dot(tangentNormal.xy, tangentNormal.xy)));</span><br></pre></td></tr></table></figure>
+<p>自己写的UnpackNormal需要注意packedNormal的分量应该取wy，因为部分平台使用的是DXT5nm格式的压缩方式，纹素的a通道对应法线的x分量，g通道对应y分量，纹素的r和b通道会被丢弃，所以取出packedNormal后，其xyzw对应纹素上的rgba，我们需要ag，就取wy。</p>
+<p>这样可以达到压缩的目的，因为第三个通道的值可以通过另外两个推导出来（法线是单位向量，并且切线空间下法线的z分量始终为正）</p>
+<h2 id="渐变纹理"><a href="#渐变纹理" class="headerlink" title="渐变纹理"></a>渐变纹理</h2><p>用渐变纹理控制漫反射光照的效果，之前是用法线和光照的点积结果与材质的反射率（从纹理上取得）相乘得来的，但有时需要更灵活地控制光照效果，就可以使用渐变纹理。</p>
+<p>渐变纹理给我的感觉就是只能控制亮度，还得再加一层纹理才能表现出正常的颜色，因为他是通过法线与光照的点积结果去纹理上去对应的rgb的，就意味着他代表着shading point接收的光照强度，本来点积就是用来表示这个东西的，加纹理的作用就是能在原本点积的基础上做更灵活的变化，相当于从一个东西映射到了另外一个东西上。我的理解大概就是这样。</p>
+<ul>
+<li>记得将渐变纹理的wrap mode设置为clamp</li>
+</ul>
+<h2 id="遮罩纹理"><a href="#遮罩纹理" class="headerlink" title="遮罩纹理"></a>遮罩纹理</h2><p>遮罩允许我们保护某些区域，使他们免于某些修改。例如，我们将高光反射应用到模型表面的所有地方，及所有的像素都是用同样的高光强度和高光指数。但有时我们希望某些地方反光强一点，某些地方反光弱一点，得到更细腻的效果，就可以使用一张遮罩纹理来控制光照。</p>
+<h2 id="float4-tangent"><a href="#float4-tangent" class="headerlink" title="float4 tangent"></a>float4 tangent</h2><p><code>float4 tangent : TANGENT;</code>顶点的切线方向。需注意tangent是float4而非float3，因为我们需要使用tangent.w分量来决定切线空间中的第三个坐标轴—副切线的方向性。</p>
+<p>如果用float3，使用TANGENT_SPACE_ROTATION宏时，会提示找不到z分量。</p>
+<h2 id="深度测试的弊端"><a href="#深度测试的弊端" class="headerlink" title="深度测试的弊端"></a>深度测试的弊端</h2><p> 在绘制多边形并且开启深度测试时，可能会产生z-stitching和z-fighting。当使用<code>glPolygonMode (GLenum face, GLenum mode)</code>为多边形绘制边界时，由于线和面的光栅化的方式不同，导致位于同一位置的多边形和直线的深度值并不相同，进而导致直线有时在多边形的里面，有时在多边形的外面，这种现象就是”Stiching”。</p>
+<p> 而Z-fighting主要是指当两个面共面时，二者的深度值一样，深度缓冲就不能清楚的将它们两者分离开来，位于后面的图元上的一些像素就会被渲染到前面的图元上。</p>
+<p> 使用<code>glPolygonOffset (GLfloat factor, GLfloat units)</code>可以解决这两个问题。</p>
+<h2 id="back-face-culling-amp-zbuffer"><a href="#back-face-culling-amp-zbuffer" class="headerlink" title="back face culling &amp; zbuffer"></a>back face culling &amp; zbuffer</h2><p>一般面剔除是应用于一些<strong>闭合物体</strong>（比方说立方体），由于视角的缘故，我们最多能同时看到一个物体的三个面，其他三个看不到，那么此时，我们就可以将另外三个看不到的面剔除掉。这就是面剔除，它节省了很多系统开销。</p>
+<p>深度测试的话不仅用于单个物体（的两个相对面），也用于物体于物体之间(还有草之类的非闭合，面片都是前面对着摄像头，但是有遮挡的物体)。</p>
+<p>面剔除总是会将back face丢弃（对于单个物体来说），而深度测试不会，只要Z-Value合理，它就都会渲染，只是会被覆盖率。</p>
+<p>感觉上zbuffer可以完全替代back face culling，但是实际上因为深度测试是在fragment shader里的，非常耗费时间，所以back face culling还是非常有必要的。</p>
+<blockquote>
+<p>几何体剔除相比Early-Z剔除，可以节省光栅化开销，而且也能节省因为读取深度图造成的显存带宽开销。</p>
+</blockquote>
+<h2 id="Overdraw"><a href="#Overdraw" class="headerlink" title="Overdraw"></a>Overdraw</h2><p>所谓OverDraw，就是一帧当中，同一个像素被重复绘制的次数。</p>
+<p>那些关于OverDraw的前世今生 - Coresi7的文章 - 知乎 <a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/76562327">https://zhuanlan.zhihu.com/p/76562327</a></p>
+<ul>
+<li><p>如何优化呢？</p>
+<p>能用不透明物体渲染就用不透明物体渲染，能用Alpha blend不要使用Alpha test，如果这些都没办法规避，可以考虑从设置LOD着手，降低特效表现力。特效较多的情况下，肉眼不大能看出来特效效果降低。对于Shader而言，尽可能优化写法降低GPU计算复杂度。</p>
+</li>
+</ul>
+<h2 id="RenderQueue、Ztest、Zwrite、AlphaTest、AlphaBlend和Stencil"><a href="#RenderQueue、Ztest、Zwrite、AlphaTest、AlphaBlend和Stencil" class="headerlink" title="RenderQueue、Ztest、Zwrite、AlphaTest、AlphaBlend和Stencil"></a>RenderQueue、Ztest、Zwrite、AlphaTest、AlphaBlend和Stencil</h2><p>一口气解决RenderQueue、Ztest、Zwrite、AlphaTest、AlphaBlend和Stencil - 最强的补丁的文章 - 知乎 <a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/28557283">https://zhuanlan.zhihu.com/p/28557283</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/ca65934dd493">https://www.jianshu.com/p/ca65934dd493</a></p>
+<p>Alpha test是指在fragment shader 里通过判断alpha是否满足一定的条件从而来决定是否discard该fragment,不满足条件的fragment就被discard,不能通过alpha test。Alpha test经常用在渲染树叶，花草等含透明部分的物体上</p>
+<p>渲染有透明度物体的时候，其实对于透明度极高的物体，那一点点透明度根本可以直接舍弃，对最终渲染效果影响又不大，还提升了效率。<strong>AlphaTest就是这样一种优化方式：我们设定一个alpha阈值，当偏于不满足条件（通常是小于阈值）就直接舍弃当作全透明，满足条件的片元就直接当作不透明物体进行处理。</strong>所以注意AlphaTest并没有实现真正的半透明效果哈。</p>
+<p>Alpha test不需要关闭深度写入，Alpha blend需要关闭深度写入（如果不关，半透明后面的物体就看不到了），且深度写入的关闭导致渲染顺序非常重要</p>
+<ul>
+<li>场景中有半透明物体又有不透明物体，有可能会导致不透明的覆盖掉半透明的（不透明的在半透明的后面，不应该覆盖掉）</li>
+<li>场景中只有半透明物体时，也要注意渲染顺序，不然会导致物体间覆盖顺序混乱</li>
+</ul>
+<p>面对这些问题，（Alpha blend）常用的办法是</p>
+<ul>
+<li>先渲染所有不透明物体，并开启他们的深度测试和深度写入</li>
+<li>把半透明物体按他们距离摄像机的远近进行排序，然后按照从前往后的顺序渲染这些半透明物体，并开启他们的深度测试，但关闭深度写入。</li>
+</ul>
+<p>但其实这样还是存在问题，物体之间相互交叠，没办法排序（我们按照物体级别排的序，如果按像素级别排序我感觉不太现实，毕竟这样渲染顺序就全打乱了，而且就算能实现也显得很蠢XD），还有选定那个点来代表物体深度这种问题，都会影响渲染正常的进行下去。unity shader入门精要P171 图8.10可以看到模型网格相互交叉的时候会得到错误的半透明效果。</p>
+<p>unity里 可以用两个pass 在一定程度上决解 关闭深度写入而造成的问题，一个开启深度写入，但不输出颜色，另一个正常Alpha blend。这种方法的缺点是 1 两个pass对性能有一定的影响，2 可以实现模型和背景的混合效果，但模型内部不会有真正的半透明效果（前面会遮挡掉后面，而不是混合，如果是从后往前画，模型内部应该是有混合效果的，但有时候控制不了）。</p>
+<h2 id="切线空间"><a href="#切线空间" class="headerlink" title="切线空间"></a>切线空间</h2><p>切线空间是有顶点法线和切线构建出的一个坐标空间</p>
+<p><a target="_blank" rel="noopener" href="https://www.zhihu.com/question/23706933/answer/161968056">https://www.zhihu.com/question/23706933/answer/161968056</a></p>
+<h2 id="Premultiplied-Alpha"><a href="#Premultiplied-Alpha" class="headerlink" title="Premultiplied Alpha"></a>Premultiplied Alpha</h2><p>alpha blend中透明物体的混合方式是这样的</p>
+<script type="math/tex; mode=display">
+C_{o} = \alpha_{s}C_{s} + (1-\alpha_{s})C_{d}</script><p>假设一个值 C<sub>o </sub> = (255,0,0)⋅0.6 + (255,255,255)⋅(1–0.6) = (255,102,102)</p>
+<p>所谓Premultiplied Alpha就是将颜色预先乘一下alpha值，即将纹素的(r g b a)变成(r*a g*a b*a a)</p>
+<p>混合公式就变成了</p>
+<script type="math/tex; mode=display">
+C_{o} = C_{s}^{'} + (1-\alpha_{s})C_{d}</script><p>Premultiplied Alpha 后的像素格式变得不直观，虽然可以用除法还原回来，但总显得有些多余。从前面的 Alpha Blending 公式可以看出，Premultiplied Alpha 之后，alpha blend的时候可以少一次乘法，这可以提高一些效率，但这并不是最主要的原因。实际上他还解决了以下几个问题</p>
+<ul>
+<li>解决纹理比例缩放映射产生的颜色错误问题</li>
+<li>可以和其他纹理一起正常混合而不打破批次渲染</li>
+</ul>
+<p>eg. 想象一下，现在有两个纹素，需要取两者的平均值（比如把两个缩放为一个），就用简单的平均法</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">non-premultiplied:</span><br><span class="line">(<span class="number">1</span>|<span class="number">0</span>|<span class="number">0</span>|<span class="number">1</span> + <span class="number">0</span>|<span class="number">1</span>|<span class="number">0</span>|<span class="number">0</span>) / <span class="number">2</span> = <span class="number">0.25</span>|<span class="number">0.25</span>|<span class="number">0</span>|<span class="number">0.25</span></span><br><span class="line">premultiplied:</span><br><span class="line"> <span class="number">1</span>|<span class="number">0</span>|<span class="number">0</span>|<span class="number">1</span> --&gt; <span class="number">1</span>*<span class="number">1</span>|<span class="number">0</span>*<span class="number">1</span>|<span class="number">0</span>*<span class="number">1</span>|<span class="number">1</span></span><br><span class="line"> <span class="number">0</span>|<span class="number">1</span>|<span class="number">0</span>|<span class="number">0</span> --&gt; <span class="number">0</span>*<span class="number">0</span>|<span class="number">1</span>*<span class="number">0</span>|<span class="number">0</span>*<span class="number">0</span>|<span class="number">0</span></span><br><span class="line">(<span class="number">1</span>|<span class="number">0</span>|<span class="number">0</span>|<span class="number">1</span> + <span class="number">0</span>|<span class="number">0</span>|<span class="number">0</span>|<span class="number">0</span>) / <span class="number">2</span> = <span class="number">0.25</span>|<span class="number">0</span>|<span class="number">0</span>|<span class="number">0.25</span></span><br></pre></td></tr></table></figure>
+<p>注意，第二个颜色本来是完全透明的，混合后应该完全是第一个颜色才符合常理，但结果却不对。这就是解决的第一个问题。</p>
+<p><font color= red>关于第二个，没找到很好的解答，求解</font>。</p>
+<blockquote>
+<p>Premultiplied alpha is used in graphics rendering because it gives better results than straight alpha when filtering images or composing different layers.</p>
+<p>本文最重要的目的是讲解第一点，为什么会出现颜色的错误问题。当一个图片素材被引擎放置在屏幕上时，往往不是1:1映射的，有可能因为在世界坐标的不同位置，映射到屏幕可能有不同的缩放比例。</p>
+<p>比如有linear，nearest等算法可以将缺失的像素补全。这时候这些缺失像素的计算，会因为alpha因子的本身也会被平均而导致RGB因子被缩放两次，进而会产生一个黑色的边缘。</p>
+<p>而实际上我们希望的结果应该是alpha因子RGB值只被平均一次，进而有需求就是将RGB值在素材中就被预乘。</p>
+</blockquote>
+<h2 id="multi-compile-amp-shader-feature"><a href="#multi-compile-amp-shader-feature" class="headerlink" title="multi_compile &amp; shader_feature"></a>multi_compile &amp; shader_feature</h2><blockquote>
+<p>在撰寫Shader時會有要因應各種狀況執行不同效果的時候，此時你可以透過條件判斷的方式來運行各種狀況，或是用一個slider來調整某一個效果的強度，再來就是寫很多個Shader來因應各種狀況。</p>
+<p>但是條件判斷對於Shader來說不是一個很有效率的方法，除非不得已不然盡量不要用。而透過Slider來調整，也是會一直要計算特定效果的演算法，只是關閉時最後強度加成後是0而已。寫很多份類似的Shader，在維護上也是不容易。不管怎樣，這幾個方法並不是最好的。</p>
+<p>而另一個方式就是在Shader裡透過Define的方式來運行不同的程式片段。達到多種功能切換的目的。它的原理就是在編譯時期自動產生各種Shader的變體，根據你在Shader裡Define的定義有多少，就會自動編譯出因應各種狀況的Shader。再根據你開啟哪個Define的功能來運行對應的Shader Code。</p>
+<p>透過這個方式，你可以不用因應各種狀況來撰寫特定的Shader。來避免掉條件判斷和不需要運行的演算法在本來的Shader裡。只須要寫一份Shader，系統就會自動幫你產生這份Shader的變體。</p>
+<p>要達到這個方式，可以透過Unity在ShaderLab裡所提供的前置處理定義，multi_compile與shader_feature。</p>
+<p><code>shader_feature</code> is very similar to <code>multi_compile</code>. The only difference is that Unity does not include unused variants of <code>shader_feature</code> shaders in the final build. For this reason, you should use <code>shader_feature</code> for keywords that are set from the Materials, while <code>multi_compile</code> is better for keywords that are set from code globally.</p>
+</blockquote>
+<p>其中multi_compile_fwdbase是unity内置的用于前向渲染的关键字快捷方式，可以为相应类型的Pass生成所有需要的Shader变种，这些变种会处理不同条件下的渲染逻辑，例如是否使用lightmap、当前使用哪种光源类型等。</p>
+<h2 id="unity中的阴影"><a href="#unity中的阴影" class="headerlink" title="unity中的阴影"></a>unity中的阴影</h2><p>常用shadow map</p>
+<p>开启了光源的阴影效果后，底层渲染引擎首先会在当前渲染物体的shader中找到LightMode为ShadowCaster的pass，如果没有，就在Fallback指定的shader中继续寻找，如果仍然没有找到，该物体就无法向其他物体投射阴影（但仍可以接收其他物体的阴影）。如果找到了正确的pass，unity会用该pass更新光源的阴影映射纹理。</p>
+<h1 id="Code"><a href="#Code" class="headerlink" title="Code"></a>Code</h1><h2 id="P192-9-2节"><a href="#P192-9-2节" class="headerlink" title="P192 9.2节"></a>P192 9.2节</h2><p><code>dot(lightCoord, lightCoord).rr</code> </p>
+<p>首先是由点积得到光源的距离平方，这是一个标量，我们对这个变量进行.rr操作相当于构建了一个二维矢量，这个二维矢量每个分量的值都是这个标量值，由此得到一个二维采样坐标。这个操作是shader中常见的<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Swizzling_(computer_graphics">swizzling</a>)操作</p>
+<h1 id="效果图"><a href="#效果图" class="headerlink" title="效果图"></a>效果图</h1><h2 id="NormalMap-Tangent-space"><a href="#NormalMap-Tangent-space" class="headerlink" title="NormalMap Tangent space"></a>NormalMap Tangent space</h2><p><img src="https://i.loli.net/2021/01/30/BcDrypZK2oRQHF1.png" alt="31NEIM9_TLMU~_C6E_0PJ_G.png"></p>
+<h2 id="RampMap"><a href="#RampMap" class="headerlink" title="RampMap"></a>RampMap</h2><p><img src="https://i.loli.net/2021/01/30/QL8EuS7XnGtyIpH.png" alt="~V3VRCPP_FE3_5OL~4N4S57.png"></p>
+<h2 id="Specular-Mask-Texture"><a href="#Specular-Mask-Texture" class="headerlink" title="Specular Mask Texture"></a>Specular Mask Texture</h2><p><img src="https://i.loli.net/2021/01/30/QZsEnxfdCoSpG9H.png" alt="4_YR3~W_~_A`634H06_H5D6.png"></p>
+<h2 id="Alpha-Test"><a href="#Alpha-Test" class="headerlink" title="Alpha Test"></a>Alpha Test</h2><p><img src="https://i.loli.net/2021/01/30/m3zLNjW4caH6CkI.png" alt="GQJ~_ACS_G_P75YWC~NTLM5.png"></p>
+<h2 id="Alpha-Blend"><a href="#Alpha-Blend" class="headerlink" title="Alpha Blend"></a>Alpha Blend</h2><h3 id="zWrite-off"><a href="#zWrite-off" class="headerlink" title="zWrite off"></a>zWrite off</h3><p><img src="https://i.loli.net/2021/01/30/YosGVT2RlBFS7DJ.png" alt="HYR2@5V_WTTFRFGOA@ZJO0V.png"></p>
+<h3 id="2-pass-zWrite-on"><a href="#2-pass-zWrite-on" class="headerlink" title="2 pass zWrite on"></a>2 pass zWrite on</h3><p><img src="https://i.loli.net/2021/01/30/GSUT35H1dIea8su.png" alt="F`_N_9R_6K_@OXJ4R_S15`3.png"></p>
+<h3 id="back-face-culling-off"><a href="#back-face-culling-off" class="headerlink" title="back face culling off"></a>back face culling off</h3><p><img src="https://i.loli.net/2021/01/30/Ndue24AEBjCUrVS.png" alt="L04Z@0EAMU3UPVUM_0T@L1P.png"></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/01/01/cppSTL2/" rel="prev" title="cppSTL2-allocator">
+      <i class="fa fa-chevron-left"></i> cppSTL2-allocator
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/02/20/Shader%E6%95%88%E6%9E%9C/" rel="next" title="unity Shader">
+      unity Shader <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AD%A6%E4%B9%A0"><span class="nav-number">1.</span> <span class="nav-text">学习</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#UnpackNormal"><span class="nav-number">1.1.</span> <span class="nav-text">UnpackNormal</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B8%90%E5%8F%98%E7%BA%B9%E7%90%86"><span class="nav-number">1.2.</span> <span class="nav-text">渐变纹理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%81%AE%E7%BD%A9%E7%BA%B9%E7%90%86"><span class="nav-number">1.3.</span> <span class="nav-text">遮罩纹理</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#float4-tangent"><span class="nav-number">1.4.</span> <span class="nav-text">float4 tangent</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B7%B1%E5%BA%A6%E6%B5%8B%E8%AF%95%E7%9A%84%E5%BC%8A%E7%AB%AF"><span class="nav-number">1.5.</span> <span class="nav-text">深度测试的弊端</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#back-face-culling-amp-zbuffer"><span class="nav-number">1.6.</span> <span class="nav-text">back face culling &amp; zbuffer</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Overdraw"><span class="nav-number">1.7.</span> <span class="nav-text">Overdraw</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RenderQueue%E3%80%81Ztest%E3%80%81Zwrite%E3%80%81AlphaTest%E3%80%81AlphaBlend%E5%92%8CStencil"><span class="nav-number">1.8.</span> <span class="nav-text">RenderQueue、Ztest、Zwrite、AlphaTest、AlphaBlend和Stencil</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%87%E7%BA%BF%E7%A9%BA%E9%97%B4"><span class="nav-number">1.9.</span> <span class="nav-text">切线空间</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Premultiplied-Alpha"><span class="nav-number">1.10.</span> <span class="nav-text">Premultiplied Alpha</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#multi-compile-amp-shader-feature"><span class="nav-number">1.11.</span> <span class="nav-text">multi_compile &amp; shader_feature</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#unity%E4%B8%AD%E7%9A%84%E9%98%B4%E5%BD%B1"><span class="nav-number">1.12.</span> <span class="nav-text">unity中的阴影</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Code"><span class="nav-number">2.</span> <span class="nav-text">Code</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#P192-9-2%E8%8A%82"><span class="nav-number">2.1.</span> <span class="nav-text">P192 9.2节</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%95%88%E6%9E%9C%E5%9B%BE"><span class="nav-number">3.</span> <span class="nav-text">效果图</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#NormalMap-Tangent-space"><span class="nav-number">3.1.</span> <span class="nav-text">NormalMap Tangent space</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RampMap"><span class="nav-number">3.2.</span> <span class="nav-text">RampMap</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Specular-Mask-Texture"><span class="nav-number">3.3.</span> <span class="nav-text">Specular Mask Texture</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Alpha-Test"><span class="nav-number">3.4.</span> <span class="nav-text">Alpha Test</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Alpha-Blend"><span class="nav-number">3.5.</span> <span class="nav-text">Alpha Blend</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#zWrite-off"><span class="nav-number">3.5.1.</span> <span class="nav-text">zWrite off</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#2-pass-zWrite-on"><span class="nav-number">3.5.2.</span> <span class="nav-text">2 pass zWrite on</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#back-face-culling-off"><span class="nav-number">3.5.3.</span> <span class="nav-text">back face culling off</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="lorstyang"
+      src="/images/header.jpg">
+  <p class="site-author-name" itemprop="name">lorstyang</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">17</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="mailto:lorstyang@163.com" title="E-Mail → mailto:lorstyang@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="http://www.myangswhitehat.cn/" title="http:&#x2F;&#x2F;www.myangswhitehat.cn" rel="noopener" target="_blank">My0n9s</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">lorstyang</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>

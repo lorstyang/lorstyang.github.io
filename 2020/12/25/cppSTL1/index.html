@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="看的是侯捷老师的课">
+<meta property="og:type" content="article">
+<meta property="og:title" content="cppSTL1">
+<meta property="og:url" content="http://example.com/2020/12/25/cppSTL1/index.html">
+<meta property="og:site_name" content="lorstyang">
+<meta property="og:description" content="看的是侯捷老师的课">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://i.loli.net/2020/12/26/qRlOue7IUJ5rm9K.png">
+<meta property="article:published_time" content="2020-12-25T05:21:29.000Z">
+<meta property="article:modified_time" content="2021-01-01T05:48:47.729Z">
+<meta property="article:author" content="lorstyang">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.loli.net/2020/12/26/qRlOue7IUJ5rm9K.png">
+
+<link rel="canonical" href="http://example.com/2020/12/25/cppSTL1/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>cppSTL1 | lorstyang</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">lorstyang</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/12/25/cppSTL1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpg">
+      <meta itemprop="name" content="lorstyang">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="lorstyang">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          cppSTL1
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-12-25 13:21:29" itemprop="dateCreated datePublished" datetime="2020-12-25T13:21:29+08:00">2020-12-25</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2021-01-01 13:48:47" itemprop="dateModified" datetime="2021-01-01T13:48:47+08:00">2021-01-01</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/cpp/" itemprop="url" rel="index"><span itemprop="name">cpp</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>看的是侯捷老师的课</p>
+<a id="more"></a>
+<h3 id="STL-Application"><a href="#STL-Application" class="headerlink" title="STL Application"></a>STL Application</h3><ul>
+<li><p>STL六大Components</p>
+<p>容器（Containers）</p>
+<p>分配器（Allocators）</p>
+<p>算法（Algorithms）</p>
+<p>迭代器（Iterators）</p>
+<p>适配器（Adapters）</p>
+<p>仿函数（Functors/Function object）</p>
+<h4 id="array"><a href="#array" class="headerlink" title="array"></a>array</h4><p>数组</p>
+<h4 id="vector"><a href="#vector" class="headerlink" title="vector"></a>vector</h4><ul>
+<li><p>内存分配时，是两倍两倍的分</p>
+<p>pushback进来一个元素时，先分一个单位内存</p>
+<p>push第二个的时候，vector分配两个</p>
+<p>push第三个的时候，该vector占用的变为四个(capacity)，但实际上只有3个元素(size）</p>
+<p>…</p>
+<p>tips：这个内存成长的过程是非常缓慢的，因为你不可能在当前的地方再扩展一倍的内存，而是需要去其他地方再找一个两倍大小的内存区域，然后把数据一个个搬过去</p>
+</li>
+</ul>
+<h4 id="list"><a href="#list" class="headerlink" title="list"></a>list</h4><ul>
+<li><p>list</p>
+<p>双向</p>
+</li>
+<li><p>forward_list </p>
+<p>单向</p>
+<p>与其他容器不同，没有push_back，只有push_front</p>
+</li>
+<li><p>slist</p>
+<p>单向 push_front</p>
+<p>非标准库 GNU带的（C++11里没有）</p>
+</li>
+</ul>
+<font color = 'red'>max_size()? 为什么会有这么个东西</font>
+
+<h4 id="deque"><a href="#deque" class="headerlink" title="deque"></a>deque</h4><ul>
+<li><p>双向</p>
+</li>
+<li><p>分段，由很多buffer组成</p>
+</li>
+<li><p>每一个buffer内部是连续的，但段与段之间的并不连续，我们需要制造段与段之间连续的假象，<font color = 'red'>那么如何实现这个假象？</font></p>
+<p>这个假象就是 假如你顺着去遍历，一个buffer到头了，再加1，要到下一个连着的buffer的第一个单元</p>
+</li>
+<li><p>扩充时，每次扩充一个buffer，两端都可以扩充</p>
+</li>
+</ul>
+<p><img src="https://i.loli.net/2020/12/26/qRlOue7IUJ5rm9K.png" width="50%" height="50%"></p>
+<h4 id="stack-amp-queue"><a href="#stack-amp-queue" class="headerlink" title="stack &amp; queue"></a>stack &amp; queue</h4><ul>
+<li>stack和queue都是基于deque实现的，就放在一起算了</li>
+<li>stack同一端进出，queue一端进另一端出</li>
+<li>技术上stack和queue是adapter，不过作为容器也没什么问题</li>
+</ul>
+<h4 id="各种map和set"><a href="#各种map和set" class="headerlink" title="各种map和set"></a>各种map和set</h4><h5 id="multiset"><a href="#multiset" class="headerlink" title="multiset"></a>multiset</h5><ul>
+<li>关联式容器 associative container</li>
+<li>内部是红黑树，查找很快</li>
+<li>带multi的元素可以重复</li>
+</ul>
+<h5 id="multimap"><a href="#multimap" class="headerlink" title="multimap"></a>multimap</h5><ul>
+<li>红黑树 同multiset</li>
+<li>multimap不能用 [] 做insertion</li>
+</ul>
+<h5 id="unordered-multiset"><a href="#unordered-multiset" class="headerlink" title="unordered_multiset"></a>unordered_multiset</h5><ul>
+<li>内部是hashtable</li>
+<li>现在的unordered_XXX以前在GNU中是hash_XXX</li>
+<li>bucket一定比元素多    <font color = 'red'>原因？</font></li>
+<li>如果元素个数≥bucket个数（从经验而来，大家都那么做），bucket需要扩充，变为大约原来的两倍，然后元素重新打散再挂在不同的bucket上面    <font color = 'red'>怎么打散？</font></li>
+</ul>
+<h5 id="unordered-multimap"><a href="#unordered-multimap" class="headerlink" title="unordered_multimap"></a>unordered_multimap</h5><p>同上</p>
+<h5 id="set-amp-map-amp-unordered-set-amp-unordered-map"><a href="#set-amp-map-amp-unordered-set-amp-unordered-map" class="headerlink" title="set &amp; map &amp; unordered_set &amp; unordered_map"></a>set &amp; map &amp; unordered_set &amp; unordered_map</h5><ul>
+<li>没有multi的不能重复，带了multi的可以重复，这个重复实际上指的是key，set因为key和value是一个东西，不用太在意，但map就需要区分开来了</li>
+<li>带unordered的，内部实现是用的hashtable，不带用的是红黑树</li>
+</ul>
+<h4 id="一些点"><a href="#一些点" class="headerlink" title="一些点"></a>一些点</h4><ul>
+<li>有些时候，标准库会和容器有一样的函数，比如sort，标准库（全局的）有，容器也有，这种时候尽量用容器自带的函数，自带的会快一点，<font color = 'red'>原因要看源代码</font>，估计是和容器特性有关。</li>
+<li>set里面key就是value，value就是key，而map是分开的（这种说法感觉怪怪的，set里面的元素不就单有一个值吗）</li>
+<li>红色部分后续会有讲解</li>
+</ul>
+</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/12/22/bug/" rel="prev" title="令人摸不着头脑">
+      <i class="fa fa-chevron-left"></i> 令人摸不着头脑
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/01/01/cppSTL2/" rel="next" title="cppSTL2-allocator">
+      cppSTL2-allocator <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#STL-Application"><span class="nav-number">1.</span> <span class="nav-text">STL Application</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#array"><span class="nav-number">1.1.</span> <span class="nav-text">array</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#vector"><span class="nav-number">1.2.</span> <span class="nav-text">vector</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#list"><span class="nav-number">1.3.</span> <span class="nav-text">list</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#deque"><span class="nav-number">1.4.</span> <span class="nav-text">deque</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#stack-amp-queue"><span class="nav-number">1.5.</span> <span class="nav-text">stack &amp; queue</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%90%84%E7%A7%8Dmap%E5%92%8Cset"><span class="nav-number">1.6.</span> <span class="nav-text">各种map和set</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#multiset"><span class="nav-number">1.6.1.</span> <span class="nav-text">multiset</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#multimap"><span class="nav-number">1.6.2.</span> <span class="nav-text">multimap</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#unordered-multiset"><span class="nav-number">1.6.3.</span> <span class="nav-text">unordered_multiset</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#unordered-multimap"><span class="nav-number">1.6.4.</span> <span class="nav-text">unordered_multimap</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#set-amp-map-amp-unordered-set-amp-unordered-map"><span class="nav-number">1.6.5.</span> <span class="nav-text">set &amp; map &amp; unordered_set &amp; unordered_map</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E4%B8%80%E4%BA%9B%E7%82%B9"><span class="nav-number">1.7.</span> <span class="nav-text">一些点</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="lorstyang"
+      src="/images/header.jpg">
+  <p class="site-author-name" itemprop="name">lorstyang</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">17</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="mailto:lorstyang@163.com" title="E-Mail → mailto:lorstyang@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="http://www.myangswhitehat.cn/" title="http:&#x2F;&#x2F;www.myangswhitehat.cn" rel="noopener" target="_blank">My0n9s</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">lorstyang</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>

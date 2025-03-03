@@ -22,13 +22,13 @@
 
   <meta property="og:type" content="website">
 <meta property="og:title" content="lorstyang">
-<meta property="og:url" content="http://example.com/index.html">
+<meta property="og:url" content="http://example.com/page/2/index.html">
 <meta property="og:site_name" content="lorstyang">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:author" content="lorstyang">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="http://example.com/">
+<link rel="canonical" href="http://example.com/page/2/">
 
 
 <script id="page-configurations">
@@ -178,7 +178,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/02/20/Shader%E6%95%88%E6%9E%9C/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/11/07/Shading-3/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/header.jpg">
@@ -192,7 +192,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2021/02/20/Shader%E6%95%88%E6%9E%9C/" class="post-title-link" itemprop="url">unity Shader</a>
+            <a href="/2020/11/07/Shading-3/" class="post-title-link" itemprop="url">Applications of textures</a>
         </h2>
 
         <div class="post-meta">
@@ -203,7 +203,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2021-02-20 10:50:55 / 修改时间：11:02:04" itemprop="dateCreated datePublished" datetime="2021-02-20T10:50:55+08:00">2021-02-20</time>
+              <time title="创建时间：2020-11-07 09:12:50 / 修改时间：11:22:50" itemprop="dateCreated datePublished" datetime="2020-11-07T09:12:50+08:00">2020-11-07</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -226,10 +226,10 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>一些shader实现的效果</p>
+          <p>纹理的应用很多，远不止作为反射系数来表现出不同的颜色</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2021/02/20/Shader%E6%95%88%E6%9E%9C/#more" rel="contents">
+              <a class="btn" href="/2020/11/07/Shading-3/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -253,7 +253,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/01/30/UnityShader/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/10/31/Shading-2/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/header.jpg">
@@ -267,7 +267,98 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2021/01/30/UnityShader/" class="post-title-link" itemprop="url">UnityShader</a>
+            <a href="/2020/10/31/Shading-2/" class="post-title-link" itemprop="url">Shading(续)</a>
+        </h2>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-10-31 10:20:32" itemprop="dateCreated datePublished" datetime="2020-10-31T10:20:32+08:00">2020-10-31</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-11-01 00:47:54" itemprop="dateModified" datetime="2020-11-01T00:47:54+08:00">2020-11-01</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/CG/" itemprop="url" rel="index"><span itemprop="name">CG</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+          <h4 id="Shading-frequencies"><a href="#Shading-frequencies" class="headerlink" title="Shading frequencies"></a>Shading frequencies</h4><ul>
+<li>Flat shading<ul>
+<li>每个三角形都有一个法线，每个三角形做一次shading</li>
+<li>对平滑的表面来说效果不好</li>
+</ul>
+</li>
+<li>Gouraud shading<ul>
+<li>每个顶点做一次shading，三角形内部的颜色用插值的方式算出来</li>
+</ul>
+</li>
+</ul>
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2020/10/31/Shading-2/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
+      
+    </div>
+
+    
+    
+    
+      <footer class="post-footer">
+        <div class="post-eof"></div>
+      </footer>
+  </article>
+  
+  
+  
+
+      
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/10/27/Shading/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpg">
+      <meta itemprop="name" content="lorstyang">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="lorstyang">
+    </span>
+      <header class="post-header">
+        <h2 class="post-title" itemprop="name headline">
+          
+            <a href="/2020/10/27/Shading/" class="post-title-link" itemprop="url">Shading(Blinn-Phong Reflectance Model)</a>
         </h2>
 
         <div class="post-meta">
@@ -278,7 +369,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2021-01-30 13:36:30 / 修改时间：13:41:03" itemprop="dateCreated datePublished" datetime="2021-01-30T13:36:30+08:00">2021-01-30</time>
+              <time title="创建时间：2020-10-27 12:07:32 / 修改时间：22:09:27" itemprop="dateCreated datePublished" datetime="2020-10-27T12:07:32+08:00">2020-10-27</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -286,7 +377,7 @@
               </span>
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/Shader/" itemprop="url" rel="index"><span itemprop="name">Shader</span></a>
+                  <a href="/categories/CG/" itemprop="url" rel="index"><span itemprop="name">CG</span></a>
                 </span>
             </span>
 
@@ -301,10 +392,11 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>unity shader入门精要</p>
+          <h4 id="Blinn-Phong-Reflectance-Model-反射模型"><a href="#Blinn-Phong-Reflectance-Model-反射模型" class="headerlink" title="Blinn-Phong Reflectance Model 反射模型"></a>Blinn-Phong Reflectance Model 反射模型</h4><p>是一个经验模型，并不完全准确，但相对简单</p>
+<p>光源照射会分成三个部分，一是Diffuse漫反射，二是Specular镜面反射（高光部分），三是环境光（各个方向乱七八糟经过多次反射打过来的光）</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2021/01/30/UnityShader/#more" rel="contents">
+              <a class="btn" href="/2020/10/27/Shading/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -328,7 +420,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2021/01/01/cppSTL2/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/10/22/Rasterization/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/header.jpg">
@@ -342,7 +434,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2021/01/01/cppSTL2/" class="post-title-link" itemprop="url">cppSTL2-allocator</a>
+            <a href="/2020/10/22/Rasterization/" class="post-title-link" itemprop="url">Rasterization</a>
         </h2>
 
         <div class="post-meta">
@@ -352,14 +444,14 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2021-01-01 13:48:02" itemprop="dateCreated datePublished" datetime="2021-01-01T13:48:02+08:00">2021-01-01</time>
+              <time title="创建时间：2020-10-22 10:31:11" itemprop="dateCreated datePublished" datetime="2020-10-22T10:31:11+08:00">2020-10-22</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-01-06 15:26:09" itemprop="dateModified" datetime="2021-01-06T15:26:09+08:00">2021-01-06</time>
+                <time title="修改时间：2020-10-27 12:42:52" itemprop="dateModified" datetime="2020-10-27T12:42:52+08:00">2020-10-27</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -367,7 +459,7 @@
               </span>
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/cpp/" itemprop="url" rel="index"><span itemprop="name">cpp</span></a>
+                  <a href="/categories/CG/" itemprop="url" rel="index"><span itemprop="name">CG</span></a>
                 </span>
             </span>
 
@@ -382,10 +474,15 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>allocator</p>
+          <ul>
+<li><p>after MVP</p>
+<p>做完MVP后所有的物体到了[-1, 1]<sup>3</sup>的立方体内，然后我们需要把他画到屏幕上去</p>
+</li>
+<li><p>M<sub>viewport</sub></p>
+<p>假设屏幕的宽度是width，高度是height。对于那个标准的立方体，先不管它的z方向，现在要把x，y两个方向拉成屏幕的大小，用到的矩阵就是M<sub>viewport</sub> :</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2021/01/01/cppSTL2/#more" rel="contents">
+              <a class="btn" href="/2020/10/22/Rasterization/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -409,7 +506,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2020/12/25/cppSTL1/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/10/19/Games101-Transformation/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/header.jpg">
@@ -423,7 +520,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2020/12/25/cppSTL1/" class="post-title-link" itemprop="url">cppSTL1</a>
+            <a href="/2020/10/19/Games101-Transformation/" class="post-title-link" itemprop="url">Games101: Transformation</a>
         </h2>
 
         <div class="post-meta">
@@ -433,14 +530,14 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2020-12-25 13:21:29" itemprop="dateCreated datePublished" datetime="2020-12-25T13:21:29+08:00">2020-12-25</time>
+              <time title="创建时间：2020-10-19 18:58:07" itemprop="dateCreated datePublished" datetime="2020-10-19T18:58:07+08:00">2020-10-19</time>
             </span>
               <span class="post-meta-item">
                 <span class="post-meta-item-icon">
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2021-01-01 13:48:47" itemprop="dateModified" datetime="2021-01-01T13:48:47+08:00">2021-01-01</time>
+                <time title="修改时间：2021-01-20 15:06:27" itemprop="dateModified" datetime="2021-01-20T15:06:27+08:00">2021-01-20</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -448,7 +545,7 @@
               </span>
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/cpp/" itemprop="url" rel="index"><span itemprop="name">cpp</span></a>
+                  <a href="/categories/CG/" itemprop="url" rel="index"><span itemprop="name">CG</span></a>
                 </span>
             </span>
 
@@ -463,10 +560,16 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>看的是侯捷老师的课</p>
+          <h3 id="仿射变换"><a href="#仿射变换" class="headerlink" title="仿射变换"></a>仿射变换</h3><ul>
+<li><p>仿射变换 = 线性变换 + 平移</p>
+</li>
+<li><p>线性变换包括 缩放，切变，旋转</p>
+<p>线性变换可以用一个矩阵表示，但是变换中有平移的时候，一个矩阵就表示不了了，为了解决这个问题，就引入了齐次坐标（懒惰是一种美德）</p>
+</li>
+</ul>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2020/12/25/cppSTL1/#more" rel="contents">
+              <a class="btn" href="/2020/10/19/Games101-Transformation/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -490,7 +593,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2020/12/22/bug/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/10/18/%E6%9D%82%E9%B1%BC/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/header.jpg">
@@ -504,7 +607,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2020/12/22/bug/" class="post-title-link" itemprop="url">令人摸不着头脑</a>
+            <a href="/2020/10/18/%E6%9D%82%E9%B1%BC/" class="post-title-link" itemprop="url">杂鱼</a>
         </h2>
 
         <div class="post-meta">
@@ -515,7 +618,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2020-12-22 00:10:17 / 修改时间：00:37:42" itemprop="dateCreated datePublished" datetime="2020-12-22T00:10:17+08:00">2020-12-22</time>
+              <time title="创建时间：2020-10-18 20:57:01 / 修改时间：21:07:18" itemprop="dateCreated datePublished" datetime="2020-10-18T20:57:01+08:00">2020-10-18</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -523,7 +626,7 @@
               </span>
               <span class="post-meta-item-text">分类于</span>
                 <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/SomethingWrong/" itemprop="url" rel="index"><span itemprop="name">SomethingWrong</span></a>
+                  <a href="/categories/%E4%BB%80%E4%B9%88%E7%8E%A9%E6%84%8F%E5%84%BF/" itemprop="url" rel="index"><span itemprop="name">什么玩意儿</span></a>
                 </span>
             </span>
 
@@ -538,15 +641,8 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>不知道是些什么玩意</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/12/22/bug/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
+          <p>鱼塘里没有一只鱼，全是钩子。</p>
+
       
     </div>
 
@@ -565,7 +661,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2020/12/20/RayTracing-3/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/10/18/%E7%AC%AC%E4%B8%80%E7%AF%87/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/header.jpg">
@@ -579,250 +675,7 @@
       <header class="post-header">
         <h2 class="post-title" itemprop="name headline">
           
-            <a href="/2020/12/20/RayTracing-3/" class="post-title-link" itemprop="url">蒙特卡洛路径追踪</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-12-20 18:42:39" itemprop="dateCreated datePublished" datetime="2020-12-20T18:42:39+08:00">2020-12-20</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-12-26 14:35:33" itemprop="dateModified" datetime="2020-12-26T14:35:33+08:00">2020-12-26</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/CG/" itemprop="url" rel="index"><span itemprop="name">CG</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>上一部分乱七八糟的弄了那么多东西，搞出了渲染方程，要把这东西实际用上，就要涉及到蒙特卡洛积分了</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/12/20/RayTracing-3/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2020/12/10/RayTracing-2/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/header.jpg">
-      <meta itemprop="name" content="lorstyang">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="lorstyang">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/12/10/RayTracing-2/" class="post-title-link" itemprop="url">PBR基础</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-12-10 11:31:25" itemprop="dateCreated datePublished" datetime="2020-12-10T11:31:25+08:00">2020-12-10</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-12-20 19:44:22" itemprop="dateModified" datetime="2020-12-20T19:44:22+08:00">2020-12-20</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/CG/" itemprop="url" rel="index"><span itemprop="name">CG</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>PBR（physically based rendering）基于物理的渲染</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/12/10/RayTracing-2/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2020/11/26/RayTracing/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/header.jpg">
-      <meta itemprop="name" content="lorstyang">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="lorstyang">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/11/26/RayTracing/" class="post-title-link" itemprop="url">Ray Tracing</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-
-              <time title="创建时间：2020-11-26 12:15:29" itemprop="dateCreated datePublished" datetime="2020-11-26T12:15:29+08:00">2020-11-26</time>
-            </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2020-12-01 11:36:30" itemprop="dateModified" datetime="2020-12-01T11:36:30+08:00">2020-12-01</time>
-              </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/CG/" itemprop="url" rel="index"><span itemprop="name">CG</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <p>光栅化不好处理全局的效果，比如有些地方光源无法直接打到，但是经过多次反射，光线会打到有些地方形成一块比较亮的地方，也许有些奇技淫巧可以处理这种东西，但是总归不是那么好。所以为了全局光照的效果，就有了光线追踪。</p>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/11/26/RayTracing/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2020/11/20/Geometry-2/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/header.jpg">
-      <meta itemprop="name" content="lorstyang">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="lorstyang">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/11/20/Geometry-2/" class="post-title-link" itemprop="url">曲面细分与曲面简化</a>
+            <a href="/2020/10/18/%E7%AC%AC%E4%B8%80%E7%AF%87/" class="post-title-link" itemprop="url">Q</a>
         </h2>
 
         <div class="post-meta">
@@ -833,7 +686,7 @@
               <span class="post-meta-item-text">发表于</span>
               
 
-              <time title="创建时间：2020-11-20 09:07:04 / 修改时间：11:44:14" itemprop="dateCreated datePublished" datetime="2020-11-20T09:07:04+08:00">2020-11-20</time>
+              <time title="创建时间：2020-10-18 15:59:19 / 修改时间：21:05:36" itemprop="dateCreated datePublished" datetime="2020-10-18T15:59:19+08:00">2020-10-18</time>
             </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -856,85 +709,13 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          <p>最忙的一段时间总算过去了，但是总有种预感后面的工作并不会变少，不过能接受的是肯定没之前那么有压迫感了。</p>
+          <h1 id="Q"><a href="#Q" class="headerlink" title="Q"></a>Q</h1><p>1.COM对象（接口）为什么不能new？</p>
+<p>2.超级采样(supersampling)和多重采样(multisampling)</p>
+<p>​    超级采样时将四个子像素的颜色都计算了一遍，然后取得平均值，得到该像素的颜色；</p>
+<p>​    而多重采样只计算了该像素的颜色，通过其他方法算出了平均值，从而得到了该像素的最终颜色。【这里的其他方法简单的来说是基于子像素的可见性（基于子像素的深度/模板测试）和范围（子像素的中心在三角形之内还是之外）】</p>
           <!--noindex-->
             <div class="post-button">
-              <a class="btn" href="/2020/11/20/Geometry-2/#more" rel="contents">
-                阅读全文 &raquo;
-              </a>
-            </div>
-          <!--/noindex-->
-        
-      
-    </div>
-
-    
-    
-    
-      <footer class="post-footer">
-        <div class="post-eof"></div>
-      </footer>
-  </article>
-  
-  
-  
-
-      
-  
-  
-  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2020/11/08/Geometry/">
-
-    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
-      <meta itemprop="image" content="/images/header.jpg">
-      <meta itemprop="name" content="lorstyang">
-      <meta itemprop="description" content="">
-    </span>
-
-    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
-      <meta itemprop="name" content="lorstyang">
-    </span>
-      <header class="post-header">
-        <h2 class="post-title" itemprop="name headline">
-          
-            <a href="/2020/11/08/Geometry/" class="post-title-link" itemprop="url">Geometry</a>
-        </h2>
-
-        <div class="post-meta">
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-calendar"></i>
-              </span>
-              <span class="post-meta-item-text">发表于</span>
-              
-
-              <time title="创建时间：2020-11-08 15:36:09 / 修改时间：19:56:20" itemprop="dateCreated datePublished" datetime="2020-11-08T15:36:09+08:00">2020-11-08</time>
-            </span>
-            <span class="post-meta-item">
-              <span class="post-meta-item-icon">
-                <i class="far fa-folder"></i>
-              </span>
-              <span class="post-meta-item-text">分类于</span>
-                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
-                  <a href="/categories/CG/" itemprop="url" rel="index"><span itemprop="name">CG</span></a>
-                </span>
-            </span>
-
-          
-
-        </div>
-      </header>
-
-    
-    
-    
-    <div class="post-body" itemprop="articleBody">
-
-      
-          <h4 id="几何的表示方法"><a href="#几何的表示方法" class="headerlink" title="几何的表示方法"></a>几何的表示方法</h4>
-          <!--noindex-->
-            <div class="post-button">
-              <a class="btn" href="/2020/11/08/Geometry/#more" rel="contents">
+              <a class="btn" href="/2020/10/18/%E7%AC%AC%E4%B8%80%E7%AF%87/#more" rel="contents">
                 阅读全文 &raquo;
               </a>
             </div>
@@ -957,7 +738,7 @@
 
   
   <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/page/2/">2</a><a class="extend next" rel="next" href="/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
+    <a class="extend prev" rel="prev" href="/"><i class="fa fa-angle-left" aria-label="上一页"></i></a><a class="page-number" href="/">1</a><span class="page-number current">2</span>
   </nav>
 
 

@@ -20,15 +20,21 @@
     var CONFIG = {"hostname":"example.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta property="og:type" content="website">
-<meta property="og:title" content="lorstyang">
-<meta property="og:url" content="http://example.com/archives/index.html">
+  <meta name="description" content="Blinn-Phong Reflectance Model 反射模型是一个经验模型，并不完全准确，但相对简单 光源照射会分成三个部分，一是Diffuse漫反射，二是Specular镜面反射（高光部分），三是环境光（各个方向乱七八糟经过多次反射打过来的光）">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Shading(Blinn-Phong Reflectance Model)">
+<meta property="og:url" content="http://example.com/2020/10/27/Shading/index.html">
 <meta property="og:site_name" content="lorstyang">
+<meta property="og:description" content="Blinn-Phong Reflectance Model 反射模型是一个经验模型，并不完全准确，但相对简单 光源照射会分成三个部分，一是Diffuse漫反射，二是Specular镜面反射（高光部分），三是环境光（各个方向乱七八糟经过多次反射打过来的光）">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://i.loli.net/2020/10/27/QRLx16ZdOpVr4Go.png">
+<meta property="article:published_time" content="2020-10-27T04:07:32.000Z">
+<meta property="article:modified_time" content="2020-10-27T14:09:27.347Z">
 <meta property="article:author" content="lorstyang">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.loli.net/2020/10/27/QRLx16ZdOpVr4Go.png">
 
-<link rel="canonical" href="http://example.com/archives/">
+<link rel="canonical" href="http://example.com/2020/10/27/Shading/">
 
 
 <script id="page-configurations">
@@ -36,12 +42,12 @@
   CONFIG.page = {
     sidebar: "",
     isHome : false,
-    isPost : false,
+    isPost : true,
     lang   : 'zh-CN'
   };
 </script>
 
-  <title>归档 | lorstyang</title>
+  <title>Shading(Blinn-Phong Reflectance Model) | lorstyang</title>
   
 
 
@@ -172,237 +178,125 @@
         <div class="content-wrap">
           
 
-          <div class="content archive">
+          <div class="content post posts-expand">
             
 
+    
   
   
-  
-  <div class="post-block">
-    <div class="posts-collapse">
-      <div class="collection-title">
-        <span class="collection-header">嗯..! 目前共计 17 篇日志。 继续努力。</span>
-      </div>
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/10/27/Shading/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpg">
+      <meta itemprop="name" content="lorstyang">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="lorstyang">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Shading(Blinn-Phong Reflectance Model)
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-10-27 12:07:32 / 修改时间：22:09:27" itemprop="dateCreated datePublished" datetime="2020-10-27T12:07:32+08:00">2020-10-27</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/CG/" itemprop="url" rel="index"><span itemprop="name">CG</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
 
       
-    <div class="collection-year">
-      <span class="collection-header">2021</span>
+        <h4 id="Blinn-Phong-Reflectance-Model-反射模型"><a href="#Blinn-Phong-Reflectance-Model-反射模型" class="headerlink" title="Blinn-Phong Reflectance Model 反射模型"></a>Blinn-Phong Reflectance Model 反射模型</h4><p>是一个经验模型，并不完全准确，但相对简单</p>
+<p>光源照射会分成三个部分，一是Diffuse漫反射，二是Specular镜面反射（高光部分），三是环境光（各个方向乱七八糟经过多次反射打过来的光）</p>
+<a id="more"></a>
+<ul>
+<li><p>Diffuse 漫反射</p>
+<p>因为是漫反射，各个方向看到的光线能量强度都相同，所以与视角（view）方向无关，表示漫反射的公式里就只有光源方向 <strong>l</strong> 和 法线方向<strong>n</strong></p>
+<script type="math/tex; mode=display">
+L_{d} = k_{d}( I/r^{2})\max(0, \mathbf{n} \cdot \mathbf{l})</script><ul>
+<li>k<sub>d</sub>是漫反射系数，因为不同的材质对光线的吸收情况不同</li>
+<li><strong>n</strong> 和 <strong>l</strong> 点乘得出cos的结果以求得光线直着打到shading point上的能量强度</li>
+<li>max(0, <strong>n</strong> · <strong>l</strong>) 就是取0和 <strong>n</strong> · <strong>l</strong> 之间的最大值，光线从背着shading point的方向射过来的时候 <strong>n</strong> · <strong>l</strong> 会是个负值，而这种情况是将其视作没有意义的，因为我们只在考虑反射，没考虑折射之类的，所以 <strong>n</strong> · <strong>l</strong> 为负值时直接取0就好了。</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><p>Specular 镜面反射</p>
+<ul>
+<li>高光是只有你的视角方向对着镜面反射光的方向了才能看到的，所以反射光与视角的夹角会影响你看到的高光</li>
+<li>计算反射光与视角的夹角余弦相对来说比较麻烦，有聪明人发现了视角靠近反射光时，半程向量会靠近法线向量</li>
+<li>p用来控制高光大小，角度在增大时，余弦值其实下降的比较慢，就会造成视角与反射光相差很大时都可以看到很明显的高光，但高光一般就集中在一小片区域，视角偏差大一点就看不到了，所以加一个指数来加快它的下降速度，p一般取100~200</li>
+</ul>
+</li>
+</ul>
+<p>  <img src="https://i.loli.net/2020/10/27/QRLx16ZdOpVr4Go.png" alt="Specular.png"></p>
+<ul>
+<li><p>Ambient</p>
+<ul>
+<li>fake</li>
+<li>提升亮度</li>
+<li>精确计算需要用到全局光照</li>
+</ul>
+<script type="math/tex; mode=display">
+L_{a}=k_{a} I_{a}</script></li>
+</ul>
+<p>要得到最后的光照效果，把上面三种加起来就可以了</p>
+<script type="math/tex; mode=display">
+\begin{aligned} L &=L_{a}+L_{d}+L_{s} \\ &=k_{a} I_{a}+k_{d}\left(I / r^{2}\right) \max (0, \mathbf{n} \cdot \mathbf{l})+k_{s}\left(I / r^{2}\right) \max (0, \mathbf{n} \cdot \mathbf{h})^{p} \end{aligned}</script>
     </div>
 
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
+    
+    
+    
 
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2021-02-20T10:50:55+08:00"
-              content="2021-02-20">
-          02-20
-        </time>
-      </div>
+      <footer class="post-footer">
 
-      <div class="post-title">
-          <a class="post-title-link" href="/2021/02/20/Shader%E6%95%88%E6%9E%9C/" itemprop="url">
-            <span itemprop="name">unity Shader</span>
-          </a>
-      </div>
+        
 
-    </header>
-  </article>
 
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2021-01-30T13:36:30+08:00"
-              content="2021-01-30">
-          01-30
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2021/01/30/UnityShader/" itemprop="url">
-            <span itemprop="name">UnityShader</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2021-01-01T13:48:02+08:00"
-              content="2021-01-01">
-          01-01
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2021/01/01/cppSTL2/" itemprop="url">
-            <span itemprop="name">cppSTL2-allocator</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-    <div class="collection-year">
-      <span class="collection-header">2020</span>
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/10/22/Rasterization/" rel="prev" title="Rasterization">
+      <i class="fa fa-chevron-left"></i> Rasterization
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/10/31/Shading-2/" rel="next" title="Shading(续)">
+      Shading(续) <i class="fa fa-chevron-right"></i>
+    </a></div>
     </div>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2020-12-25T13:21:29+08:00"
-              content="2020-12-25">
-          12-25
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2020/12/25/cppSTL1/" itemprop="url">
-            <span itemprop="name">cppSTL1</span>
-          </a>
-      </div>
-
-    </header>
+      </footer>
+    
   </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2020-12-22T00:10:17+08:00"
-              content="2020-12-22">
-          12-22
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2020/12/22/bug/" itemprop="url">
-            <span itemprop="name">令人摸不着头脑</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2020-12-20T18:42:39+08:00"
-              content="2020-12-20">
-          12-20
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2020/12/20/RayTracing-3/" itemprop="url">
-            <span itemprop="name">蒙特卡洛路径追踪</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2020-12-10T11:31:25+08:00"
-              content="2020-12-10">
-          12-10
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2020/12/10/RayTracing-2/" itemprop="url">
-            <span itemprop="name">PBR基础</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2020-11-26T12:15:29+08:00"
-              content="2020-11-26">
-          11-26
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2020/11/26/RayTracing/" itemprop="url">
-            <span itemprop="name">Ray Tracing</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2020-11-20T09:07:04+08:00"
-              content="2020-11-20">
-          11-20
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2020/11/20/Geometry-2/" itemprop="url">
-            <span itemprop="name">曲面细分与曲面简化</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-
-  <article itemscope itemtype="http://schema.org/Article">
-    <header class="post-header">
-
-      <div class="post-meta">
-        <time itemprop="dateCreated"
-              datetime="2020-11-08T15:36:09+08:00"
-              content="2020-11-08">
-          11-08
-        </time>
-      </div>
-
-      <div class="post-title">
-          <a class="post-title-link" href="/2020/11/08/Geometry/" itemprop="url">
-            <span itemprop="name">Geometry</span>
-          </a>
-      </div>
-
-    </header>
-  </article>
-
-
-    </div>
-  </div>
   
   
   
-
-  
-  <nav class="pagination">
-    <span class="page-number current">1</span><a class="page-number" href="/archives/page/2/">2</a><a class="extend next" rel="next" href="/archives/page/2/"><i class="fa fa-angle-right" aria-label="下一页"></i></a>
-  </nav>
 
 
 
@@ -454,6 +348,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#Blinn-Phong-Reflectance-Model-%E5%8F%8D%E5%B0%84%E6%A8%A1%E5%9E%8B"><span class="nav-number">1.</span> <span class="nav-text">Blinn-Phong Reflectance Model 反射模型</span></a></li></ol></div>
       </div>
       <!--/noindex-->
 
@@ -581,6 +476,59 @@
   
 
   
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
 
   
 

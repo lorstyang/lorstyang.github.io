@@ -1,0 +1,598 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="after MVP 做完MVP后所有的物体到了[-1, 1]3的立方体内，然后我们需要把他画到屏幕上去  Mviewport 假设屏幕的宽度是width，高度是height。对于那个标准的立方体，先不管它的z方向，现在要把x，y两个方向拉成屏幕的大小，用到的矩阵就是Mviewport :">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Rasterization">
+<meta property="og:url" content="http://example.com/2020/10/22/Rasterization/index.html">
+<meta property="og:site_name" content="lorstyang">
+<meta property="og:description" content="after MVP 做完MVP后所有的物体到了[-1, 1]3的立方体内，然后我们需要把他画到屏幕上去  Mviewport 假设屏幕的宽度是width，高度是height。对于那个标准的立方体，先不管它的z方向，现在要把x，y两个方向拉成屏幕的大小，用到的矩阵就是Mviewport :">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://i.loli.net/2020/10/23/igEotWaOAs7N6mU.png">
+<meta property="og:image" content="https://i.loli.net/2020/10/23/ZU5cx2KziT9RJ6y.png">
+<meta property="og:image" content="https://i.loli.net/2020/10/23/rZFkG71DXQcjyTW.png">
+<meta property="og:image" content="https://i.loli.net/2020/10/23/pIw8osTPKiZOhdj.png">
+<meta property="article:published_time" content="2020-10-22T02:31:11.000Z">
+<meta property="article:modified_time" content="2020-10-27T04:42:52.927Z">
+<meta property="article:author" content="lorstyang">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.loli.net/2020/10/23/igEotWaOAs7N6mU.png">
+
+<link rel="canonical" href="http://example.com/2020/10/22/Rasterization/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Rasterization | lorstyang</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">lorstyang</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/10/22/Rasterization/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpg">
+      <meta itemprop="name" content="lorstyang">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="lorstyang">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Rasterization
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-10-22 10:31:11" itemprop="dateCreated datePublished" datetime="2020-10-22T10:31:11+08:00">2020-10-22</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-10-27 12:42:52" itemprop="dateModified" datetime="2020-10-27T12:42:52+08:00">2020-10-27</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/CG/" itemprop="url" rel="index"><span itemprop="name">CG</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <ul>
+<li><p>after MVP</p>
+<p>做完MVP后所有的物体到了[-1, 1]<sup>3</sup>的立方体内，然后我们需要把他画到屏幕上去</p>
+</li>
+<li><p>M<sub>viewport</sub></p>
+<p>假设屏幕的宽度是width，高度是height。对于那个标准的立方体，先不管它的z方向，现在要把x，y两个方向拉成屏幕的大小，用到的矩阵就是M<sub>viewport</sub> :</p>
+<a id="more"></a>
+<script type="math/tex; mode=display">
+M_{viewport} = \left[ \begin{matrix} width/2 & 0 & 0 & width/2 \\ 0 & height/2 & 0 & height/2 \\ 0 & 0 & 1 & 0 \\ 0 & 0 & 0 & 1 \end{matrix} \right]</script><p>这里默认屏幕坐标系的起点是左下角，所以最右边一列有width/2和height/2，将立方体向右上方平移，使它的左下角与屏幕原点重合。</p>
+</li>
+</ul>
+<h4 id="sampling"><a href="#sampling" class="headerlink" title="sampling"></a>sampling</h4><ul>
+<li><p>屏幕是一系列离散的像素</p>
+</li>
+<li><p>计算机生成的图像最基本的单位是三角形</p>
+<ul>
+<li>最基本的多边形</li>
+<li>内外定义清晰</li>
+<li>平面</li>
+<li>方便插值</li>
+</ul>
+</li>
+<li><p>这里的采样就是判断像素是否在三角形中</p>
+</li>
+<li><p>如何判断一个像素是否在三角形内？</p>
+<p>可以用三次叉积来判断。假设有像素Q（用像素中心的点来代表像素），三角形p<sub>0</sub>p<sub>1</sub>p<sub>2</sub></p>
+<p>首先算出<strong>p<sub>0</sub>p<sub>1</sub></strong> × <strong>p<sub>1</sub>p<sub>Q</sub></strong>，可以根据得到的向量的正负判断Q点在<strong>p<sub>0</sub>p<sub>1</sub></strong>的左边还是右边，同理算出<strong>p<sub>1</sub>p<sub>2</sub></strong> × <strong>p<sub>1</sub>p<sub>Q</sub></strong>，<strong>p<sub>2</sub>p<sub>0</sub></strong> × <strong>p<sub>2</sub>p<sub>Q</sub></strong>，如何得到的三个向量同正或同负，则代表像素在三角形内。画图可以很清晰的看到，一个点在三角形内部时，将三角形的三条边看成顺序的三个向量，这个点一定是在这三个向量的同一侧的。</p>
+</li>
+<li><p>点在边界上怎么算</p>
+<p>自己规定。不过一些API（opengl，directx）都已经规定好了。</p>
+</li>
+<li><p>Bounding Box</p>
+<p>遍历像素判断它是否在三角形中时，肯定不会把所有的像素全部遍历一遍，一种做法就是找到一个最小的能把一个三角形包围起来的包围盒（矩形），然后在这个矩形内部遍历就可以了。这个矩形也好找，取三个顶点坐标的最大最小值就可以了。</p>
+<ul>
+<li>缺点：三角形比较奇怪的时候会做很多无用功，比如一个很细长的呈45°的三角形</li>
+<li>还有很多其他的加速方法</li>
+</ul>
+</li>
+</ul>
+<h4 id="Antialiasing"><a href="#Antialiasing" class="headerlink" title="Antialiasing"></a>Antialiasing</h4><ul>
+<li><p>把像素看成一个个方块，最后的图形就会有锯齿，称之为走样，所以需要反走样</p>
+</li>
+<li><p>走样原因：采样速度跟不上信号变化速度</p>
+</li>
+<li><p>解决办法：采样之前，做一个模糊/滤波（Filtering）</p>
+</li>
+<li><p>为什么先采样再模糊不行？/为什么…?</p>
+<p>这一部分可以看一下傅里叶变换相关的知识，看懂了之后再来看这部分会有种垂死病中惊坐起的感觉（不知道这么形容对不对，但感觉蛮贴切的）”如果看了这篇文章你还不懂傅里叶变换，那就过来掐死我吧 - Heinrich的文章 - 知乎 <a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/19759362">https://zhuanlan.zhihu.com/p/19759362</a>“</p>
+</li>
+</ul>
+<p><img src="https://i.loli.net/2020/10/23/igEotWaOAs7N6mU.png" alt="C8CBB3IA0HBE6BL65VH8P_S.png"></p>
+<p>有这幅图可以看出，频率很高采样速度跟不上的时候会与原来的曲线差很远，所以会产生走样。为了贴近原曲线，现在有两个选项，一个是提高采样速度，另一个就是把高频的部分去掉。如果要提高采样速度的话，就要在硬件上想办法（提高像素数量，屏幕分辨率），但这就不是我们考虑的方向了。从后续的那个帅小伙指着我们的图片可以知道，在他的频域图上，高频的部分代表图像内的边界部分，把高频部分去掉后，也就是加一个低通滤波，图像自然就变模糊了，那个帅小伙也确实证明了这点。到这里，其实已经和前面连起来了，先将照片模糊，然后再采样，就可以达到反走样的目的。</p>
+<p>还剩一个问题就是前面提到的为什么先采样，再模糊不行？</p>
+<p><img src="https://i.loli.net/2020/10/23/ZU5cx2KziT9RJ6y.png" alt="LDOX__Y_D_7638_9_B8JEGO.png"></p>
+<p><img src="https://i.loli.net/2020/10/23/rZFkG71DXQcjyTW.png" alt="DU__G_5_FSV96W_RC_X6E16.png"></p>
+<p>从这里看会比较清楚，前面说采样就是在重复原始信号的频谱，采样不够密集时，会发生混叠，也就是Sparse sampling这种情况，也就引发了走样。可以想象，先采样，再做模糊（把那个梯形形的边角去掉），波形重叠的情况下截断也会发生混叠。</p>
+<p>关于卷积这一部分听得不是特别明白，还需加深理解。</p>
+<ul>
+<li><p>Antialiasing By Supersampling (MSAA) （具体怎么做）</p>
+<ul>
+<li>supersampling 将一个像素分成多个小的像素，根据在三角形内的小像素的数量来判断该像素的颜色程度（多次取样。</li>
+</ul>
+</li>
+<li><p>no free lunch！</p>
+<ul>
+<li>MSAA每个像素多次采样浪费性能</li>
+<li>优化：不使用均匀分布，采样复用</li>
+</ul>
+</li>
+<li>其他的老师推荐的抗锯齿方法<ul>
+<li>FXAA(Fast Approximate AA)：先得到有锯齿的图，然后再做后续处理</li>
+<li>TAA (Tem‘poral AA)：借助前面的帧</li>
+</ul>
+</li>
+<li>Super resolution / super sampling<ul>
+<li>From low resolution to high resolution</li>
+<li>Essentially still “not enough samples” problem</li>
+<li>DLSS (Deep Learning Super Sampling) 靠深度学习去猜</li>
+</ul>
+</li>
+</ul>
+<h4 id="Z-Buffering"><a href="#Z-Buffering" class="headerlink" title="Z-Buffering"></a>Z-Buffering</h4><ul>
+<li>画家算法<ul>
+<li>三个三角形互相重叠会没法排序</li>
+<li>无法处理透明物体</li>
+</ul>
+</li>
+</ul>
+<p><img src="https://i.loli.net/2020/10/23/pIw8osTPKiZOhdj.png" alt="Untitled.png"></p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/10/19/Games101-Transformation/" rel="prev" title="Games101: Transformation">
+      <i class="fa fa-chevron-left"></i> Games101: Transformation
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/10/27/Shading/" rel="next" title="Shading(Blinn-Phong Reflectance Model)">
+      Shading(Blinn-Phong Reflectance Model) <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#sampling"><span class="nav-number">1.</span> <span class="nav-text">sampling</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Antialiasing"><span class="nav-number">2.</span> <span class="nav-text">Antialiasing</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#Z-Buffering"><span class="nav-number">3.</span> <span class="nav-text">Z-Buffering</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="lorstyang"
+      src="/images/header.jpg">
+  <p class="site-author-name" itemprop="name">lorstyang</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">17</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="mailto:lorstyang@163.com" title="E-Mail → mailto:lorstyang@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="http://www.myangswhitehat.cn/" title="http:&#x2F;&#x2F;www.myangswhitehat.cn" rel="noopener" target="_blank">My0n9s</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">lorstyang</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+</body>
+</html>

@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="Q1.COM对象（接口）为什么不能new？ 2.超级采样(supersampling)和多重采样(multisampling) ​    超级采样时将四个子像素的颜色都计算了一遍，然后取得平均值，得到该像素的颜色； ​    而多重采样只计算了该像素的颜色，通过其他方法算出了平均值，从而得到了该像素的最终颜色。【这里的其他方法简单的来说是基于子像素的可见性（基于子像素的深度&#x2F;模板测试）和范围（子像">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Q">
+<meta property="og:url" content="http://example.com/2020/10/18/%E7%AC%AC%E4%B8%80%E7%AF%87/index.html">
+<meta property="og:site_name" content="lorstyang">
+<meta property="og:description" content="Q1.COM对象（接口）为什么不能new？ 2.超级采样(supersampling)和多重采样(multisampling) ​    超级采样时将四个子像素的颜色都计算了一遍，然后取得平均值，得到该像素的颜色； ​    而多重采样只计算了该像素的颜色，通过其他方法算出了平均值，从而得到了该像素的最终颜色。【这里的其他方法简单的来说是基于子像素的可见性（基于子像素的深度&#x2F;模板测试）和范围（子像">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2020-10-18T07:59:19.000Z">
+<meta property="article:modified_time" content="2020-10-18T13:05:36.822Z">
+<meta property="article:author" content="lorstyang">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2020/10/18/%E7%AC%AC%E4%B8%80%E7%AF%87/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Q | lorstyang</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">lorstyang</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/10/18/%E7%AC%AC%E4%B8%80%E7%AF%87/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpg">
+      <meta itemprop="name" content="lorstyang">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="lorstyang">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Q
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-10-18 15:59:19 / 修改时间：21:05:36" itemprop="dateCreated datePublished" datetime="2020-10-18T15:59:19+08:00">2020-10-18</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/CG/" itemprop="url" rel="index"><span itemprop="name">CG</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h1 id="Q"><a href="#Q" class="headerlink" title="Q"></a>Q</h1><p>1.COM对象（接口）为什么不能new？</p>
+<p>2.超级采样(supersampling)和多重采样(multisampling)</p>
+<p>​    超级采样时将四个子像素的颜色都计算了一遍，然后取得平均值，得到该像素的颜色；</p>
+<p>​    而多重采样只计算了该像素的颜色，通过其他方法算出了平均值，从而得到了该像素的最终颜色。【这里的其他方法简单的来说是基于子像素的可见性（基于子像素的深度/模板测试）和范围（子像素的中心在三角形之内还是之外）】</p>
+<a id="more"></a>
+<p>3.<strong>由于<code>XMFLOAT3</code>等这些用于存储的类型是不能直接用到指令集加速的。要想进行向量的运算，就需要从用于存储的变量，通过读取函数，将数据读入到<code>XMVECTOR</code></strong></p>
+<p>4.对x86平台，XMVECTOR的定义如下：    // XMMATRIX则是一组(4个) XMVECTOR<br><code>typedef __m128 XMVECTOR;</code></p>
+<p>由于__m128在内存中需要严格的16 byte对齐，因此并不建议直接在程序中使用这两种类型保存数据，</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">Class Camera</span><br><span class="line">&#123;</span><br><span class="line">      XMVECTOR position;</span><br><span class="line">      XMMATRIX viewMatrix;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面的代码基本上不会成功运行，32位下new并不保证16byte对齐，而且由于类成员布局的关系，其中的XMVECTOR也不一定是16byte对齐，访问以上数据，程序可能直接崩溃。因此，DXM定义了大量用来储存数据的类型，比如XMFLOAT4,XMFLOAT3,XMFLOAT4X4等。</p>
+<p>既然__m128需要16byte对齐，那为什么在分配内存的时候，不能直接确定好分配给XMVECTOR 16byte的内存？</p>
+<p>5.图片的放大和缩小</p>
+<p>放大很好搞，按比例用一样的颜色填充就行了，也就是做个插值，但也会导致太大了会变得马赛克</p>
+<p>缩小要丢弃一些像素，一般用的是mipmap，然后找到最接近目的大小的mipmap等级，再进行插值。（按道理是最接近但小于的目标大小的等级，因为后续插值相当于放大）</p>
+<p>.* : 操作放大缩小的叫过滤器</p>
+<p>6.纹理坐标以及采样</p>
+<p>纹理（贴图）坐标，即UV坐标</p>
+<p>纹理在计算机中就是一堆数据，那纹理坐标又是个什么玩意？    因为我们在给物体做纹理时，相当于把一张图片贴在了物体上，这张图由很多纹理像素（texel）构成，那纹理其实就是一个二维数组，纹理坐标（u，v）用来确定纹理像素的位置。【纹理像素（texel）也称纹素与像素相似但并不完全等价】</p>
+<p>玩家们所谓的贴图是什么？ - Focux的回答 - 知乎 <a target="_blank" rel="noopener" href="https://www.zhihu.com/question/319059045/answer/1286403304">https://www.zhihu.com/question/319059045/answer/1286403304</a>  说的很详细</p>
+<p>相关资料<a target="_blank" rel="noopener" href="https://blog.csdn.net/u014800094/article/details/55224541">https://blog.csdn.net/u014800094/article/details/55224541</a></p>
+<p>7.交换链<br><a target="_blank" rel="noopener" href="https://blog.csdn.net/sinat_24229853/article/details/46884833">https://blog.csdn.net/sinat_24229853/article/details/46884833</a></p>
+<p><a target="_blank" rel="noopener" href="https://gavinkg.github.io/ILearnVulkanFromScratch-CN/mdroot/%E6%A6%82%E5%BF%B5%E6%B1%87%E6%80%BB/%E4%BA%A4%E6%8D%A2%E9%93%BE.html">https://gavinkg.github.io/ILearnVulkanFromScratch-CN/mdroot/%E6%A6%82%E5%BF%B5%E6%B1%87%E6%80%BB/%E4%BA%A4%E6%8D%A2%E9%93%BE.html</a><br>双重缓冲其实也存在问题，上面链接就说了，渲染速度较vblank快的话，会有可感知的延迟造成，其实在我的理解里，准确来说应该是vblank太慢了（刷新过慢）导致的延迟，<br>因为所谓延迟就是一帧画面渲染好了之后，它过了一段时间才被显示出来，仔细想想其实问题是出在刷新太慢了上面，如果刷新频率符合人眼的习惯，即使他渲染速度再快，<br>只要我在人眼习惯的频率上把它显示出来，也不会出现延迟，最多会有部分资源被浪费掉（渲染好了不刷新导致设备闲置不能进行下一帧的渲染）。</p>
+<p>那同理可以很容易推出渲染速度较慢的话，就会造成卡顿，前台缓冲区显示后，后台没渲染完，导致下一帧画面显示的还是原前台缓冲区的东西，呈现出来的结果就是卡顿。</p>
+<p>8.视图（view）就是描述符（descriptor），它告诉我们资源如何使用，相当于一个中间层</p>
+<p>9.任何 Direct3D 程序的最后一件事情是清理并且释放你所创建的对象，你必须释放这些对象将资源归还系统进行再利用<br>COM对象持有一个引用计数，告诉系统什么时候将它从内存中删除是安全的。通过使用 Release函数，将会减少对象的引用数，当引用计数为 0 时，系统将对象删除以便回收再利用。<br>在对象调用 Release 函数之前总是检查确保对象非 NULL，可以减少由于无效指针导致你的游戏由于未 定义行为所产生的崩溃</p>
+<p>引用技术的初始值是多少？是调用一次release就变为0了吗？</p>
+<p>10.ClearRenderTargetView说是清除屏幕，实际上是用一种颜色覆盖掉整个屏幕<br>其实有点讨厌这样的概念，总感觉很冗杂，函数名是清除渲染目标视图，参数传进去缓冲区（即渲染目标，一般是后台缓冲区，因为后台用来渲染，前台用来显示），虽然view实际上就是类似于target的引用或者说是它的一个中间层，这样是可以理解它具体指的啥，但看起来总有点别扭</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">float</span> clearColor[<span class="number">4</span>] = &#123; <span class="number">0.0f</span>, <span class="number">0.0f</span>, <span class="number">0.25f</span>, <span class="number">1.0f</span> &#125;; </span><br><span class="line">d3dContext_-&gt;ClearRenderTargetView( backBufferTarget_, clearColor ); </span><br><span class="line"></span><br><span class="line">swapChain_-&gt;Present( <span class="number">0</span>, <span class="number">0</span> );</span><br></pre></td></tr></table></figure>
+<p>11.DESC就是（description）描述符的缩写，名字里带这个的都是描述符，也就是视图。</p>
+<h1 id="XJUN"><a href="#XJUN" class="headerlink" title="XJUN"></a>XJUN</h1><h2 id="02-rendering-a-triangle"><a href="#02-rendering-a-triangle" class="headerlink" title="02 rendering a triangle"></a>02 rendering a triangle</h2><p>设置三角形顶点时，顶点的顺序需要按顺时针顺序给（可自行查找why），但图元类型为trianglestrip时，第二个三角形的点的顺序可以为逆时针，这是为什么？</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//draw rect with 4 vertexes</span></span><br><span class="line">		&#123; XMFLOAT3(<span class="number">-0.5f</span>, <span class="number">-0.5f</span>, <span class="number">0.0f</span>), XMFLOAT4(<span class="number">0.0f</span>, <span class="number">1.0f</span>, <span class="number">0.0f</span>, <span class="number">1.0f</span>) &#125;,</span><br><span class="line">		&#123; XMFLOAT3(<span class="number">-0.5f</span>, <span class="number">0.5f</span>, <span class="number">0.0f</span>), XMFLOAT4(<span class="number">0.0f</span>, <span class="number">0.0f</span>, <span class="number">1.0f</span>, <span class="number">1.0f</span>) &#125;,</span><br><span class="line">		&#123; XMFLOAT3(<span class="number">0.5f</span>, <span class="number">-0.5f</span>, <span class="number">0.0f</span>), XMFLOAT4(<span class="number">1.0f</span>, <span class="number">0.0f</span>, <span class="number">0.0f</span>, <span class="number">1.0f</span>) &#125;,</span><br><span class="line">		&#123; XMFLOAT3(<span class="number">0.5f</span>, <span class="number">0.5f</span>, <span class="number">0.0f</span>), XMFLOAT4(<span class="number">0.0f</span>, <span class="number">0.0f</span>, <span class="number">1.0f</span>, <span class="number">1.0f</span>) &#125;</span><br></pre></td></tr></table></figure>
+<p>(-0.5f, -0.5f, 0.0f)—&gt;(-0.5f, 0.5f, 0.0f)—&gt;(0.5f, -0.5f, 0.0f) 是顺时针的</p>
+<p>但 (-0.5f, 0.5f, 0.0f)—&gt;(0.5f, -0.5f, 0.0f)—&gt;(0.5f, 0.5f, 0.0f) 是逆时针的</p>
+<p>见龙书P149</p>
+<h2 id="06-Mouse-and-Keyboard"><a href="#06-Mouse-and-Keyboard" class="headerlink" title="06 Mouse and Keyboard"></a>06 Mouse and Keyboard</h2><p>对于瞬时状态，比如按鼠标，就按照接收的事件次数来处理，但对于会保持一段时间的状态比如滚轮或按着一个键，就需要获取两个状态一个state，一个laststate(上一帧状态)，通过两者之间的时间差来改变状态。</p>
+<h2 id="07-Lighting"><a href="#07-Lighting" class="headerlink" title="07 Lighting"></a>07 Lighting</h2><p>做XJUN的作业时，第三个通过滚轮改变汇聚强度做是做出来了，但是在另外两种光照模型下也会触发，暂时还没找到解决办法<br>我最开始是以为改变光照强度，那样又该如何做？<br>4(不太懂这题是啥意思，看起来不难),5,7还没做出来，其他都比较简单。</p>
+<h1 id="points"><a href="#points" class="headerlink" title="points"></a>points</h1><h2 id="一些改进"><a href="#一些改进" class="headerlink" title="一些改进"></a>一些改进</h2><p>从Windows 8开始，DirectX不再是您下载和安装的单独SDK；相反，DirectX随操作系统一起提供，并通过Windows Update进行更新。 此外，D3DX库已被弃用，Windows不附带，现在XNA Math库的名称为DirectX Math。 另外，从Visual Studio 2015开始，dxerr.lib不再与Visual Studio 2015兼容。</p>
+<h2 id="修改全屏模式"><a href="#修改全屏模式" class="headerlink" title="修改全屏模式"></a>修改全屏模式</h2><p>为什么要修改窗口使其没有背景？</p>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// wc.hbrBackground =（HBRUSH）COLOR_WINDOW;</span></span><br></pre></td></tr></table></figure>
+<p>教程给出的解释是这样的：<strong>Doing this leaves the background color untouched, which means it won’t be visible as a window for a second or two before the game starts (important to making your game look professional).</strong></p>
+<p>机翻果然有点问题…我理解了一下，大概就是说游戏在刚开始的时候，也就是从窗口变成全屏的时候，会显示出窗口的（背景）颜色，因为游戏本质上是一个程序，打开的时候就是一窗口的模式打开的，这样做就可以避免掉显示出窗口的颜色。</p>
+<p>窗口背景颜色：顾名思义，就是一个窗口里面那个背景板的颜色。</p>
+<h2 id="XMVector2Dot的返回值"><a href="#XMVector2Dot的返回值" class="headerlink" title="XMVector2Dot的返回值"></a>XMVector2Dot的返回值</h2><figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">XMVECTOR XM_CALLCONV <span class="title">XMVector2Dot</span><span class="params">(FXMVECTOR V1, FXMVECTOR V2)</span></span>;		<span class="comment">// 每个分量都是V1.x * V2.x + V1.y * V2.y</span></span><br></pre></td></tr></table></figure>
+<p>返回一个向量，向量的每一分量的值都是v1和v2的点积。</p>
+<p>很奇特，也让人很迷惑的操作…… I need a reason.      叉积也是，不知道在干嘛。。</p>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item"></div>
+      <div class="post-nav-item">
+    <a href="/2020/10/18/%E6%9D%82%E9%B1%BC/" rel="next" title="杂鱼">
+      杂鱼 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Q"><span class="nav-number">1.</span> <span class="nav-text">Q</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#XJUN"><span class="nav-number">2.</span> <span class="nav-text">XJUN</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#02-rendering-a-triangle"><span class="nav-number">2.1.</span> <span class="nav-text">02 rendering a triangle</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#06-Mouse-and-Keyboard"><span class="nav-number">2.2.</span> <span class="nav-text">06 Mouse and Keyboard</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#07-Lighting"><span class="nav-number">2.3.</span> <span class="nav-text">07 Lighting</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#points"><span class="nav-number">3.</span> <span class="nav-text">points</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%80%E4%BA%9B%E6%94%B9%E8%BF%9B"><span class="nav-number">3.1.</span> <span class="nav-text">一些改进</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BF%AE%E6%94%B9%E5%85%A8%E5%B1%8F%E6%A8%A1%E5%BC%8F"><span class="nav-number">3.2.</span> <span class="nav-text">修改全屏模式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#XMVector2Dot%E7%9A%84%E8%BF%94%E5%9B%9E%E5%80%BC"><span class="nav-number">3.3.</span> <span class="nav-text">XMVector2Dot的返回值</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="lorstyang"
+      src="/images/header.jpg">
+  <p class="site-author-name" itemprop="name">lorstyang</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">17</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="mailto:lorstyang@163.com" title="E-Mail → mailto:lorstyang@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="http://www.myangswhitehat.cn/" title="http:&#x2F;&#x2F;www.myangswhitehat.cn" rel="noopener" target="_blank">My0n9s</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">lorstyang</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>

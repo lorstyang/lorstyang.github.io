@@ -1,0 +1,1302 @@
+<?xml version="1.0" encoding="utf-8"?>
+<search>
+  <entry>
+    <title>Games101: Transformation</title>
+    <url>/2020/10/19/Games101-Transformation/</url>
+    <content><![CDATA[<h3 id="仿射变换"><a href="#仿射变换" class="headerlink" title="仿射变换"></a>仿射变换</h3><ul>
+<li><p>仿射变换 = 线性变换 + 平移</p>
+</li>
+<li><p>线性变换包括 缩放，切变，旋转</p>
+<p>线性变换可以用一个矩阵表示，但是变换中有平移的时候，一个矩阵就表示不了了，为了解决这个问题，就引入了齐次坐标（懒惰是一种美德）</p>
+</li>
+</ul>
+<a id="more"></a>
+<h4 id="齐次坐标"><a href="#齐次坐标" class="headerlink" title="齐次坐标"></a>齐次坐标</h4><ul>
+<li><p>给原来的点/向量增加一个维度</p>
+<p>2D point (x, y) —&gt; (x, y, 1)</p>
+<p>2D vector (x, y) —&gt; (x, y, 0)</p>
+</li>
+<li><p>这样仿射变换就从原来的</p>
+<script type="math/tex; mode=display">
+\left[ \begin{matrix} x' \\ y' \end{matrix} \right] = \left[ \begin{matrix} a & b \\ c & d \end{matrix} \right]\left[ \begin{matrix} x \\ y \end{matrix} \right] + \left[ \begin{matrix} t_{x} \\ t_{y} \end{matrix} \right]</script><p>变成了</p>
+<script type="math/tex; mode=display">
+\left[ \begin{matrix} x' \\ y' \\ w' \end{matrix} \right] = \left[ \begin{matrix} a & b & t_{x} \\ c & d & t_{y} \\ 0 & 0 & 1 \end{matrix} \right]\left[ \begin{matrix} x \\ y \\ 1 \end{matrix} \right] = \left[ \begin{matrix} ax+by+t_{x} \\ cx+dy+t_{y} \\ 1 \end{matrix} \right]</script><p>这样，现在的变换矩阵不仅包含了原有的线性变换，还包括了平移（t<sub>x</sub>和t<sub>y</sub>）</p>
+</li>
+</ul>
+<p>之前的旋转默认都是绕原点转的，如果要绕任意点旋转，可以先把那个任意点平移到原点（物体也做同样的平移），然后绕原点旋转，再平移回来。</p>
+<ul>
+<li>3D中，绕任意经过原点的轴：Rodrigues’ Rotation Formula：<script type="math/tex; mode=display">
+\mathbf{R}(\mathbf{n}, \alpha)=\cos (\alpha) \mathbf{I}+(1-\cos (\alpha)) \mathbf{n} \mathbf{n}^{T}+\sin (\alpha)\left(\begin{array}{ccc} 0 & -n_{z} & n_{y} \\ n_{z} & 0 & -n_{x} \\ -n_{y} & n_{x} & 0 \end{array}\right)</script>如果要绕任意轴，而不一定经过原点，同样的思路，将该轴平移至经过原点，旋转完后再平移回去</li>
+</ul>
+<h3 id="MVP"><a href="#MVP" class="headerlink" title="MVP"></a>MVP</h3><ul>
+<li><p>Model transformation</p>
+<p>把物体从局部坐标系变换到世界坐标系，玩过建模软件的应该知道，你选中物体时，会有X，Y，Z三个方向的箭头，可以把那个当成物体的局部坐标系，然后用矩阵可以把局部坐标系里的物体的顶点坐标转换到世界坐标系。至于世界坐标系，就是整个场景的坐标系了。</p>
+</li>
+<li><p>View transformation</p>
+<p>闫老师是这样说的 Find a good ”angle“ to put the camera 很形象是吧。这一步是从世界坐标系转换到摄像机坐标系。摄像机的位置之类的，一般来说是 位于原点，up at Y，look at -Z（约定俗成）。</p>
+<p>M<sub>view</sub>是通过求逆变换得到的，用到了正交矩阵的逆矩阵等于其转置矩阵，而旋转矩阵是正交矩阵。 </p>
+<p>摄像机从任意位置到原点，有旋转和平移两个操作，将其分开来看清楚一点，M<sub>view</sub> = R<sub>view</sub>T<sub>view</sub></p>
+<script type="math/tex; mode=display">
+T_{view} = \left[ \begin{matrix} 1 & 0 & 0 & -x_{e} \\ 0 & 1 & 0 & -y_{e} \\ 0 & 0 & 1 & -z_{e} \\ 0 & 0 & 0 & 1 \end{matrix}\right]</script><p>对于R<sub>view</sub>不好求，先求他的逆矩阵</p>
+<script type="math/tex; mode=display">
+R_{view}^{-1} = \left[ \begin{matrix} x_{g×t} & x_{t} & x_{-g} & 0 \\ y_{g×t} & y_{t} & y_{-g} & 0 \\ z_{g×t} & z_{t} & z_{-g} & 0 \\ 0 & 0 & 0 & 1 \end{matrix}\right]</script><p>因为R<sub>view</sub>的转置等于它的逆，所以R<sup>T</sup><sub>view</sub> = R<sup>-1</sup><sub>view</sub>，将R<sup>T</sup><sub>view</sub>再转置一下就得到了R<sub>view</sub>。即</p>
+<script type="math/tex; mode=display">
+R_{view} = \left[ \begin{matrix} x_{g×t} & y_{g×t} & z_{g×t} & 0 \\ x_{t} & y_{t} & z_{t} & 0 \\ x_{-g} & y_{-g} & z_{-g} & 0 \\ 0 & 0 & 0 & 1 \end{matrix}\right]</script><p>其实这一步更多的应该叫camera transformation</p>
+</li>
+<li><p>Projection transformation</p>
+<ul>
+<li>Orthographic projection 正交投影</li>
+<li>Perspective projection 透视投影（近大远小</li>
+</ul>
+<p>M<sub>persp</sub> = M<sub>ortho</sub> M<sub>persp-&gt;ortho</sub> </p>
+<p>M<sub>persp-&gt;ortho</sub> 将视锥体变成立方体，M<sub>ortho</sub> 做正交投影到[-1, 1]^3上，z值保留（之后zbuffer要用）</p>
+</li>
+<li><p>viewport transformation</p>
+<p>将[-1, 1]\^2（立方体的x，y平面）映射到平面分辨率大小</p>
+<p>[-1,1]\^2 —&gt; [0,width]*[0,height]</p>
+</li>
+</ul>
+<p><img src="https://i.loli.net/2021/01/20/cX3tHFBGQO4A1eu.jpg" width="80%" height="80%"></p>
+<p>图片来自<a href="https://zhuanlan.zhihu.com/p/144329075">这里</a></p>
+]]></content>
+      <categories>
+        <category>CG</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>Rasterization</title>
+    <url>/2020/10/22/Rasterization/</url>
+    <content><![CDATA[<ul>
+<li><p>after MVP</p>
+<p>做完MVP后所有的物体到了[-1, 1]<sup>3</sup>的立方体内，然后我们需要把他画到屏幕上去</p>
+</li>
+<li><p>M<sub>viewport</sub></p>
+<p>假设屏幕的宽度是width，高度是height。对于那个标准的立方体，先不管它的z方向，现在要把x，y两个方向拉成屏幕的大小，用到的矩阵就是M<sub>viewport</sub> :</p>
+<a id="more"></a>
+<script type="math/tex; mode=display">
+M_{viewport} = \left[ \begin{matrix} width/2 & 0 & 0 & width/2 \\ 0 & height/2 & 0 & height/2 \\ 0 & 0 & 1 & 0 \\ 0 & 0 & 0 & 1 \end{matrix} \right]</script><p>这里默认屏幕坐标系的起点是左下角，所以最右边一列有width/2和height/2，将立方体向右上方平移，使它的左下角与屏幕原点重合。</p>
+</li>
+</ul>
+<h4 id="sampling"><a href="#sampling" class="headerlink" title="sampling"></a>sampling</h4><ul>
+<li><p>屏幕是一系列离散的像素</p>
+</li>
+<li><p>计算机生成的图像最基本的单位是三角形</p>
+<ul>
+<li>最基本的多边形</li>
+<li>内外定义清晰</li>
+<li>平面</li>
+<li>方便插值</li>
+</ul>
+</li>
+<li><p>这里的采样就是判断像素是否在三角形中</p>
+</li>
+<li><p>如何判断一个像素是否在三角形内？</p>
+<p>可以用三次叉积来判断。假设有像素Q（用像素中心的点来代表像素），三角形p<sub>0</sub>p<sub>1</sub>p<sub>2</sub></p>
+<p>首先算出<strong>p<sub>0</sub>p<sub>1</sub></strong> × <strong>p<sub>1</sub>p<sub>Q</sub></strong>，可以根据得到的向量的正负判断Q点在<strong>p<sub>0</sub>p<sub>1</sub></strong>的左边还是右边，同理算出<strong>p<sub>1</sub>p<sub>2</sub></strong> × <strong>p<sub>1</sub>p<sub>Q</sub></strong>，<strong>p<sub>2</sub>p<sub>0</sub></strong> × <strong>p<sub>2</sub>p<sub>Q</sub></strong>，如何得到的三个向量同正或同负，则代表像素在三角形内。画图可以很清晰的看到，一个点在三角形内部时，将三角形的三条边看成顺序的三个向量，这个点一定是在这三个向量的同一侧的。</p>
+</li>
+<li><p>点在边界上怎么算</p>
+<p>自己规定。不过一些API（opengl，directx）都已经规定好了。</p>
+</li>
+<li><p>Bounding Box</p>
+<p>遍历像素判断它是否在三角形中时，肯定不会把所有的像素全部遍历一遍，一种做法就是找到一个最小的能把一个三角形包围起来的包围盒（矩形），然后在这个矩形内部遍历就可以了。这个矩形也好找，取三个顶点坐标的最大最小值就可以了。</p>
+<ul>
+<li>缺点：三角形比较奇怪的时候会做很多无用功，比如一个很细长的呈45°的三角形</li>
+<li>还有很多其他的加速方法</li>
+</ul>
+</li>
+</ul>
+<h4 id="Antialiasing"><a href="#Antialiasing" class="headerlink" title="Antialiasing"></a>Antialiasing</h4><ul>
+<li><p>把像素看成一个个方块，最后的图形就会有锯齿，称之为走样，所以需要反走样</p>
+</li>
+<li><p>走样原因：采样速度跟不上信号变化速度</p>
+</li>
+<li><p>解决办法：采样之前，做一个模糊/滤波（Filtering）</p>
+</li>
+<li><p>为什么先采样再模糊不行？/为什么…?</p>
+<p>这一部分可以看一下傅里叶变换相关的知识，看懂了之后再来看这部分会有种垂死病中惊坐起的感觉（不知道这么形容对不对，但感觉蛮贴切的）”如果看了这篇文章你还不懂傅里叶变换，那就过来掐死我吧 - Heinrich的文章 - 知乎 <a href="https://zhuanlan.zhihu.com/p/19759362">https://zhuanlan.zhihu.com/p/19759362</a>“</p>
+</li>
+</ul>
+<p><img src="https://i.loli.net/2020/10/23/igEotWaOAs7N6mU.png" alt="C8CBB3IA0HBE6BL65VH8P_S.png"></p>
+<p>有这幅图可以看出，频率很高采样速度跟不上的时候会与原来的曲线差很远，所以会产生走样。为了贴近原曲线，现在有两个选项，一个是提高采样速度，另一个就是把高频的部分去掉。如果要提高采样速度的话，就要在硬件上想办法（提高像素数量，屏幕分辨率），但这就不是我们考虑的方向了。从后续的那个帅小伙指着我们的图片可以知道，在他的频域图上，高频的部分代表图像内的边界部分，把高频部分去掉后，也就是加一个低通滤波，图像自然就变模糊了，那个帅小伙也确实证明了这点。到这里，其实已经和前面连起来了，先将照片模糊，然后再采样，就可以达到反走样的目的。</p>
+<p>还剩一个问题就是前面提到的为什么先采样，再模糊不行？</p>
+<p><img src="https://i.loli.net/2020/10/23/ZU5cx2KziT9RJ6y.png" alt="LDOX__Y_D_7638_9_B8JEGO.png"></p>
+<p><img src="https://i.loli.net/2020/10/23/rZFkG71DXQcjyTW.png" alt="DU__G_5_FSV96W_RC_X6E16.png"></p>
+<p>从这里看会比较清楚，前面说采样就是在重复原始信号的频谱，采样不够密集时，会发生混叠，也就是Sparse sampling这种情况，也就引发了走样。可以想象，先采样，再做模糊（把那个梯形形的边角去掉），波形重叠的情况下截断也会发生混叠。</p>
+<p>关于卷积这一部分听得不是特别明白，还需加深理解。</p>
+<ul>
+<li><p>Antialiasing By Supersampling (MSAA) （具体怎么做）</p>
+<ul>
+<li>supersampling 将一个像素分成多个小的像素，根据在三角形内的小像素的数量来判断该像素的颜色程度（多次取样。</li>
+</ul>
+</li>
+<li><p>no free lunch！</p>
+<ul>
+<li>MSAA每个像素多次采样浪费性能</li>
+<li>优化：不使用均匀分布，采样复用</li>
+</ul>
+</li>
+<li>其他的老师推荐的抗锯齿方法<ul>
+<li>FXAA(Fast Approximate AA)：先得到有锯齿的图，然后再做后续处理</li>
+<li>TAA (Tem‘poral AA)：借助前面的帧</li>
+</ul>
+</li>
+<li>Super resolution / super sampling<ul>
+<li>From low resolution to high resolution</li>
+<li>Essentially still “not enough samples” problem</li>
+<li>DLSS (Deep Learning Super Sampling) 靠深度学习去猜</li>
+</ul>
+</li>
+</ul>
+<h4 id="Z-Buffering"><a href="#Z-Buffering" class="headerlink" title="Z-Buffering"></a>Z-Buffering</h4><ul>
+<li>画家算法<ul>
+<li>三个三角形互相重叠会没法排序</li>
+<li>无法处理透明物体</li>
+</ul>
+</li>
+</ul>
+<p><img src="https://i.loli.net/2020/10/23/pIw8osTPKiZOhdj.png" alt="Untitled.png"></p>
+]]></content>
+      <categories>
+        <category>CG</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>曲面细分与曲面简化</title>
+    <url>/2020/11/20/Geometry-2/</url>
+    <content><![CDATA[<p>最忙的一段时间总算过去了，但是总有种预感后面的工作并不会变少，不过能接受的是肯定没之前那么有压迫感了。</p>
+<a id="more"></a>
+<p>曲面细分与曲面简化</p>
+<ul>
+<li><p>mesh subdivision</p>
+<p>曲面细分，顾名思义，就是将原本模型的三角形变得更多，让模型更加丝滑</p>
+<ul>
+<li><p>Loop Subdivision (loop是发明者名字)</p>
+<p>这种细分很好理解，就是把每条边的中点连起来，形成更多的三角形</p>
+<p><img src="https://i.loli.net/2020/11/20/zwcWqa5RMfBFDYQ.png" width="40%" height="40%"></p>
+<p>完成了将一个三角形分成多个三角形之后肯定得调整三角形的位置，如果让分出来的三角形还在一个平面上那不等于没分嘛。调整三角形的位置其实也就是调整顶点的位置，loop细分的操作是将顶点分为新的顶点和旧的顶点两部分，分别用不同的规则来改变它们的位置。</p>
+<p><img src="https://i.loli.net/2020/11/20/S8DLRtq4d6ONEmp.png" width="50%" height="50%"></p>
+<p>新顶点的位置就是周围点的位置的加权平均。特殊情况如点在边界的情况老师没说，是不是也是平均，只不过少用几个点？</p>
+<p><img src="https://i.loli.net/2020/11/20/UgrLk8F4xQ7TfB6.png" width="50%" height="50%"></p>
+<p>本质上也是一种加权平均，只不过平均的是它自己原本的位置和周围的顶点的位置，权重的设置与顶点的度有关。这个u没听懂怎么回事，用来确定权重的？</p>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><p>Catmull-Clark Subdivision</p>
+<p>loop subdivision是针对三角形网格的，对于有非三角形网格的就需要用到新的方法了。</p>
+<p><img src="https://i.loli.net/2020/11/20/KOT7mwiMGEqhVFt.png" width="50%" height="50%"></p>
+<p>​    图是以三角形和四边形混合的面为例子的，经过上图中的处理，会得到下面的情况</p>
+<p><img src="https://i.loli.net/2020/11/20/prCl2ksxgHfPAMi.png" width="40%" height="40%"></p>
+<p>​    再做一次细分</p>
+<p><img src="https://i.loli.net/2020/11/20/8H1IOzV5pQGPYUT.png" width="30%" height="30%"></p>
+<p>到这里已经可以得出CC细分的一些特点了</p>
+<ul>
+<li>在第一次细分后，增加了 非四边形面的数量 这么多个的奇异点之后（相当于所有的非四边形面“变成”了奇异点），奇异点的数量就再也不会增加了，并且所有面会变成四边形</li>
+<li>新出现的奇异点的度数与原来所在面的边数相等</li>
+</ul>
+<p>调整顶点的位置，点被分为了3类：</p>
+<p><img src="https://i.loli.net/2020/11/20/LT1RzjgZseQAqvu.png" width="60%" height="60%"></p>
+<p>自己遗留的一些问题：</p>
+<p>第一个：四边形不是都可以分为三角形吗，分为三角形后再用loop细分怎么样？</p>
+<p>第二个：物体的网格不都是三角形吗，渲染的时候用到的都是三角形吧，这是不是说明后续将四边形分成了三角形，如果是的话，上一个问题的结论怎么样，如果不是的话，那具体又是什么个情况？</p>
+</li>
+</ul>
+<ul>
+<li><p>mesh simplification</p>
+<p>曲面简化，也很好理解，模型三角形太多了，影响性能 或者 这个模型离我们很远，不需要这么多三角形，就要在不影响模型基本形状的情况下减少三角形。</p>
+<p>简化使用的方法就是边坍缩</p>
+<p><img src="https://i.loli.net/2020/11/20/SFNnOAZygqjUrH3.png" width="40%" height="40%"></p>
+<p>如何去坍缩，坍缩成的那个点，位置该怎么取</p>
+<p><img src="https://i.loli.net/2020/11/20/7ZWw8vElJx2OAMh.png" width="40%" height="40%"></p>
+<p>如果仅仅是按照上图左边取平均的方法，无论是取5个点还是3个点的平均，那个新形成的点的位置都会在原形状下面，可想而知，这样会使模型特征变得模糊，效果不会太好（变得模糊只是我的猜测，但结果确实不是我们想要的）。所以就引入了上图右边的方法，二次误差度量，和最小二乘法的思路很像，这个方法就是找一个点，使这个点与原来各平面的距离之和最小，那这个点就是坍缩后影响最小的点。</p>
+<p>整个曲面简化流程的思路就是算出每条边的坍缩的二次误差度量，然后从小到大的去做边坍缩，这样其实还会存在一个问题，就是坍缩一条边后，与其相连的边会被影响，这样需要去更新被影响边的误差值，解决的办法是使用优先队列（堆）。</p>
+<p>曲面简化的算法流程：</p>
+<p>1 算出每条边的误差值</p>
+<p>2 选取值最小的边做坍缩</p>
+<p>3 更新相连边的误差值</p>
+<p>4 重复上述23步骤，直到达到终止条件</p>
+<p>这种简化方式本质上是一种贪心算法，我在每一次坍缩都取误差值最小的那条边（局部最优）以达到最后整个模型的 形状变化最小/误差最小 的结果（全局最优）。</p>
+<p>那么，这样做到底对不对？好像也没人证明贪心在曲面简化上的正确性。老师给出的答案是也没人给出贪心做出来结果很差的例子，事实证明最终的结果还是挺不错的。</p>
+<p><img src="https://i.loli.net/2020/11/20/CaVUmMsqptnYAjI.png" width="70%" height="70%"></p>
+<p>从上面的结果图可以看出，下面的牛的面部比较简单，就坍缩的边多一点，而脖子这种复杂的地方，坍缩就少一些，这些也是可以从算法上预想到的。</p>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>CG</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>PBR基础</title>
+    <url>/2020/12/10/RayTracing-2/</url>
+    <content><![CDATA[<p>PBR（physically based rendering）基于物理的渲染</p>
+<a id="more"></a>
+<p>whitted-style的光线追踪其实本质上就是模拟了光线路径的多重blinn-phong着色，比起光栅化有了很大的不同，但是在着色模型上并没有改变，而且前面也说了，blinn-phong这玩意是错的，虽然现在好像也没有搞出那么正确的东西，但这个终归差的有点远，就需要更好一点的方法。颜色其实就是进入眼睛的光线，那以物理的角度去描述光线，最后得到的结果肯定会更真实，所以从这里入手，引入了这些奇奇怪怪的东西。</p>
+<h4 id="Basic-radiometry-（基础的辐射度量学）"><a href="#Basic-radiometry-（基础的辐射度量学）" class="headerlink" title="Basic radiometry （基础的辐射度量学）"></a>Basic radiometry （基础的辐射度量学）</h4><ul>
+<li><p>Radiant energy (辐射能量)</p>
+<p>Q[J = Joule]</p>
+<p>这个就是以前学过的能量，单位焦耳（J）</p>
+</li>
+<li><p>Radiant flux (辐射通量)</p>
+<p>Definition: Radiant flux (power) is the energy emmitted, reflected, transmitted or received, per unit time</p>
+<script type="math/tex; mode=display">
+\phi = \frac{\mathrm{d} Q}{\mathrm{d} t}</script><p>[W = watt] [lm = lumen]</p>
+<p>单位时间内的能量 光学里的单位是流明(lumen)，跟watt是一样的</p>
+<p>一般会用Radiant flux来描述光线强度（现实中用灯泡多少W来描述灯泡亮度）</p>
+</li>
+<li><p>Radiant intensity (辐射强度)</p>
+<p>Definition: The radiant (luminous) intensity is the power per unit solid angle emitted by a point light source.</p>
+<script type="math/tex; mode=display">
+I(\omega) = \frac{\mathrm{d} \Phi}{\mathrm{d} \omega}</script><p>[W/sr] [lm/sr = cd = candela (坎德拉)] sr是立体角的单位</p>
+<p>单位立体角的Radiant flux(也就是功率)，结合前面的，可以知道这个可以代表某个方向上的光线强度</p>
+<ul>
+<li><p>solid angle (立体角)</p>
+<p>平面角的三维拓展</p>
+<p>平面上的角：θ = l/r  l是弧长，r是半径，圆的角为2π</p>
+<p>立体角：Ω = A/r  l是面积，r是半径，球的立体角为4π</p>
+<p>Ω是ω的大写</p>
+</li>
+</ul>
+<p>点光源的情况下，通过两个量θ和φ (见图中) ，可以确定空间中的一个方向，然后就可以表示出该方向上的Radiant intensity</p>
+<p><img src="https://i.loli.net/2020/12/10/QczDeC7KX3kPOrh.png" width="60%" height="60%"></p>
+<p>对dω在整个球上积分，可以得到球的立体角为4π，前面说的球的立体角为4π就是这么来的</p>
+<p><img src="https://i.loli.net/2020/12/10/y7TDekIJO6rYs85.png" width="30%" height="30%"></p>
+<p>点光源的辐射通量(Radiant flux)可以将整个球面积分</p>
+<script type="math/tex; mode=display">
+\phi = \int_{S^{2}} I \mathrm{d}\omega = 4\pi I</script><p>在把式子变换一下就可以得到总的点光源的辐射强度(Radiant intensity)</p>
+<script type="math/tex; mode=display">
+I = \frac{\phi}{4\pi}</script><p>这里默认点光源是各向同性的(Isotropic)，每个方向上的辐射强度都一样，如果不是各向同性的，I是关于ω的函数，即I(ω)，积分出来的结果是不同的。</p>
+</li>
+<li><p>irradiance</p>
+<p>Definition:  The irradiance is the power per unit area incident on a surface point.</p>
+<script type="math/tex; mode=display">
+E(\mathbf{x}) \equiv \frac{\mathrm{d} \Phi(\mathbf{x})}{\mathrm{d} A}</script><p>[W/m<sup>2</sup>] [lm/m<sup>2</sup> = lux]</p>
+<p>单位面积的辐射强度</p>
+<ul>
+<li><p>因为是单位面积上的辐射强度，所以光线与平面不垂直的时候需要乘上一个cosθ，这与之前blinn-phong里的lambert’s law（计算光线强度时要乘上cosθ）是一致的，配合图会更好理解，可以看PPT或者别的什么，懒得放了(×</p>
+<p>eg.地球的四季就是很好理解的例子</p>
+</li>
+<li><p>距离越远，光线强度会越弱</p>
+<p>eg.假设光源是点光源，功率固定，则以光源为中心，等距离上接收光线的为球形面积，可以很容易得出，距离越远光源照射的面积越大，根据式子，irradiance也就越小</p>
+</li>
+</ul>
+</li>
+<li><p>radiance</p>
+<p>Definition: The radiance (luminance) is the power emitted, reflected, transmitted or received by a surface, per unit solid angle, per projected unit area. </p>
+<script type="math/tex; mode=display">
+L(\mathrm{p}, \omega) \equiv \frac{\mathrm{d}^{2} \Phi(\mathrm{p}, \omega)}{\mathrm{d} \omega \mathrm{d} A \cos \theta}</script><p>单位立体角，单位面积上的辐射强度，p是点</p>
+<p>就是在irradiance的基础上又对立体角进行了一次微分，可以理解为某个方向上光线的辐射强度</p>
+<p>与irradiance不同，radiance是有方向的</p>
+<p>这里下面有一个cosθ的原因是radiance定义的是单位垂直面积，而非单位照射面积，这一点有点不好理解，写一下自己的理解，首先为什么要这么定义，radiance关键点并不是在那个打到的面积元上，而更多的是为了表示某一束光线本身的能量（作为一束光线，它有一个方向，并且会打到某一个点上，然后将自己的能量传递到那个点），而且radiance是有方向的，所以是单位垂直面积。极端点说，单位垂直面积就是光束本身的横切面。然后是第二个问题，为什么不单独另设一个dA’或者dB什么的表示垂直面积的微分，而要写成dAcosθ的形式，这样写可以让radiance与irradiance联系起来，dA代表的是同一个意思，就那个面积微元，但是乘上cosθ就有了radiance定义的效果。</p>
+<p>还有两种解释方式</p>
+<ul>
+<li>Irradiance per solid angle</li>
+<li>Intensity per projected unit area</li>
+</ul>
+<p>Incident Radiance 和 Exiting Radiance</p>
+<p>这两个和上面两种是对应的</p>
+<ul>
+<li><p>Incident Radiance</p>
+<p>Incident radiance is the irradiance per unit solid angle arriving at the surface. </p>
+<p>irradiance是单位表面接收的辐射强度，所以这种说法就是某个方向上的单位表面接收的光线</p>
+<script type="math/tex; mode=display">
+L(\mathrm{p}, \omega)=\frac{\mathrm{d} E(\mathrm{p})}{\mathrm{d} \omega \cos \theta}</script></li>
+<li><p>Exiting Radiance</p>
+<p>Exiting surface radiance is the intensity per unit projected area leaving the surface. </p>
+<p>intensity是光源在某个方向的辐射强度，所以这种说法就是</p>
+<p>单位表面在某个方向上辐射强度（这个单位表面是光源）</p>
+<script type="math/tex; mode=display">
+L(\mathrm{p}, \omega)=\frac{\mathrm{d} I(\mathrm{p}, \omega)}{\mathrm{d} A \cos \theta}</script></li>
+</ul>
+</li>
+</ul>
+<p>  再看Incident Radiance的那个式子</p>
+<script type="math/tex; mode=display">
+  L(\mathrm{p}, \omega)=\frac{\mathrm{d} E(\mathrm{p})}{\mathrm{d} \omega \cos \theta}</script><p>  推导一下</p>
+<script type="math/tex; mode=display">
+  \begin{aligned} d E(\mathrm{p}, \omega) &=L_{i}(\mathrm{p}, \omega) \cos \theta \mathrm{d} \omega \\ E(\mathrm{p}) &=\int_{H^{2}} L_{i}(\mathrm{p}, \omega) \cos \theta \mathrm{d} \omega \end{aligned}</script><p>  <img src="https://i.loli.net/2020/12/16/zMIdZC8LbRVPrna.png" width="60%" height="60%"></p>
+<p>  积分域H<sup>2</sup>是半球面 E(p)是点p的irradiance</p>
+<p>  可以看出，点p的irradiance等于半球上各个方向的radiance的积分</p>
+<p>  其物理意义便是 一个点所接收到的辐射强度(irradiance)，由所有不同方向的入射光线辐射强度(radiance)共同累加得到。其实在学习之前对此就有个大概的设想了，大抵不不过如此，但我们确实用数学公式把它表示出来了，这一点是十分值得庆幸的。</p>
+<p>  这里也可以解释那个cosθ，因为L<sub>i</sub>(p, w)是垂直半球面上的辐射强度，而p点那个面积元是有方向的，那再乘上一个cosθ，就刚好是该处的辐射强度。</p>
+<h4 id="BRDF"><a href="#BRDF" class="headerlink" title="BRDF"></a>BRDF</h4><p>简单的来说，BRDF就是一个比值，它定义了 某个点接收了来自一个方向的光线之后，该点在某个方向上反射出去的能量与之前那个方向接收能量的比例</p>
+<p><img src="https://i.loli.net/2020/12/19/mJTWH42UCuMxVBr.png" width="60%" height="60%"></p>
+<ul>
+<li><p>两个参数w<sub>i</sub> w<sub>r</sub> 分别代表入射光方向和反射光方向</p>
+</li>
+<li><p>比值实际上就是反射光的radiance和该点接收的irradiance的比</p>
+</li>
+<li>定义了材质</li>
+</ul>
+<h4 id="The-Reflection-Equation-（反射方程）"><a href="#The-Reflection-Equation-（反射方程）" class="headerlink" title="The Reflection Equation （反射方程）"></a>The Reflection Equation （反射方程）</h4><p>借助BRDF，我们知道了特定方向上的入射与反射光的关系，但实际上，某个点接收的光线肯定不是一个方向，而是整个半圆方向上的都能接收到（不考虑背面），所以需要用积分将所有方向上的光线能量积起来。至于反射光，反正摄像头（眼睛）只看着一个方向，w<sub>r</sub>选定一个值就可以了。这样就可以得到反射方程</p>
+<p><img src="https://i.loli.net/2020/12/19/CEKgavO4SIjiqrB.png" width="60%" height="60%"></p>
+<p>入射方向上的光线能量乘BRDF得到反射方向上的光线能量，然后把所有方向上的反射结果都加起来（积分）得到结果</p>
+<ul>
+<li>入射光不只有光源，还有其他反射光，比如反射方程算出来的反射光线也可能是另一个点入射光线</li>
+<li>是一个递归的过程</li>
+</ul>
+<h4 id="The-Rendering-Equation-（渲染方程-绘制方程）"><a href="#The-Rendering-Equation-（渲染方程-绘制方程）" class="headerlink" title="The Rendering Equation （渲染方程/绘制方程）"></a>The Rendering Equation （渲染方程/绘制方程）</h4><p>渲染方程就是在反射方程的基础上多加了一个自发光项</p>
+<script type="math/tex; mode=display">
+L_{o}\left(p, \omega_{o}\right)=L_{e}\left(p, \omega_{o}\right)+\int_{\Omega^{+}} L_{i}\left(p, \omega_{i}\right) f_{r}\left(p, \omega_{i}, \omega_{o}\right)\left(n \cdot \omega_{i}\right) \mathrm{d} \omega_{i}</script><ul>
+<li>cosθ<sub>i</sub>用n·w<sub>i</sub>代替了</li>
+<li>积分域还是半球</li>
+</ul>
+<p>细致的理解一下rendering equation</p>
+<p>1 考虑单个点光源的情况（只有一“条”入射光）</p>
+<p><img src="https://i.loli.net/2020/12/19/VvRLgZNJolBY8aO.png" width="60%" height="60%"></p>
+<p>入射光和自发光两部分</p>
+<p>2 多个点光源的情况</p>
+<p><img src="https://i.loli.net/2020/12/19/9bqaQh82zWgRU6F.png" width="60%" height="60%"></p>
+<p>入射光加起来</p>
+<p>3 面光源</p>
+<p><img src="https://i.loli.net/2020/12/19/YOUnHIMqAwG9mtT.png" width="60%" height="60%"></p>
+<p>从离散的光变成了连续的光，立体角积分</p>
+<p>4 入射光不止光源，还有从其他物体反射来的光</p>
+<p><img src="https://i.loli.net/2020/12/19/94dnciY1ovNMOsa.png" width="60%" height="60%"></p>
+<p>把物体当做面光源，对其所占的立体角积分，但是物体和面光源不同，它不一定每个入射方向都有radiance（有的反射方向能量强度可能基本没有，就像几乎平行于平面的方向）</p>
+<p>把渲染方程简写一下</p>
+<script type="math/tex; mode=display">
+I(u)=\theta(u)+\int l(v)K(u,v)dv</script><p>再简化一下，写成算子形式</p>
+<p>Can be discretized to a simple matrix equation [or system of simultaneous linear equations] (L, E are vectors, K is the light transport matrix)原PPT是这么写的</p>
+<script type="math/tex; mode=display">
+L = E + KL</script><p>为什么可以变成这样不太懂，姑且先这样做吧</p>
+<p>再进行一个导的推</p>
+<p><img src="https://i.loli.net/2020/12/19/s9VQpkaFIPAGM7f.png" width="60%" height="60%"></p>
+<p>I为单位矩阵，(I - K)<sup>-1</sup>可以用泰勒展开变成多项式的样子</p>
+<p><img src="https://i.loli.net/2020/12/19/Sgu85L1xC3yvflb.png" width="60%" height="60%"></p>
+<p>E为光源直接发出的光，反射0次，KE为光源反射一次的结果，即直接光照，同理后面的</p>
+<p>光栅化能处理的就是前两项，全局光照则是考虑了多次弹射的结果</p>
+<p>PPT上的效果图可以很清楚的看到反射次数的增加带来的效果提升</p>
+]]></content>
+      <categories>
+        <category>CG</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>Geometry</title>
+    <url>/2020/11/08/Geometry/</url>
+    <content><![CDATA[<h4 id="几何的表示方法"><a href="#几何的表示方法" class="headerlink" title="几何的表示方法"></a>几何的表示方法</h4><a id="more"></a>
+<ul>
+<li><p>隐式曲面</p>
+<p>隐式曲面不会告诉具体点的位置，只会告诉你点的坐标满足的关系，举个栗子：</p>
+<script type="math/tex; mode=display">
+x^{2}+y^{2}+z^{2} = 1</script><p>我们一般将其表示为</p>
+<script type="math/tex; mode=display">
+f(x,y,z)=x^{2}+y^{2}+z^{2}-1</script></li>
+</ul>
+<p>  这个特殊一点，一看就知道是个球，但有些就不太明显，再举个栗子：</p>
+<script type="math/tex; mode=display">
+  f(x,y,z)=(2- \sqrt{x^{2} + y^{2}})^{2} + z^{2} - 1</script><p>  这个就不太明显，它是一个圆环。所以说隐式曲面跟你能不能看出来它是个什么东西一点关系没有，判断隐式还是靠上面说的那种方式，没告诉点的具体位置，只告诉点的位置关系</p>
+<ul>
+<li>缺点：难以采样到曲面上具体的点。就是说要你给我一个在这曲面上的点，如果是复杂一点的曲面或者说不知道长什么样的曲面，你对着函数表达式想破脑袋估计也难想出一个点来</li>
+<li>优点：容易判断某个点与曲面的关系。反过来就不一样了，你给我一个点，我很容易判断它跟曲面的位置关系，直接带进去看正负就可以了</li>
+</ul>
+<ul>
+<li><p>显式曲面</p>
+<p>显式曲面的点都被直接给出，或者可以通过映射关系直接得到</p>
+<p>二维到三维的映射 (u, v) —&gt; (x, y, z)</p>
+<p><img src="https://i.loli.net/2020/11/08/cPVrQnBwTvol8DH.png" width="70%" height="70%"></p>
+<p>这个(2+cosu)cosv是x，后面两个对应y，z。</p>
+<p>咋一看，这个和那个函数表达式很像，但两个并不一样，u,v是曲面在二维图上的坐标，所以带入是直接得到的(x, y, z)。虽说大体上是懂了，但是总感觉充满了违和感，为什么突然蹦出来个u,v，感觉没任何道理啊，单纯是因为 得到显式曲面的点的一种方法是映射吗？</p>
+<ul>
+<li>缺点：没办法判断特定点与曲面的关系</li>
+<li>优点：可以直接采样到曲面上所有的点</li>
+</ul>
+<p>与隐式曲面相反</p>
+</li>
+</ul>
+<ul>
+<li><p>隐式曲面种类</p>
+<ul>
+<li>Algebraic Surface</li>
+<li>最直接的代数表达式</li>
+<li>Constructive Solid Geometry(CSG)<ul>
+<li>对不同的几何体做布尔运算</li>
+<li>通过这些布尔运算可以得到更复杂的几何</li>
+</ul>
+</li>
+<li>Distance Function 距离函数<ul>
+<li>这个东西很有意思，可以实现两个几何体混合的效果</li>
+<li>实现混合效果的方法是找到任意一个点到两个几何体表面最短的距离，然后再减去一个变量作为最终的SDF(Signed Distance Function)</li>
+</ul>
+</li>
+<li>level set 水平集<ul>
+<li>和SDF很像，只不过函数不是以数学表达式的方式显式的表示出来，而是用一个一个格子表示出函数离散的值，然后通过双线性插值算出所有值等于0的点</li>
+</ul>
+</li>
+<li>Fractals 分型几何<ul>
+<li>自相似，递归</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li>显式曲面种类<ul>
+<li>点云<ul>
+<li>一堆点的表示方法，有所有的点的信息</li>
+</ul>
+</li>
+<li>Polygon Mesh 多边形网格<ul>
+<li>应用的最广泛</li>
+<li>object file(.obj) 和编译出来的.obj不是一回事，注意区分。其实就是一个文本文件，里面给出了所有的顶点，法线，纹理信息，然后加上它们的组织方式</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="贝塞尔曲线-Bezier-Curves-amp-贝塞尔曲面-Bezier-Surfaces"><a href="#贝塞尔曲线-Bezier-Curves-amp-贝塞尔曲面-Bezier-Surfaces" class="headerlink" title="贝塞尔曲线(Bézier Curves) &amp; 贝塞尔曲面(Bézier Surfaces)"></a>贝塞尔曲线(Bézier Curves) &amp; 贝塞尔曲面(Bézier Surfaces)</h4><ul>
+<li><p>曲线</p>
+<ul>
+<li><p>其实就是不停做线性插值，插值到只剩一个点，下图中的b(3,0)，时间t∈[0, 1]，这个点的轨迹就是贝塞尔曲线，实际上就是一个关于t的函数</p>
+<p><img src="https://i.loli.net/2020/11/08/WsUFcthNPuKEn9l.png" width="60%" height="60%"></p>
+</li>
+<li><p>这个关于t的函数挺好求的，三个控制点的贝塞尔曲线：</p>
+<script type="math/tex; mode=display">
+\textbf{b}^{2}_{0}(t) = (1-t)^{2}\textbf{b}_{0} + 2t(1-t)\textbf{b}_{1} + t^{2}\textbf{b}_{2}</script><p>可以看到，最高项指数为2，所以说n个控制点的贝塞尔曲线为n-1次</p>
+</li>
+<li><p>这个系数可以看出来有规律，所以有了n+1个控制点的贝塞尔曲线的公式</p>
+<p><img src="https://i.loli.net/2020/11/08/vz4o6heUdqAXwYJ.png" width="70%" height="70%"></p>
+<p>图中下面那个伯恩斯坦多项式(Bernstein polynomials)跟多项式展开差不多</p>
+</li>
+<li><p>性质</p>
+<ul>
+<li>必定经过起点和终点，并与这两个点相切</li>
+<li>具有仿射变换性质，可以通过移动控制点移动整条曲线</li>
+<li>凸包性质，曲线一定不会超出所有控制点构成的多边形范围</li>
+</ul>
+</li>
+<li><p>分段贝塞尔曲线</p>
+<ul>
+<li>原因：控制点太多时，局部的曲线形状会出问题</li>
+</ul>
+</li>
+<li><p>further：B样条，NURBS</p>
+</li>
+</ul>
+</li>
+<li><p>曲面</p>
+<ul>
+<li><p>贝塞尔曲面与曲线类似，只是从2维到了3维。原来只有一个参数t，现在有两个u，v，范围都是[0, 1]</p>
+<p><img src="https://i.loli.net/2020/11/08/VlDPp9yRxiTen5c.png" width="70%" height="70%"></p>
+</li>
+<li><p>1、用参数u，先根据4列（每列4个点，这4个点形成折线段）用算贝塞尔曲线的方式算出4个蓝色的点，灰色的线即为生成的贝塞尔曲线（底下的方格即为点的位置，但没表示出点的高度信息）</p>
+<p>2、再用参数中，根据4个蓝色的点用同样的方法算出最终贝塞尔曲面上的一点</p>
+<p>3、遍历所有的u，v，得到的所有点贝塞尔曲面，即点在u，v上的轨迹</p>
+</li>
+<li><p>其实可以看出来，所有的蓝色线条就组成了贝塞尔曲面，灰色线条是不在曲面上的</p>
+</li>
+</ul>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>CG</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>蒙特卡洛路径追踪</title>
+    <url>/2020/12/20/RayTracing-3/</url>
+    <content><![CDATA[<p>上一部分乱七八糟的弄了那么多东西，搞出了渲染方程，要把这东西实际用上，就要涉及到蒙特卡洛积分了</p>
+<a id="more"></a>
+<h4 id="蒙特卡洛积分"><a href="#蒙特卡洛积分" class="headerlink" title="蒙特卡洛积分"></a>蒙特卡洛积分</h4><ul>
+<li><p>前置知识是概率论</p>
+</li>
+<li><p>我们用的积分基本上都是黎曼积分：分解为很多矩形积分（二维曲线那个）</p>
+<p>但有时候解析式求不出来，黎曼积分就没办法做了，需要用蒙特卡洛来估计复杂定积分的值</p>
+<p>蒙特卡洛积分是指用蒙特卡洛法来估计积分，蒙特卡洛是一类算法的统称，估计积分只是其中的一个应用（不过把他当做一种积分方法好像也没什么问题）</p>
+</li>
+<li><p>蒙特卡洛积分直观上的解释大概就是 你先随便找一点x<sub>i</sub>，得到f(x<sub>i</sub>)，然后用(b-a)*f(x<sub>i</sub>)当做这个曲线围住的面积，然后采样很多点，把得到的面积平均一下，作为积分的近似值</p>
+<p><img src="https://i.loli.net/2020/12/20/5bvNS4nWHjpJxOl.png" width="50%" height="50%"></p>
+</li>
+<li><p>具体做法</p>
+<p>$\int_{b}^{a} f(x) dx$    计算的定积分</p>
+<p>X<sub>i</sub> ~ p(x)    随机变量及PDF（概率密度函数）</p>
+<p>则</p>
+<p>积分近似为</p>
+<script type="math/tex; mode=display">
+F_{N}=\frac{1}{N} \sum_{i=1}^{N} \frac{f\left(X_{i}\right)}{p\left(X_{i}\right)}</script><p>别问为什么要除以PDF，问就是不知道(X</p>
+<p>其实可以去看看<a href="https://zhuanlan.zhihu.com/p/146144853">这个</a>，感觉上这是一个逆推出来的玩意，需要的做的是验证它的正确性（链接文章里有对它的验证），所以 用就完事了</p>
+<p>均匀采样的情况下，即p(x) = 1/(b-a)，此时</p>
+<script type="math/tex; mode=display">
+F_{N}=\frac{b-a}{N} \sum_{i=1}^{N} f\left(X_{i}\right)</script><p>任何一个积分的近似值都可以计算</p>
+<script type="math/tex; mode=display">
+\int f(x) \mathrm{d} x=\frac{1}{N} \sum_{i=1}^{N} \frac{f\left(X_{i}\right)}{p\left(X_{i}\right)} \quad X_{i} \sim p(x)</script><ul>
+<li>N为采样数 采样越多，结果越准</li>
+<li>不用关心积分域，积分域包含在了PDF里</li>
+<li>在x上采样就要在x上积分</li>
+</ul>
+</li>
+</ul>
+<h4 id="路径追踪-Path-Tracing"><a href="#路径追踪-Path-Tracing" class="headerlink" title="路径追踪 Path Tracing"></a>路径追踪 Path Tracing</h4>]]></content>
+      <categories>
+        <category>CG</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>Shading(Blinn-Phong Reflectance Model)</title>
+    <url>/2020/10/27/Shading/</url>
+    <content><![CDATA[<h4 id="Blinn-Phong-Reflectance-Model-反射模型"><a href="#Blinn-Phong-Reflectance-Model-反射模型" class="headerlink" title="Blinn-Phong Reflectance Model 反射模型"></a>Blinn-Phong Reflectance Model 反射模型</h4><p>是一个经验模型，并不完全准确，但相对简单</p>
+<p>光源照射会分成三个部分，一是Diffuse漫反射，二是Specular镜面反射（高光部分），三是环境光（各个方向乱七八糟经过多次反射打过来的光）</p>
+<a id="more"></a>
+<ul>
+<li><p>Diffuse 漫反射</p>
+<p>因为是漫反射，各个方向看到的光线能量强度都相同，所以与视角（view）方向无关，表示漫反射的公式里就只有光源方向 <strong>l</strong> 和 法线方向<strong>n</strong></p>
+<script type="math/tex; mode=display">
+L_{d} = k_{d}( I/r^{2})\max(0, \mathbf{n} \cdot \mathbf{l})</script><ul>
+<li>k<sub>d</sub>是漫反射系数，因为不同的材质对光线的吸收情况不同</li>
+<li><strong>n</strong> 和 <strong>l</strong> 点乘得出cos的结果以求得光线直着打到shading point上的能量强度</li>
+<li>max(0, <strong>n</strong> · <strong>l</strong>) 就是取0和 <strong>n</strong> · <strong>l</strong> 之间的最大值，光线从背着shading point的方向射过来的时候 <strong>n</strong> · <strong>l</strong> 会是个负值，而这种情况是将其视作没有意义的，因为我们只在考虑反射，没考虑折射之类的，所以 <strong>n</strong> · <strong>l</strong> 为负值时直接取0就好了。</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><p>Specular 镜面反射</p>
+<ul>
+<li>高光是只有你的视角方向对着镜面反射光的方向了才能看到的，所以反射光与视角的夹角会影响你看到的高光</li>
+<li>计算反射光与视角的夹角余弦相对来说比较麻烦，有聪明人发现了视角靠近反射光时，半程向量会靠近法线向量</li>
+<li>p用来控制高光大小，角度在增大时，余弦值其实下降的比较慢，就会造成视角与反射光相差很大时都可以看到很明显的高光，但高光一般就集中在一小片区域，视角偏差大一点就看不到了，所以加一个指数来加快它的下降速度，p一般取100~200</li>
+</ul>
+</li>
+</ul>
+<p>  <img src="https://i.loli.net/2020/10/27/QRLx16ZdOpVr4Go.png" alt="Specular.png"></p>
+<ul>
+<li><p>Ambient</p>
+<ul>
+<li>fake</li>
+<li>提升亮度</li>
+<li>精确计算需要用到全局光照</li>
+</ul>
+<script type="math/tex; mode=display">
+L_{a}=k_{a} I_{a}</script></li>
+</ul>
+<p>要得到最后的光照效果，把上面三种加起来就可以了</p>
+<script type="math/tex; mode=display">
+\begin{aligned} L &=L_{a}+L_{d}+L_{s} \\ &=k_{a} I_{a}+k_{d}\left(I / r^{2}\right) \max (0, \mathbf{n} \cdot \mathbf{l})+k_{s}\left(I / r^{2}\right) \max (0, \mathbf{n} \cdot \mathbf{h})^{p} \end{aligned}</script>]]></content>
+      <categories>
+        <category>CG</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>Shading(续)</title>
+    <url>/2020/10/31/Shading-2/</url>
+    <content><![CDATA[<h4 id="Shading-frequencies"><a href="#Shading-frequencies" class="headerlink" title="Shading frequencies"></a>Shading frequencies</h4><ul>
+<li>Flat shading<ul>
+<li>每个三角形都有一个法线，每个三角形做一次shading</li>
+<li>对平滑的表面来说效果不好</li>
+</ul>
+</li>
+<li>Gouraud shading<ul>
+<li>每个顶点做一次shading，三角形内部的颜色用插值的方式算出来</li>
+</ul>
+</li>
+</ul>
+<a id="more"></a>
+<ul>
+<li>Phong shading<ul>
+<li>求出顶点法线，插值出每一个像素的法线，对每个像素进行一次着色</li>
+<li>不要与Blinn-Phong着色模型搞混了</li>
+</ul>
+</li>
+</ul>
+<p><img src="https://i.loli.net/2020/10/31/Jz5AGUi1Mhq8TLy.png" width="50%" height="50%"></p>
+<p>面很多的时候，逐像素的效果并不会比逐面要好，但是当面多到一定程度(当面的数量超过像素时)的时候，逐面的计算量又不会比逐像素少了。所以想要好的效果，大量的计算基本上是免不了的。</p>
+<p>比较好奇面的数量比像素多的时候，到底是个什么情况？</p>
+<p>我最开始不能理解的地方在于顶点，也就是一个点，为什么会有颜色，开始给自己的解释是 为了插值给他定义的属性。后来发现这样想或许也挺能接受的 假如有一个红色的正方形，我说它上面的任意一点的颜色是红色的，感觉上也没什么错哈。</p>
+<p>前面(三种着色频率)遗留下来一个问题，顶点怎么算法线。</p>
+<ul>
+<li>求顶点相邻的面的法线的平均 作为顶点的法线</li>
+<li>法线向量要归一化</li>
+</ul>
+<h4 id="Graphics-pipeline"><a href="#Graphics-pipeline" class="headerlink" title="Graphics pipeline"></a>Graphics pipeline</h4><p><img src="https://i.loli.net/2020/10/31/h1kNm54wRJiMdDb.png" width="80%" height="80%"></p>
+<ul>
+<li>Vertex Processing<ul>
+<li>输入是场景中的模型，对其顶点进行处理</li>
+<li>MVP </li>
+<li>shading，texture mapping</li>
+</ul>
+</li>
+<li>Triangle Processing<ul>
+<li>将得到的顶点按一定规则连起来，得到三角形</li>
+</ul>
+</li>
+<li>Rasterization<ul>
+<li>Sampling</li>
+</ul>
+</li>
+<li>Fragment Processing<ul>
+<li>Z-buffer</li>
+<li>shading，texture mapping</li>
+</ul>
+</li>
+<li>Framebuffer Operations<ul>
+<li>帧缓冲区中输出图片</li>
+</ul>
+</li>
+</ul>
+<p>着色频率不同，shading发生的阶段也不同，比如说Gouraud shading是对顶点做shading，所以发生在Vertex Processing，而Phong shading则发生在Fragment Processing。不过Gouraud shading来说，三角形内部的着色是发生在哪？sampling还没做，还不知道三角形覆盖了那些像素。</p>
+<h4 id="Texture-mapping"><a href="#Texture-mapping" class="headerlink" title="Texture mapping"></a>Texture mapping</h4><ul>
+<li>一个点的颜色由漫反射系数决定，实际中不可能去逐点去设置它的系数，这样太蠢了，所以有了纹理映射，找一张能把物体包着的图片，并且有3D物体上任一点到2D图片上对应点的映射关系，然后计算着色的时候通过映射关系找到每个点的漫反射系数进行计算（每个点的漫反射系数存储在2D的图片，也就是texture上）。</li>
+<li>纹理坐标UV，2维图片上点的坐标，范围[0, 1]<sup>2</sup></li>
+<li>tilable texture无缝衔接的纹理<ul>
+<li>Wang Tiling</li>
+</ul>
+</li>
+</ul>
+<h4 id="Barycentric-coordinates-重心坐标-（插值）"><a href="#Barycentric-coordinates-重心坐标-（插值）" class="headerlink" title="Barycentric coordinates 重心坐标 （插值）"></a>Barycentric coordinates 重心坐标 （插值）</h4><ul>
+<li>三角形内部任一点的坐标(x, y)</li>
+</ul>
+<script type="math/tex; mode=display">
+\begin{array}{r} (x, y)=\alpha A+\beta B+\gamma C \\ \alpha+\beta+\gamma=1 \end{array}</script><ul>
+<li><p>α，β，γ    (α，β，γ)即为重心坐标</p>
+<script type="math/tex; mode=display">
+\begin{aligned}
+\alpha &= \frac{A_{A}}{A_{A}+A_{B}+A_{C}} \\
+\beta &= \frac{A_{B}}{A_{A}+A_{B}+A_{C}} \\
+\gamma &= \frac{A_{C}}{A_{A}+A_{B}+A_{C}}
+\end{aligned}</script><ul>
+<li>将要求的那一点与三个顶点连起来，形成三个三角形A<sub>A</sub>, A<sub>B </sub>, A<sub>C</sub> 式中代表三角形面积</li>
+</ul>
+</li>
+<li><p>算面积较为麻烦，有公式可以直接算</p>
+<script type="math/tex; mode=display">
+\begin{aligned} 
+\alpha &=\frac{-\left(x-x_{B}\right)\left(y_{C}-y_{B}\right)+\left(y-y_{B}\right)\left(x_{C}-x_{B}\right)}{-\left(x_{A}-x_{B}\right)\left(y_{C}-y_{B}\right)+\left(y_{A}-y_{B}\right)\left(x_{C}-x_{B}\right)} \\ 
+\beta &=\frac{-\left(x-x_{C}\right)\left(y_{A}-y_{C}\right)+\left(y-y_{C}\right)\left(x_{A}-x_{C}\right)}{-\left(x_{B}-x_{C}\right)\left(y_{A}-y_{C}\right)+\left(y_{B}-y_{C}\right)\left(x_{A}-x_{C}\right)} \\ \gamma &=1-\alpha-\beta 
+\end{aligned}</script></li>
+<li><p>投影后重心坐标会发生变化</p>
+</li>
+</ul>
+<h4 id="Applying-Textures"><a href="#Applying-Textures" class="headerlink" title="Applying Textures"></a>Applying Textures</h4><ul>
+<li>步骤前面已经大致提到了，利用重心坐标插值算出和映射关系算出每个点（如果是Gouraud shading的话，应该是不会查每个像素的UV的，中间的像素颜色直接插值出来了）的UV坐标，然后去查texture，得到漫反射系数</li>
+</ul>
+<p>会遇到些问题</p>
+<ul>
+<li><p>纹理太小</p>
+<ul>
+<li><p>首先有个概念纹理像素texel，纹理的基本单位（纹素）</p>
+</li>
+<li><p>纹理太小会导致一个texel映射到多个pixel</p>
+</li>
+<li><p>决解方法</p>
+<ul>
+<li><p>Bilinear Interpolation 双线性插值</p>
+<p><img src="https://i.loli.net/2020/10/31/udiIgDMRFXbtBC5.png" width="70%" height="70%"></p>
+<p>红点是一个pixel，每个方格是一个texel，为了求红点的颜色，不是直接等同于u11</p>
+<p>先通过u01和u11插值得到u1，同理得到u0，然后u0和u1再做一个插值得到红点的颜色</p>
+</li>
+<li><p>Bicubic Interpolation 双三次插值</p>
+<p>周围16个点做三次插值，效果更好，但运算量更大</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>纹理太大</p>
+<ul>
+<li><p>纹理太大导致了一个pixel会对应多个texel，就是说一个pixel需要表示多个texel的信息，显然这是不够的，必然会造成信息的丢失，所以会导致失真。从信号的角度来讲也是，用pixel去采样texture，采样频率太低导致走样。</p>
+</li>
+<li><p>简单暴力的解决方法就是增加采样频率，比如说supersampling，问题也显而易见，超采样对性能影响太大</p>
+</li>
+<li><p>正着来不行，就反着来，可以将texture的纹素密度变小，这样也能达到目的，就有了mipmap</p>
+<ul>
+<li><p>每次长宽都减少一半，形成一个新的纹理</p>
+<p><img src="https://i.loli.net/2020/10/31/p26le5HnzJVAkQP.png" width="70%" height="70%"></p>
+</li>
+<li><p>所有的纹理合起来形成一个金字塔的形状，不同的纹理在不同的层level=D，D=0,1,2…</p>
+</li>
+<li><p>把所有纹理层都存储起来，也只比原来的纹理多了1/3(等比数列求和)</p>
+</li>
+<li><p>如何确定D，D=log<sub>2</sub>L，L是像素对应到纹理上近似的正方形的边长(占几个纹素)</p>
+<ul>
+<li><p>如果D是整数，直接取该层就可以了</p>
+</li>
+<li><p>如果不是整数，有两种应对方法</p>
+<ul>
+<li><p>四舍五入取最近的那层</p>
+</li>
+<li><p>Trilinear Interpolation 三线性插值</p>
+<p>首先D向下取整，假设取整后为d，在d层做一次Bilinear Interpolation，然后再d+1层再做一次Bilinear Interpolation(这两次双线性插值插的是颜色)，然后将两次结果再做一次插值(这次是层与层之间的插值，根据小数D的值做一次线性插值)</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>mipmap也存在问题，因为不同level的mipmap的Range Query(也就是一个像素在纹理上近似的区域)都是正方形的，然而一个像素实际在纹理上对应的区域可能是比较奇怪的形状，将这个奇怪的形状近似成正方形肯定会产生很大的误差，所以有了各向异性过滤Anisotropic Filtering    </p>
+<p><img src="https://i.loli.net/2020/11/01/njubQOEH8ogfLrh.png" width="70%" height="70%"></p>
+<p><img src="https://i.loli.net/2020/11/01/yWdeIVDx2ZOupm8.png" width="40%" height="40%"></p>
+<ul>
+<li>比如说，上面第二幅图左下角一个纹理上，一个像素在上面近似了一个正方形，还原到最初的纹理上就被拉伸成了一个矩形的形状，这样我们就可以解决在实际纹理中对应矩形的像素</li>
+<li>但是Anisotropic Filtering也只解决了部分问题，那种斜着的也没很好的办法处理</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li><p>EWA filtering</p>
+<ul>
+<li><p>可以解决斜着的情况</p>
+</li>
+<li><p>不太懂</p>
+</li>
+</ul>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>CG</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>Ray Tracing</title>
+    <url>/2020/11/26/RayTracing/</url>
+    <content><![CDATA[<p>光栅化不好处理全局的效果，比如有些地方光源无法直接打到，但是经过多次反射，光线会打到有些地方形成一块比较亮的地方，也许有些奇技淫巧可以处理这种东西，但是总归不是那么好。所以为了全局光照的效果，就有了光线追踪。</p>
+<a id="more"></a>
+<p>关于ray tracing这个概念，由于现在牛逼的东西越来越多，它所代表的东西与原来已经大有不同了，引用闫老师的定义，ray tracing是所有光线传播方法的一个大集合，像whitted-style ray tracing，path tracing，photon mapping等等都是其中的一部分，这一小节说的其实是whitted-style ray tracing，以前说ray tracing的时候，一般默认的都是这个。</p>
+<h3 id="Whitted-Style-Ray-Tracing"><a href="#Whitted-Style-Ray-Tracing" class="headerlink" title="Whitted-Style Ray Tracing"></a>Whitted-Style Ray Tracing</h3><h4 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h4><ul>
+<li><p>首先对我们考虑的光线进行几个假定</p>
+<p>1.光线沿着直线传播（不考虑它的波动性）</p>
+<p>2.光线之间无法碰撞</p>
+<p>3.光路可逆（这个算是光线本身的性质）</p>
+<p>通过第三点可以还原出光路，我们反过来从视点出发，从视点向近投影平面上的每一个像素发射一条光线，然后判断光线与场景中物体的交点。</p>
+<p>其实从眼睛出发的线与其说是光路，不如说我们的“视线路径”，我们的视线路径打到的点（反射也好，折射也好），如果没有被遮挡的话，可以用blinn-phong里面算shading point的方法，算出那一点的光照信息，然后从那一点开始，光线沿着我们的视线路径回到相应的像素，所有被打到的点上的光照信息合起来就是应该被显示到那个像素上的信息了。</p>
+</li>
+<li><p>操作过程</p>
+<p>从视点向每一个像素发射一条光线（下图是其中一条），找光线与物体最近的的交点，用光照模型（eg.blinn-phong）可以对这一点计算，得到对应像素的颜色。看光源与交点的连线有没有被物体挡住也可以判断阴影。</p>
+<p><img src="https://i.loli.net/2020/11/27/3B1rw2d97haJoxK.png" width="60%" height="60%"></p>
+<p>如果只停在这一步的话，效果和光栅化是一样的，都只算了一次直接光照，所以为了全局效果whitted-style ray tracing还会算其他间接光照，折射，反射这些。因为光路可逆，所以除了从光源一次反射到达视点的光线可以贡献颜色给相应的像素，同一条光路上后面的交点上出来的光线也可以沿着光路到达同样的像素，也可以提供一定的颜色信息。</p>
+<p><img src="https://i.loli.net/2020/11/27/B3uiTnlVbtDX1OY.png" width="70%" height="70%"></p>
+<p>一些点：</p>
+<p>这是一个递归的过程，会设置递归的终止条件，最大弹射次数这种。</p>
+<p>光线弹射能量肯定会损失，不然最后结果会过曝，用的方法很简单，就是每次损失百分之多少。</p>
+<p>视点出去的光线没有打到物体的话，返回背景色。</p>
+<p><a href="https://zhuanlan.zhihu.com/p/144403005">https://zhuanlan.zhihu.com/p/144403005</a> （还有伪代码）</p>
+</li>
+</ul>
+<h4 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h4><p>上面是大致的操作方法，具体实现的时候又有很多技术难点</p>
+<ul>
+<li><p>光线的表示方法</p>
+<p>ray is defined by its origin and a direction vector</p>
+<p>光线算是一条射线</p>
+<script type="math/tex; mode=display">
+\mathbf{r}(t)=\mathbf{o}+t \mathbf{d} \quad 0 \leq t<\infty</script><p><strong>o</strong> : origin</p>
+<p>t : “time”</p>
+<p><strong>d</strong> : direction</p>
+<p>说t是time其实大体上代表了，假设光线从原点射出去，与物体的那些交点的先后顺序，并不是平常所说的时间。</p>
+<p>对于某个确定的t来说，<strong>r</strong>其实就是一个点，但是在定义域内，所有的点就构成了线，求交点也相当于求某个t时的点。</p>
+</li>
+<li><p>光线与物体的求交</p>
+<p>一种简单的情况，与球体的求交</p>
+<script type="math/tex; mode=display">
+(\mathbf{o}+t \mathbf{d}-\mathbf{c})^{2}-R^{2}=0</script><p><strong>c</strong> : center</p>
+<p>R : 半径</p>
+<p>展开化简后就是一个关于t的一元二次方程，就可以解出t，得到相应的交点</p>
+<ul>
+<li><p>与隐式曲面求交</p>
+<script type="math/tex; mode=display">
+\begin{aligned} &\mathbf{p}: f(\mathbf{p})=0\\ &f(\mathbf{o}+t \mathbf{d})=0 \end{aligned}</script><p>一般隐式曲面都可以表示成：f(<strong>p</strong>)=0（<strong>p</strong>代表曲面上的一点），把光线的方程带进去，得到下面那个式子，解就行了，至于怎么把曲面的表达式转换成f(<strong>p</strong>)=0这种形式，目前没什么头绪？</p>
+<p>还有一个就是，这些式子里，点和向量都是加粗表示的，以往是向量和标量用加粗区分开来，点的表示也是一样要加粗吗，不过点的维度和向量是一样的，从这个角度好像还是挺说得通的。</p>
+</li>
+<li><p>与显式曲面求交</p>
+<p>图形学中，显示曲面其实才是常态，毕竟三角形的顶点数据是都有的。</p>
+<p>判断光线与显示曲面的交点，其实就是判断光线与三角形面的交点。那么就可以分为两步，第一步算出光线与三角形所在平面的交点，然后判断该电是否在三角形内（这个方法在光栅化里有说过）。</p>
+<p>显式平面表示：</p>
+<script type="math/tex; mode=display">
+\begin{aligned} &\mathbf{p}: (\mathbf{p} - \mathbf{p'}) \cdot \mathbf{N} = 0 \end{aligned}</script><p><strong>N</strong> : 法线</p>
+<p><strong>p’</strong> : 平面上一点</p>
+<p>同样的求出点以后，看点是否在三角形里面就可以判断光线是否与物体相交了。</p>
+<p>这样需要两步，有人想了个办法把它一步搞出来</p>
+<ul>
+<li><p>Moller Trumbore Algorithm</p>
+<p>把点用重心坐标的方式表示出来，然后把重心坐标和t解出来</p>
+<p><img src="https://i.loli.net/2020/11/27/7Fj5TAd8Zg2WkMq.png" width="70%" height="70%"></p>
+<p>因为<strong>O</strong>、<strong>D</strong>、<strong>P<sub>0</sub></strong>、<strong>P<sub>1</sub></strong>、<strong>P<sub>2</sub></strong>都有三个坐标，相当于可以列出来三个方程，那三个未知数t，b1，b2也很好求出来了</p>
+<p>结果判断：</p>
+<p>​    t为正—&gt;这很河里，没算反</p>
+<p>​    重心坐标都为正—&gt;点在三角形内</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>加速光线求交</p>
+<p>隐式曲面不管他，就看显式曲面（原因前面有），虽然一步判断交点是否在三角形内的样子很靓仔，但是去遍历场景内所有三角形面的时候真的很狼狈。有时候一个场景成百上千万的三角形，再加上每个像素都要射出一支光线，用脚想都知道这样不太行，需要加速。</p>
+<p>最简单的方法跟之前光栅化的思想是一样的，搞个包围盒，先算光线与包围盒有没有交点，然后再看要不要与物体求交，当然这个包围盒是三维的，把它想象成三对平面其实会更好一点，因为算光线与包围盒的交点时，算的其实是光线与包围盒面所在平面的相交时的t。这样算有助于判断光线有没有穿过包围盒。</p>
+<p>先看二维的情况，三维无非就是二维的拓展</p>
+<p><img src="https://i.loli.net/2020/11/27/z2RpviudjEs9PMC.png" width="60%" height="60%"></p>
+<p>将面分为两对，x和y，每对 面 都会求出来两个值tmin，tmax，分别表示进入这对平面和出这对平面的t，t是有可能小于零的，就是射线反向延长与平面的交点，负的虽然没有实际意义，但是可以用来判断交点的先后进出顺序。</p>
+<p>这里其实可以得到一个东西，先只看光线进入包围盒面的情况，当光线经过了进入的最大点时（也就是tmin里最大的），才进入了盒子（即使包括t为负的那些“交点”），再看光线出包围盒的情况，当光线经过了出去的最小点时（也就是tmax里最小的），就出了包围盒。直观上来讲确实是这样，但是不太知道怎么解释？</p>
+<p>出入包围盒的t：t<sub>enter</sub> = max{tmin}, t<sub>exit</sub> = min{tmax}</p>
+</li>
+</ul>
+<p>  所以上面图中下方的问题：</p>
+<p>  t<sub>enter</sub> &lt; t<sub>exit</sub> &amp;&amp; t<sub>exit</sub> &gt; 0—&gt; 光线与包围盒相交</p>
+<p>  只有 t<sub>enter</sub> &lt; t<sub>exit</sub> 的话，盒子可能在光线原点后面</p>
+<p>  t<sub>enter</sub> &lt; 0 &amp;&amp; t<sub>exit</sub> &gt;= 0 —&gt;光线原点在盒子中间</p>
+<p>  t<sub>enter</sub> &gt; t<sub>exit</sub> —&gt; 光线与包围盒没有交点</p>
+<p>  总（有交点）：t<sub>enter</sub> &lt; t<sub>exit</sub> &amp;&amp; t<sub>exit</sub> &gt; 0</p>
+<p>  PS：与平面的求交可以根据前面的显示平面表达方式来</p>
+<script type="math/tex; mode=display">
+  \begin{aligned} &\mathbf{p}: (\mathbf{p} - \mathbf{p'}) \cdot \mathbf{N} = 0 \end{aligned}</script><p>  把p带进去解方程就行了。</p>
+<p>  不过上这种对物体做包围盒的加速方式有些问题</p>
+<p>  一个是场景中只有一个物体时，就是只搞一个盒子，对加速没有任何效果</p>
+<p>  另一个是场景中充斥着大量模型时，花花草草什么的，包围盒多了，加速效果有限</p>
+<p>  于是有了一些新的划分AABB的方法</p>
+<ul>
+<li><p>均匀空间划分 Uniform Spatial Partitions</p>
+<p>首先先找到整个场景的bounding box</p>
+<p>然后把它均匀的分成很多grids</p>
+<p>把有物体的格子标记出来</p>
+<p><img src="https://i.loli.net/2020/11/27/1f7TLSaEVACjtUP.png" width="60%" height="60%"></p>
+<p>再根据射出的光线找出所有与其相交的方格（如何光栅化一条线，虎书，bresenham算法），倘若方格中存储有物体，再进一步与方格中的物体求交。</p>
+<p>划分出来的格子太多或太少都不太好，在实际中效果不错的格子数量：</p>
+<p>​    cells ≈ C * objs</p>
+<p>​    C ≈ 27 in 3D</p>
+<p>场景中无效的格子越少，越适合这种方法</p>
+</li>
+<li><p>Spatial Partition</p>
+<p>上面是均匀的划分，这里其实就是非均匀的划分</p>
+<p>Oct-Tree （八叉树） 每次沿着三个维度划分，形成八个子块，直到某一块足够小或者空间内三角形很少。维度变高的时候，这种方法会变成2<sup>n</sup>叉的树。</p>
+<p>就光追加速这一块来讲，为什么会出现比3维高的情况？</p>
+<p>KD-Tree 每次只沿一个维度划分，顺序是按xyz来。最后形成的结构类似二叉树。</p>
+<p>BSP-Tree 跟KD-Tree类似，但是切分方向不是平行于轴的，这样作为包围盒来讲，计算会相对复杂。至于老师说的维度高了需要超平面划分，KD-Tree感觉上也有这个问题。</p>
+<ul>
+<li><p>KD-Tree</p>
+<p>划分终止条件跟Oct-Tree类似</p>
+<p>叶子节点存储对应空间的三角形面，非叶子节点指向它的子节点（三角形面只会储存在叶子节点中）</p>
+<p>遍历是一个递归的过程</p>
+<p>1 对一个节点（包围盒）求交</p>
+<p>2 如果有交点，判断是不是叶子节点，是叶子节点就与其中的物体求交，如果不是就与它的子节点（包围盒）求交，也就是回到第一步</p>
+<p>具体过程可以看PPT和视频回顾一下</p>
+<p><img src="https://i.loli.net/2020/12/01/qC1z2joS6sk8Tlp.png" width="50%" height="50%"></p>
+<p>优点：</p>
+<p>1 KD-Tree结构的AABB可以不用判断所有包围盒，光线没与非叶子节点相交就可以直接排除掉其下所有节点。</p>
+<p>2 对比均匀划分，没什么物体的空间里不会划分很多盒子。</p>
+<p>缺点：</p>
+<p>1 判断包围盒和三角形有没有交集并不简单（我们认为只要有交集就算这个三角形在包围盒内），正常情况下有交集三角形都会有顶点在包围盒内，但有些极端情况下三角形三个顶点都不在包围盒内，也会有交集。</p>
+<p>2 有些三角形可能同时在几个叶子节点内，这样的性质并不好。</p>
+</li>
+</ul>
+</li>
+<li><p>BVH （Bounding Volume Hierarchy）</p>
+<p>KD-Tree还是不太能让人满意，就再想新的办法喽。之前那么多办法都有这样那样的问题，既然这样，换个角度出发，<del>おれは人间をやめるぞ！　ジョジョ──ッ！！</del>不划分空间了，划分物体，本质上AABB的目的就是排除掉那些完全没可能相交，差的十万八千里的物体，这样的想话，划分物体也没什么问题，无非就是包围盒有重合的地方，影响不大。</p>
+<p><img src="https://i.loli.net/2020/12/01/7ojhrfaHR8JvcZW.png" width="60%" height="60%"></p>
+<p><img src="https://i.loli.net/2020/12/01/UNupxPlYaVO8cR9.png" width="60%" height="60%"></p>
+<p>既然按物体划分，一个三角形就只会被存储在一个包围盒内，这也解决了之前KD-Tree的问题</p>
+<p>为了使树的结构更加平衡（深度更小，搜索效率越高），划分的时候尽量使左右子节点的三角形数量一样多，比如选顶点坐标的中位数，还有xyz轴换着顺序来划分等等。</p>
+<p>与kdtree一样，只有叶子节点存储存储三角形信息。</p>
+<p>伪代码</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">Intersect(Ray ray, BVH node) &#123;</span><br><span class="line">    if(ray misses node.bbox) return;</span><br><span class="line">    </span><br><span class="line">    if(node is a leaf node)</span><br><span class="line">    	test intersection with all objs;</span><br><span class="line">    	return closest intersection;</span><br><span class="line">    </span><br><span class="line">    hit1 &#x3D; intersect(ray, node.child1);</span><br><span class="line">    hit2 &#x3D; intersect(ray, node.child2);</span><br><span class="line">    </span><br><span class="line">    return the closer of hit1, hit2;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>CG</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>令人摸不着头脑</title>
+    <url>/2020/12/22/bug/</url>
+    <content><![CDATA[<p>不知道是些什么玩意</p>
+<a id="more"></a>
+<h3 id="vs2019引入第三方库那些事"><a href="#vs2019引入第三方库那些事" class="headerlink" title="vs2019引入第三方库那些事"></a>vs2019引入第三方库那些事</h3><ul>
+<li><p>配置了一手opengl环境，结果被那些第三方库搞了心态</p>
+<p>先是把库文件和头文件直接放在了C盘下面，然后vs表示找不到对应的头文件，但是我已经设置好了路径，不应该会发生这种事情，想了想可能是直接放在C盘下面，它没权限。改了位置之后，放到用户我自己的文件夹下面后，头文件能找到了，但是又出现了新的错误，各种无法解析的外部符号，全是glfw的相关函数，然后照着各种文章，用各种姿势修改了路径和依赖库，结果这吊IDE都不满意，还是跑不出来。最后是又去官网下了一遍预编译好的版本（之前下载的源码，自己编译的），才跑得动的，然后看了下预编译好的和自己编译得到的lib文件都不一样（虽然不知道怎么打开lib文件，但是大小还是一目了然的，而且还是自己得到的更大），等于说俺编译出来的是错的，真是日了狗了…</p>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>SomethingWrong</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>Applications of textures</title>
+    <url>/2020/11/07/Shading-3/</url>
+    <content><![CDATA[<p>纹理的应用很多，远不止作为反射系数来表现出不同的颜色</p>
+<a id="more"></a>
+<ul>
+<li><p>Environment lighting</p>
+<p>纹理用来描述环境光长什么样，记录各个方向来的光照信息(光照信息并不仅仅指看到的照过来的光，任何方向上，只要能看到东西，都说明有光从那里打到了你的眼睛，这些都是光照信息)</p>
+<ul>
+<li>Spherical Map<ul>
+<li>会存在扭曲现象</li>
+</ul>
+</li>
+<li>Cube Map<ul>
+<li>球会出现扭曲现象，将它投影到一个立方体上</li>
+<li>立方体扭曲更少，但是计算量会多一点，比如说给你一个方向(角度)，要求这个方向上的光线信息，在原本的球上直接根据角度计算即可，但在立方体上要先计算它在立方体的哪一个面上面</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>Store microgeometry</p>
+<ul>
+<li><p>Bump/normal mapping</p>
+<ul>
+<li>不改变几何</li>
+<li>把任何像素的法线都做一个扰动</li>
+<li>通过定义的不同位置的高度和它邻近位置的高度差来重新计算法线</li>
+<li>计算法线的方法：先求得切线，然后根据切线得到法线</li>
+<li>边缘地方会露馅</li>
+</ul>
+</li>
+<li><p>Displacement mapping</p>
+<ul>
+<li>会改变三角形顶点，而不是像凹凸贴图一样只改变法线</li>
+<li>会更逼真，但需要模型足够细致，改变模型做凹凸效果的时候顶点不够用了肯定不行</li>
+<li>DX有动态的曲面细分，初始的时候不用做的特别细致，后续根据需要再将面做细分</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>Procedural textures</p>
+<ul>
+<li>纹理并不一定是二维的，也有三维的（比如球形）</li>
+<li>实际上并没有生成一张纹理的图</li>
+<li>Perlin noise</li>
+</ul>
+</li>
+</ul>
+<p>Shadow map</p>
+<ul>
+<li><p>之前没涉及阴影，用这东西处理阴影</p>
+</li>
+<li><p>阴影产生原因：光源不能直接照到，但摄像机能看到</p>
+</li>
+<li>硬阴影</li>
+<li>只适用点光源</li>
+</ul>
+<p>步骤：</p>
+<ul>
+<li>第一步：render from light<ul>
+<li>把光源当做摄像机去渲染整个场景一遍，得到光源角度的深度buffer，这玩意就是shadow map</li>
+</ul>
+</li>
+<li>第二步：render from eye</li>
+<li>第三步：project to light<ul>
+<li>如果一点在光源角度的深度图里可见，回摄像机就正常做shading</li>
+<li>反之，比如用blinn-phong着色模型的话，就不计算镜面反射和漫反射，留一个环境光做阴影，以免全黑。</li>
+</ul>
+</li>
+</ul>
+<p><a href="https://zhuanlan.zhihu.com/p/144357517">https://zhuanlan.zhihu.com/p/144357517</a></p>
+]]></content>
+      <categories>
+        <category>CG</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>杂鱼</title>
+    <url>/2020/10/18/%E6%9D%82%E9%B1%BC/</url>
+    <content><![CDATA[<p>鱼塘里没有一只鱼，全是钩子。</p>
+]]></content>
+      <categories>
+        <category>什么玩意儿</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>Q</title>
+    <url>/2020/10/18/%E7%AC%AC%E4%B8%80%E7%AF%87/</url>
+    <content><![CDATA[<h1 id="Q"><a href="#Q" class="headerlink" title="Q"></a>Q</h1><p>1.COM对象（接口）为什么不能new？</p>
+<p>2.超级采样(supersampling)和多重采样(multisampling)</p>
+<p>​    超级采样时将四个子像素的颜色都计算了一遍，然后取得平均值，得到该像素的颜色；</p>
+<p>​    而多重采样只计算了该像素的颜色，通过其他方法算出了平均值，从而得到了该像素的最终颜色。【这里的其他方法简单的来说是基于子像素的可见性（基于子像素的深度/模板测试）和范围（子像素的中心在三角形之内还是之外）】</p>
+<a id="more"></a>
+<p>3.<strong>由于<code>XMFLOAT3</code>等这些用于存储的类型是不能直接用到指令集加速的。要想进行向量的运算，就需要从用于存储的变量，通过读取函数，将数据读入到<code>XMVECTOR</code></strong></p>
+<p>4.对x86平台，XMVECTOR的定义如下：    // XMMATRIX则是一组(4个) XMVECTOR<br><code>typedef __m128 XMVECTOR;</code></p>
+<p>由于__m128在内存中需要严格的16 byte对齐，因此并不建议直接在程序中使用这两种类型保存数据，</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line">Class Camera</span><br><span class="line">&#123;</span><br><span class="line">      XMVECTOR position;</span><br><span class="line">      XMMATRIX viewMatrix;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面的代码基本上不会成功运行，32位下new并不保证16byte对齐，而且由于类成员布局的关系，其中的XMVECTOR也不一定是16byte对齐，访问以上数据，程序可能直接崩溃。因此，DXM定义了大量用来储存数据的类型，比如XMFLOAT4,XMFLOAT3,XMFLOAT4X4等。</p>
+<p>既然__m128需要16byte对齐，那为什么在分配内存的时候，不能直接确定好分配给XMVECTOR 16byte的内存？</p>
+<p>5.图片的放大和缩小</p>
+<p>放大很好搞，按比例用一样的颜色填充就行了，也就是做个插值，但也会导致太大了会变得马赛克</p>
+<p>缩小要丢弃一些像素，一般用的是mipmap，然后找到最接近目的大小的mipmap等级，再进行插值。（按道理是最接近但小于的目标大小的等级，因为后续插值相当于放大）</p>
+<p>.* : 操作放大缩小的叫过滤器</p>
+<p>6.纹理坐标以及采样</p>
+<p>纹理（贴图）坐标，即UV坐标</p>
+<p>纹理在计算机中就是一堆数据，那纹理坐标又是个什么玩意？    因为我们在给物体做纹理时，相当于把一张图片贴在了物体上，这张图由很多纹理像素（texel）构成，那纹理其实就是一个二维数组，纹理坐标（u，v）用来确定纹理像素的位置。【纹理像素（texel）也称纹素与像素相似但并不完全等价】</p>
+<p>玩家们所谓的贴图是什么？ - Focux的回答 - 知乎 <a href="https://www.zhihu.com/question/319059045/answer/1286403304">https://www.zhihu.com/question/319059045/answer/1286403304</a>  说的很详细</p>
+<p>相关资料<a href="https://blog.csdn.net/u014800094/article/details/55224541">https://blog.csdn.net/u014800094/article/details/55224541</a></p>
+<p>7.交换链<br><a href="https://blog.csdn.net/sinat_24229853/article/details/46884833">https://blog.csdn.net/sinat_24229853/article/details/46884833</a></p>
+<p><a href="https://gavinkg.github.io/ILearnVulkanFromScratch-CN/mdroot/%E6%A6%82%E5%BF%B5%E6%B1%87%E6%80%BB/%E4%BA%A4%E6%8D%A2%E9%93%BE.html">https://gavinkg.github.io/ILearnVulkanFromScratch-CN/mdroot/%E6%A6%82%E5%BF%B5%E6%B1%87%E6%80%BB/%E4%BA%A4%E6%8D%A2%E9%93%BE.html</a><br>双重缓冲其实也存在问题，上面链接就说了，渲染速度较vblank快的话，会有可感知的延迟造成，其实在我的理解里，准确来说应该是vblank太慢了（刷新过慢）导致的延迟，<br>因为所谓延迟就是一帧画面渲染好了之后，它过了一段时间才被显示出来，仔细想想其实问题是出在刷新太慢了上面，如果刷新频率符合人眼的习惯，即使他渲染速度再快，<br>只要我在人眼习惯的频率上把它显示出来，也不会出现延迟，最多会有部分资源被浪费掉（渲染好了不刷新导致设备闲置不能进行下一帧的渲染）。</p>
+<p>那同理可以很容易推出渲染速度较慢的话，就会造成卡顿，前台缓冲区显示后，后台没渲染完，导致下一帧画面显示的还是原前台缓冲区的东西，呈现出来的结果就是卡顿。</p>
+<p>8.视图（view）就是描述符（descriptor），它告诉我们资源如何使用，相当于一个中间层</p>
+<p>9.任何 Direct3D 程序的最后一件事情是清理并且释放你所创建的对象，你必须释放这些对象将资源归还系统进行再利用<br>COM对象持有一个引用计数，告诉系统什么时候将它从内存中删除是安全的。通过使用 Release函数，将会减少对象的引用数，当引用计数为 0 时，系统将对象删除以便回收再利用。<br>在对象调用 Release 函数之前总是检查确保对象非 NULL，可以减少由于无效指针导致你的游戏由于未 定义行为所产生的崩溃</p>
+<p>引用技术的初始值是多少？是调用一次release就变为0了吗？</p>
+<p>10.ClearRenderTargetView说是清除屏幕，实际上是用一种颜色覆盖掉整个屏幕<br>其实有点讨厌这样的概念，总感觉很冗杂，函数名是清除渲染目标视图，参数传进去缓冲区（即渲染目标，一般是后台缓冲区，因为后台用来渲染，前台用来显示），虽然view实际上就是类似于target的引用或者说是它的一个中间层，这样是可以理解它具体指的啥，但看起来总有点别扭</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="keyword">float</span> clearColor[<span class="number">4</span>] = &#123; <span class="number">0.0f</span>, <span class="number">0.0f</span>, <span class="number">0.25f</span>, <span class="number">1.0f</span> &#125;; </span><br><span class="line">d3dContext_-&gt;ClearRenderTargetView( backBufferTarget_, clearColor ); </span><br><span class="line"></span><br><span class="line">swapChain_-&gt;Present( <span class="number">0</span>, <span class="number">0</span> );</span><br></pre></td></tr></table></figure>
+<p>11.DESC就是（description）描述符的缩写，名字里带这个的都是描述符，也就是视图。</p>
+<h1 id="XJUN"><a href="#XJUN" class="headerlink" title="XJUN"></a>XJUN</h1><h2 id="02-rendering-a-triangle"><a href="#02-rendering-a-triangle" class="headerlink" title="02 rendering a triangle"></a>02 rendering a triangle</h2><p>设置三角形顶点时，顶点的顺序需要按顺时针顺序给（可自行查找why），但图元类型为trianglestrip时，第二个三角形的点的顺序可以为逆时针，这是为什么？</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="comment">//draw rect with 4 vertexes</span></span><br><span class="line">		&#123; XMFLOAT3(<span class="number">-0.5f</span>, <span class="number">-0.5f</span>, <span class="number">0.0f</span>), XMFLOAT4(<span class="number">0.0f</span>, <span class="number">1.0f</span>, <span class="number">0.0f</span>, <span class="number">1.0f</span>) &#125;,</span><br><span class="line">		&#123; XMFLOAT3(<span class="number">-0.5f</span>, <span class="number">0.5f</span>, <span class="number">0.0f</span>), XMFLOAT4(<span class="number">0.0f</span>, <span class="number">0.0f</span>, <span class="number">1.0f</span>, <span class="number">1.0f</span>) &#125;,</span><br><span class="line">		&#123; XMFLOAT3(<span class="number">0.5f</span>, <span class="number">-0.5f</span>, <span class="number">0.0f</span>), XMFLOAT4(<span class="number">1.0f</span>, <span class="number">0.0f</span>, <span class="number">0.0f</span>, <span class="number">1.0f</span>) &#125;,</span><br><span class="line">		&#123; XMFLOAT3(<span class="number">0.5f</span>, <span class="number">0.5f</span>, <span class="number">0.0f</span>), XMFLOAT4(<span class="number">0.0f</span>, <span class="number">0.0f</span>, <span class="number">1.0f</span>, <span class="number">1.0f</span>) &#125;</span><br></pre></td></tr></table></figure>
+<p>(-0.5f, -0.5f, 0.0f)—&gt;(-0.5f, 0.5f, 0.0f)—&gt;(0.5f, -0.5f, 0.0f) 是顺时针的</p>
+<p>但 (-0.5f, 0.5f, 0.0f)—&gt;(0.5f, -0.5f, 0.0f)—&gt;(0.5f, 0.5f, 0.0f) 是逆时针的</p>
+<p>见龙书P149</p>
+<h2 id="06-Mouse-and-Keyboard"><a href="#06-Mouse-and-Keyboard" class="headerlink" title="06 Mouse and Keyboard"></a>06 Mouse and Keyboard</h2><p>对于瞬时状态，比如按鼠标，就按照接收的事件次数来处理，但对于会保持一段时间的状态比如滚轮或按着一个键，就需要获取两个状态一个state，一个laststate(上一帧状态)，通过两者之间的时间差来改变状态。</p>
+<h2 id="07-Lighting"><a href="#07-Lighting" class="headerlink" title="07 Lighting"></a>07 Lighting</h2><p>做XJUN的作业时，第三个通过滚轮改变汇聚强度做是做出来了，但是在另外两种光照模型下也会触发，暂时还没找到解决办法<br>我最开始是以为改变光照强度，那样又该如何做？<br>4(不太懂这题是啥意思，看起来不难),5,7还没做出来，其他都比较简单。</p>
+<h1 id="points"><a href="#points" class="headerlink" title="points"></a>points</h1><h2 id="一些改进"><a href="#一些改进" class="headerlink" title="一些改进"></a>一些改进</h2><p>从Windows 8开始，DirectX不再是您下载和安装的单独SDK；相反，DirectX随操作系统一起提供，并通过Windows Update进行更新。 此外，D3DX库已被弃用，Windows不附带，现在XNA Math库的名称为DirectX Math。 另外，从Visual Studio 2015开始，dxerr.lib不再与Visual Studio 2015兼容。</p>
+<h2 id="修改全屏模式"><a href="#修改全屏模式" class="headerlink" title="修改全屏模式"></a>修改全屏模式</h2><p>为什么要修改窗口使其没有背景？</p>
+<figure class="highlight cpp"><table><tr><td class="code"><pre><span class="line"><span class="comment">// wc.hbrBackground =（HBRUSH）COLOR_WINDOW;</span></span><br></pre></td></tr></table></figure>
+<p>教程给出的解释是这样的：<strong>Doing this leaves the background color untouched, which means it won’t be visible as a window for a second or two before the game starts (important to making your game look professional).</strong></p>
+<p>机翻果然有点问题…我理解了一下，大概就是说游戏在刚开始的时候，也就是从窗口变成全屏的时候，会显示出窗口的（背景）颜色，因为游戏本质上是一个程序，打开的时候就是一窗口的模式打开的，这样做就可以避免掉显示出窗口的颜色。</p>
+<p>窗口背景颜色：顾名思义，就是一个窗口里面那个背景板的颜色。</p>
+<h2 id="XMVector2Dot的返回值"><a href="#XMVector2Dot的返回值" class="headerlink" title="XMVector2Dot的返回值"></a>XMVector2Dot的返回值</h2><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="function">XMVECTOR XM_CALLCONV <span class="title">XMVector2Dot</span><span class="params">(FXMVECTOR V1, FXMVECTOR V2)</span></span>;		<span class="comment">// 每个分量都是V1.x * V2.x + V1.y * V2.y</span></span><br></pre></td></tr></table></figure>
+<p>返回一个向量，向量的每一分量的值都是v1和v2的点积。</p>
+<p>很奇特，也让人很迷惑的操作…… I need a reason.      叉积也是，不知道在干嘛。。</p>
+]]></content>
+      <categories>
+        <category>CG</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>cppSTL1</title>
+    <url>/2020/12/25/cppSTL1/</url>
+    <content><![CDATA[<p>看的是侯捷老师的课</p>
+<a id="more"></a>
+<h3 id="STL-Application"><a href="#STL-Application" class="headerlink" title="STL Application"></a>STL Application</h3><ul>
+<li><p>STL六大Components</p>
+<p>容器（Containers）</p>
+<p>分配器（Allocators）</p>
+<p>算法（Algorithms）</p>
+<p>迭代器（Iterators）</p>
+<p>适配器（Adapters）</p>
+<p>仿函数（Functors/Function object）</p>
+<h4 id="array"><a href="#array" class="headerlink" title="array"></a>array</h4><p>数组</p>
+<h4 id="vector"><a href="#vector" class="headerlink" title="vector"></a>vector</h4><ul>
+<li><p>内存分配时，是两倍两倍的分</p>
+<p>pushback进来一个元素时，先分一个单位内存</p>
+<p>push第二个的时候，vector分配两个</p>
+<p>push第三个的时候，该vector占用的变为四个(capacity)，但实际上只有3个元素(size）</p>
+<p>…</p>
+<p>tips：这个内存成长的过程是非常缓慢的，因为你不可能在当前的地方再扩展一倍的内存，而是需要去其他地方再找一个两倍大小的内存区域，然后把数据一个个搬过去</p>
+</li>
+</ul>
+<h4 id="list"><a href="#list" class="headerlink" title="list"></a>list</h4><ul>
+<li><p>list</p>
+<p>双向</p>
+</li>
+<li><p>forward_list </p>
+<p>单向</p>
+<p>与其他容器不同，没有push_back，只有push_front</p>
+</li>
+<li><p>slist</p>
+<p>单向 push_front</p>
+<p>非标准库 GNU带的（C++11里没有）</p>
+</li>
+</ul>
+<font color = 'red'>max_size()? 为什么会有这么个东西</font>
+
+<h4 id="deque"><a href="#deque" class="headerlink" title="deque"></a>deque</h4><ul>
+<li><p>双向</p>
+</li>
+<li><p>分段，由很多buffer组成</p>
+</li>
+<li><p>每一个buffer内部是连续的，但段与段之间的并不连续，我们需要制造段与段之间连续的假象，<font color = 'red'>那么如何实现这个假象？</font></p>
+<p>这个假象就是 假如你顺着去遍历，一个buffer到头了，再加1，要到下一个连着的buffer的第一个单元</p>
+</li>
+<li><p>扩充时，每次扩充一个buffer，两端都可以扩充</p>
+</li>
+</ul>
+<p><img src="https://i.loli.net/2020/12/26/qRlOue7IUJ5rm9K.png" width="50%" height="50%"></p>
+<h4 id="stack-amp-queue"><a href="#stack-amp-queue" class="headerlink" title="stack &amp; queue"></a>stack &amp; queue</h4><ul>
+<li>stack和queue都是基于deque实现的，就放在一起算了</li>
+<li>stack同一端进出，queue一端进另一端出</li>
+<li>技术上stack和queue是adapter，不过作为容器也没什么问题</li>
+</ul>
+<h4 id="各种map和set"><a href="#各种map和set" class="headerlink" title="各种map和set"></a>各种map和set</h4><h5 id="multiset"><a href="#multiset" class="headerlink" title="multiset"></a>multiset</h5><ul>
+<li>关联式容器 associative container</li>
+<li>内部是红黑树，查找很快</li>
+<li>带multi的元素可以重复</li>
+</ul>
+<h5 id="multimap"><a href="#multimap" class="headerlink" title="multimap"></a>multimap</h5><ul>
+<li>红黑树 同multiset</li>
+<li>multimap不能用 [] 做insertion</li>
+</ul>
+<h5 id="unordered-multiset"><a href="#unordered-multiset" class="headerlink" title="unordered_multiset"></a>unordered_multiset</h5><ul>
+<li>内部是hashtable</li>
+<li>现在的unordered_XXX以前在GNU中是hash_XXX</li>
+<li>bucket一定比元素多    <font color = 'red'>原因？</font></li>
+<li>如果元素个数≥bucket个数（从经验而来，大家都那么做），bucket需要扩充，变为大约原来的两倍，然后元素重新打散再挂在不同的bucket上面    <font color = 'red'>怎么打散？</font></li>
+</ul>
+<h5 id="unordered-multimap"><a href="#unordered-multimap" class="headerlink" title="unordered_multimap"></a>unordered_multimap</h5><p>同上</p>
+<h5 id="set-amp-map-amp-unordered-set-amp-unordered-map"><a href="#set-amp-map-amp-unordered-set-amp-unordered-map" class="headerlink" title="set &amp; map &amp; unordered_set &amp; unordered_map"></a>set &amp; map &amp; unordered_set &amp; unordered_map</h5><ul>
+<li>没有multi的不能重复，带了multi的可以重复，这个重复实际上指的是key，set因为key和value是一个东西，不用太在意，但map就需要区分开来了</li>
+<li>带unordered的，内部实现是用的hashtable，不带用的是红黑树</li>
+</ul>
+<h4 id="一些点"><a href="#一些点" class="headerlink" title="一些点"></a>一些点</h4><ul>
+<li>有些时候，标准库会和容器有一样的函数，比如sort，标准库（全局的）有，容器也有，这种时候尽量用容器自带的函数，自带的会快一点，<font color = 'red'>原因要看源代码</font>，估计是和容器特性有关。</li>
+<li>set里面key就是value，value就是key，而map是分开的（这种说法感觉怪怪的，set里面的元素不就单有一个值吗）</li>
+<li>红色部分后续会有讲解</li>
+</ul>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>cpp</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>cppSTL2-allocator</title>
+    <url>/2021/01/01/cppSTL2/</url>
+    <content><![CDATA[<p>allocator</p>
+<a id="more"></a>
+<h3 id="分配器allocators"><a href="#分配器allocators" class="headerlink" title="分配器allocators"></a>分配器allocators</h3><ul>
+<li><p>所有的分配动作，最终都会到malloc上</p>
+<p>分配与删除大致顺序</p>
+<p>allocate-&gt;operator new-&gt;malloc-&gt;根据平台调用系统函数-&gt;获得内存</p>
+<p>deallocate-&gt;operator delete-&gt;free-&gt;根据平台调用系统函数-&gt;获得内存</p>
+</li>
+<li><p>给元素分配内存是，分配的内存会比你需要的要大（overhead）</p>
+</li>
+<li><p>VC/BC的allocator没有任何特殊设计，容器中元素很多时，内存利用率会很低（overhead）；其接口设计并不好用，deallocate时需要知道之前具体申请了多少内存，极其反人类，不要用！直接用容器就好，用容器不会有这个问题。</p>
+</li>
+<li><p>上面一点的第一个问题会耗费很大的内存，这是一个很难受的事，GCC在这个事情上做了不错的处理（参考GCC2.9），allocator被设计成了链表的形式，每个节点可以指向一块内存，指向的内存是申请来的一大块内存切割而来的（每个节点挂的内存大小是8的倍数，从第一个往最后一个的大小是8,16,32,40…这样排的，元素需要的内存会转换成最靠近的8的倍数大小），最后将每一个节点下的内存用单链表串起来，这样就节省了申请内存的cookie部分（记录内存大小的部分）。</p>
+<p>大体上就是这个样子。</p>
+<ul>
+<li>GCC2.9其实也设计了一个和VC/BC差不多的allocator，但他并没有用这个玩意（那为什么要做这个？）</li>
+</ul>
+</li>
+<li><p>GCC4.9又把默认的改成了最普通的和VC/BC一样的allocator（原因未知），不过原来的那个好的也保留了下来，改名成了__pool_alloc，原来那个叫alloc。（GCC4.9所附的标准库有许多extension allocators，__pool__alloc就是其中之一）</p>
+<p>eg.</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line"><span class="built_in">vector</span>&lt;<span class="built_in">string</span>, __gnu_cxx::__pool_alloc&lt;<span class="built_in">string</span>&gt;&gt; vec;</span><br><span class="line"><span class="comment">//需要注意的是__pool_alloc不在std里，而是在__gnu_cxx里</span></span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+]]></content>
+      <categories>
+        <category>cpp</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>UnityShader</title>
+    <url>/2021/01/30/UnityShader/</url>
+    <content><![CDATA[<p>unity shader入门精要</p>
+<a id="more"></a>
+<h1 id="学习"><a href="#学习" class="headerlink" title="学习"></a>学习</h1><h2 id="UnpackNormal"><a href="#UnpackNormal" class="headerlink" title="UnpackNormal"></a>UnpackNormal</h2><figure class="highlight c++"><table><tr><td class="code"><pre><span class="line">fixed3 tangentNormal;</span><br><span class="line"><span class="comment">// tangentNormal.xy = (packedNormal.wy * 2 - 1) * _BumpScale;</span></span><br><span class="line"><span class="comment">////rgb[0, 1] --&gt; normal[-1, 1] + _BumpScale</span></span><br><span class="line"><span class="comment">// tangentNormal.z = sqrt(1.0 - saturate(dot(tangentNormal.xy, tangentNormal.xy)));</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// if mark the texture as &quot;Normal map&quot;, and use the built-in funciton</span></span><br><span class="line">tangentNormal = UnpackNormal(packedNormal);</span><br><span class="line">tangentNormal.xy *= _BumpScale;</span><br><span class="line">tangentNormal.z = <span class="built_in">sqrt</span>(<span class="number">1.0</span> - saturate(dot(tangentNormal.xy, tangentNormal.xy)));</span><br></pre></td></tr></table></figure>
+<p>自己写的UnpackNormal需要注意packedNormal的分量应该取wy，因为部分平台使用的是DXT5nm格式的压缩方式，纹素的a通道对应法线的x分量，g通道对应y分量，纹素的r和b通道会被丢弃，所以取出packedNormal后，其xyzw对应纹素上的rgba，我们需要ag，就取wy。</p>
+<p>这样可以达到压缩的目的，因为第三个通道的值可以通过另外两个推导出来（法线是单位向量，并且切线空间下法线的z分量始终为正）</p>
+<h2 id="渐变纹理"><a href="#渐变纹理" class="headerlink" title="渐变纹理"></a>渐变纹理</h2><p>用渐变纹理控制漫反射光照的效果，之前是用法线和光照的点积结果与材质的反射率（从纹理上取得）相乘得来的，但有时需要更灵活地控制光照效果，就可以使用渐变纹理。</p>
+<p>渐变纹理给我的感觉就是只能控制亮度，还得再加一层纹理才能表现出正常的颜色，因为他是通过法线与光照的点积结果去纹理上去对应的rgb的，就意味着他代表着shading point接收的光照强度，本来点积就是用来表示这个东西的，加纹理的作用就是能在原本点积的基础上做更灵活的变化，相当于从一个东西映射到了另外一个东西上。我的理解大概就是这样。</p>
+<ul>
+<li>记得将渐变纹理的wrap mode设置为clamp</li>
+</ul>
+<h2 id="遮罩纹理"><a href="#遮罩纹理" class="headerlink" title="遮罩纹理"></a>遮罩纹理</h2><p>遮罩允许我们保护某些区域，使他们免于某些修改。例如，我们将高光反射应用到模型表面的所有地方，及所有的像素都是用同样的高光强度和高光指数。但有时我们希望某些地方反光强一点，某些地方反光弱一点，得到更细腻的效果，就可以使用一张遮罩纹理来控制光照。</p>
+<h2 id="float4-tangent"><a href="#float4-tangent" class="headerlink" title="float4 tangent"></a>float4 tangent</h2><p><code>float4 tangent : TANGENT;</code>顶点的切线方向。需注意tangent是float4而非float3，因为我们需要使用tangent.w分量来决定切线空间中的第三个坐标轴—副切线的方向性。</p>
+<p>如果用float3，使用TANGENT_SPACE_ROTATION宏时，会提示找不到z分量。</p>
+<h2 id="深度测试的弊端"><a href="#深度测试的弊端" class="headerlink" title="深度测试的弊端"></a>深度测试的弊端</h2><p> 在绘制多边形并且开启深度测试时，可能会产生z-stitching和z-fighting。当使用<code>glPolygonMode (GLenum face, GLenum mode)</code>为多边形绘制边界时，由于线和面的光栅化的方式不同，导致位于同一位置的多边形和直线的深度值并不相同，进而导致直线有时在多边形的里面，有时在多边形的外面，这种现象就是”Stiching”。</p>
+<p> 而Z-fighting主要是指当两个面共面时，二者的深度值一样，深度缓冲就不能清楚的将它们两者分离开来，位于后面的图元上的一些像素就会被渲染到前面的图元上。</p>
+<p> 使用<code>glPolygonOffset (GLfloat factor, GLfloat units)</code>可以解决这两个问题。</p>
+<h2 id="back-face-culling-amp-zbuffer"><a href="#back-face-culling-amp-zbuffer" class="headerlink" title="back face culling &amp; zbuffer"></a>back face culling &amp; zbuffer</h2><p>一般面剔除是应用于一些<strong>闭合物体</strong>（比方说立方体），由于视角的缘故，我们最多能同时看到一个物体的三个面，其他三个看不到，那么此时，我们就可以将另外三个看不到的面剔除掉。这就是面剔除，它节省了很多系统开销。</p>
+<p>深度测试的话不仅用于单个物体（的两个相对面），也用于物体于物体之间(还有草之类的非闭合，面片都是前面对着摄像头，但是有遮挡的物体)。</p>
+<p>面剔除总是会将back face丢弃（对于单个物体来说），而深度测试不会，只要Z-Value合理，它就都会渲染，只是会被覆盖率。</p>
+<p>感觉上zbuffer可以完全替代back face culling，但是实际上因为深度测试是在fragment shader里的，非常耗费时间，所以back face culling还是非常有必要的。</p>
+<blockquote>
+<p>几何体剔除相比Early-Z剔除，可以节省光栅化开销，而且也能节省因为读取深度图造成的显存带宽开销。</p>
+</blockquote>
+<h2 id="Overdraw"><a href="#Overdraw" class="headerlink" title="Overdraw"></a>Overdraw</h2><p>所谓OverDraw，就是一帧当中，同一个像素被重复绘制的次数。</p>
+<p>那些关于OverDraw的前世今生 - Coresi7的文章 - 知乎 <a href="https://zhuanlan.zhihu.com/p/76562327">https://zhuanlan.zhihu.com/p/76562327</a></p>
+<ul>
+<li><p>如何优化呢？</p>
+<p>能用不透明物体渲染就用不透明物体渲染，能用Alpha blend不要使用Alpha test，如果这些都没办法规避，可以考虑从设置LOD着手，降低特效表现力。特效较多的情况下，肉眼不大能看出来特效效果降低。对于Shader而言，尽可能优化写法降低GPU计算复杂度。</p>
+</li>
+</ul>
+<h2 id="RenderQueue、Ztest、Zwrite、AlphaTest、AlphaBlend和Stencil"><a href="#RenderQueue、Ztest、Zwrite、AlphaTest、AlphaBlend和Stencil" class="headerlink" title="RenderQueue、Ztest、Zwrite、AlphaTest、AlphaBlend和Stencil"></a>RenderQueue、Ztest、Zwrite、AlphaTest、AlphaBlend和Stencil</h2><p>一口气解决RenderQueue、Ztest、Zwrite、AlphaTest、AlphaBlend和Stencil - 最强的补丁的文章 - 知乎 <a href="https://zhuanlan.zhihu.com/p/28557283">https://zhuanlan.zhihu.com/p/28557283</a></p>
+<p><a href="https://www.jianshu.com/p/ca65934dd493">https://www.jianshu.com/p/ca65934dd493</a></p>
+<p>Alpha test是指在fragment shader 里通过判断alpha是否满足一定的条件从而来决定是否discard该fragment,不满足条件的fragment就被discard,不能通过alpha test。Alpha test经常用在渲染树叶，花草等含透明部分的物体上</p>
+<p>渲染有透明度物体的时候，其实对于透明度极高的物体，那一点点透明度根本可以直接舍弃，对最终渲染效果影响又不大，还提升了效率。<strong>AlphaTest就是这样一种优化方式：我们设定一个alpha阈值，当偏于不满足条件（通常是小于阈值）就直接舍弃当作全透明，满足条件的片元就直接当作不透明物体进行处理。</strong>所以注意AlphaTest并没有实现真正的半透明效果哈。</p>
+<p>Alpha test不需要关闭深度写入，Alpha blend需要关闭深度写入（如果不关，半透明后面的物体就看不到了），且深度写入的关闭导致渲染顺序非常重要</p>
+<ul>
+<li>场景中有半透明物体又有不透明物体，有可能会导致不透明的覆盖掉半透明的（不透明的在半透明的后面，不应该覆盖掉）</li>
+<li>场景中只有半透明物体时，也要注意渲染顺序，不然会导致物体间覆盖顺序混乱</li>
+</ul>
+<p>面对这些问题，（Alpha blend）常用的办法是</p>
+<ul>
+<li>先渲染所有不透明物体，并开启他们的深度测试和深度写入</li>
+<li>把半透明物体按他们距离摄像机的远近进行排序，然后按照从前往后的顺序渲染这些半透明物体，并开启他们的深度测试，但关闭深度写入。</li>
+</ul>
+<p>但其实这样还是存在问题，物体之间相互交叠，没办法排序（我们按照物体级别排的序，如果按像素级别排序我感觉不太现实，毕竟这样渲染顺序就全打乱了，而且就算能实现也显得很蠢XD），还有选定那个点来代表物体深度这种问题，都会影响渲染正常的进行下去。unity shader入门精要P171 图8.10可以看到模型网格相互交叉的时候会得到错误的半透明效果。</p>
+<p>unity里 可以用两个pass 在一定程度上决解 关闭深度写入而造成的问题，一个开启深度写入，但不输出颜色，另一个正常Alpha blend。这种方法的缺点是 1 两个pass对性能有一定的影响，2 可以实现模型和背景的混合效果，但模型内部不会有真正的半透明效果（前面会遮挡掉后面，而不是混合，如果是从后往前画，模型内部应该是有混合效果的，但有时候控制不了）。</p>
+<h2 id="切线空间"><a href="#切线空间" class="headerlink" title="切线空间"></a>切线空间</h2><p>切线空间是有顶点法线和切线构建出的一个坐标空间</p>
+<p><a href="https://www.zhihu.com/question/23706933/answer/161968056">https://www.zhihu.com/question/23706933/answer/161968056</a></p>
+<h2 id="Premultiplied-Alpha"><a href="#Premultiplied-Alpha" class="headerlink" title="Premultiplied Alpha"></a>Premultiplied Alpha</h2><p>alpha blend中透明物体的混合方式是这样的</p>
+<script type="math/tex; mode=display">
+C_{o} = \alpha_{s}C_{s} + (1-\alpha_{s})C_{d}</script><p>假设一个值 C<sub>o </sub> = (255,0,0)⋅0.6 + (255,255,255)⋅(1–0.6) = (255,102,102)</p>
+<p>所谓Premultiplied Alpha就是将颜色预先乘一下alpha值，即将纹素的(r g b a)变成(r*a g*a b*a a)</p>
+<p>混合公式就变成了</p>
+<script type="math/tex; mode=display">
+C_{o} = C_{s}^{'} + (1-\alpha_{s})C_{d}</script><p>Premultiplied Alpha 后的像素格式变得不直观，虽然可以用除法还原回来，但总显得有些多余。从前面的 Alpha Blending 公式可以看出，Premultiplied Alpha 之后，alpha blend的时候可以少一次乘法，这可以提高一些效率，但这并不是最主要的原因。实际上他还解决了以下几个问题</p>
+<ul>
+<li>解决纹理比例缩放映射产生的颜色错误问题</li>
+<li>可以和其他纹理一起正常混合而不打破批次渲染</li>
+</ul>
+<p>eg. 想象一下，现在有两个纹素，需要取两者的平均值（比如把两个缩放为一个），就用简单的平均法</p>
+<figure class="highlight c++"><table><tr><td class="code"><pre><span class="line">non-premultiplied:</span><br><span class="line">(<span class="number">1</span>|<span class="number">0</span>|<span class="number">0</span>|<span class="number">1</span> + <span class="number">0</span>|<span class="number">1</span>|<span class="number">0</span>|<span class="number">0</span>) / <span class="number">2</span> = <span class="number">0.25</span>|<span class="number">0.25</span>|<span class="number">0</span>|<span class="number">0.25</span></span><br><span class="line">premultiplied:</span><br><span class="line"> <span class="number">1</span>|<span class="number">0</span>|<span class="number">0</span>|<span class="number">1</span> --&gt; <span class="number">1</span>*<span class="number">1</span>|<span class="number">0</span>*<span class="number">1</span>|<span class="number">0</span>*<span class="number">1</span>|<span class="number">1</span></span><br><span class="line"> <span class="number">0</span>|<span class="number">1</span>|<span class="number">0</span>|<span class="number">0</span> --&gt; <span class="number">0</span>*<span class="number">0</span>|<span class="number">1</span>*<span class="number">0</span>|<span class="number">0</span>*<span class="number">0</span>|<span class="number">0</span></span><br><span class="line">(<span class="number">1</span>|<span class="number">0</span>|<span class="number">0</span>|<span class="number">1</span> + <span class="number">0</span>|<span class="number">0</span>|<span class="number">0</span>|<span class="number">0</span>) / <span class="number">2</span> = <span class="number">0.25</span>|<span class="number">0</span>|<span class="number">0</span>|<span class="number">0.25</span></span><br></pre></td></tr></table></figure>
+<p>注意，第二个颜色本来是完全透明的，混合后应该完全是第一个颜色才符合常理，但结果却不对。这就是解决的第一个问题。</p>
+<p><font color= red>关于第二个，没找到很好的解答，求解</font>。</p>
+<blockquote>
+<p>Premultiplied alpha is used in graphics rendering because it gives better results than straight alpha when filtering images or composing different layers.</p>
+<p>本文最重要的目的是讲解第一点，为什么会出现颜色的错误问题。当一个图片素材被引擎放置在屏幕上时，往往不是1:1映射的，有可能因为在世界坐标的不同位置，映射到屏幕可能有不同的缩放比例。</p>
+<p>比如有linear，nearest等算法可以将缺失的像素补全。这时候这些缺失像素的计算，会因为alpha因子的本身也会被平均而导致RGB因子被缩放两次，进而会产生一个黑色的边缘。</p>
+<p>而实际上我们希望的结果应该是alpha因子RGB值只被平均一次，进而有需求就是将RGB值在素材中就被预乘。</p>
+</blockquote>
+<h2 id="multi-compile-amp-shader-feature"><a href="#multi-compile-amp-shader-feature" class="headerlink" title="multi_compile &amp; shader_feature"></a>multi_compile &amp; shader_feature</h2><blockquote>
+<p>在撰寫Shader時會有要因應各種狀況執行不同效果的時候，此時你可以透過條件判斷的方式來運行各種狀況，或是用一個slider來調整某一個效果的強度，再來就是寫很多個Shader來因應各種狀況。</p>
+<p>但是條件判斷對於Shader來說不是一個很有效率的方法，除非不得已不然盡量不要用。而透過Slider來調整，也是會一直要計算特定效果的演算法，只是關閉時最後強度加成後是0而已。寫很多份類似的Shader，在維護上也是不容易。不管怎樣，這幾個方法並不是最好的。</p>
+<p>而另一個方式就是在Shader裡透過Define的方式來運行不同的程式片段。達到多種功能切換的目的。它的原理就是在編譯時期自動產生各種Shader的變體，根據你在Shader裡Define的定義有多少，就會自動編譯出因應各種狀況的Shader。再根據你開啟哪個Define的功能來運行對應的Shader Code。</p>
+<p>透過這個方式，你可以不用因應各種狀況來撰寫特定的Shader。來避免掉條件判斷和不需要運行的演算法在本來的Shader裡。只須要寫一份Shader，系統就會自動幫你產生這份Shader的變體。</p>
+<p>要達到這個方式，可以透過Unity在ShaderLab裡所提供的前置處理定義，multi_compile與shader_feature。</p>
+<p><code>shader_feature</code> is very similar to <code>multi_compile</code>. The only difference is that Unity does not include unused variants of <code>shader_feature</code> shaders in the final build. For this reason, you should use <code>shader_feature</code> for keywords that are set from the Materials, while <code>multi_compile</code> is better for keywords that are set from code globally.</p>
+</blockquote>
+<p>其中multi_compile_fwdbase是unity内置的用于前向渲染的关键字快捷方式，可以为相应类型的Pass生成所有需要的Shader变种，这些变种会处理不同条件下的渲染逻辑，例如是否使用lightmap、当前使用哪种光源类型等。</p>
+<h2 id="unity中的阴影"><a href="#unity中的阴影" class="headerlink" title="unity中的阴影"></a>unity中的阴影</h2><p>常用shadow map</p>
+<p>开启了光源的阴影效果后，底层渲染引擎首先会在当前渲染物体的shader中找到LightMode为ShadowCaster的pass，如果没有，就在Fallback指定的shader中继续寻找，如果仍然没有找到，该物体就无法向其他物体投射阴影（但仍可以接收其他物体的阴影）。如果找到了正确的pass，unity会用该pass更新光源的阴影映射纹理。</p>
+<h1 id="Code"><a href="#Code" class="headerlink" title="Code"></a>Code</h1><h2 id="P192-9-2节"><a href="#P192-9-2节" class="headerlink" title="P192 9.2节"></a>P192 9.2节</h2><p><code>dot(lightCoord, lightCoord).rr</code> </p>
+<p>首先是由点积得到光源的距离平方，这是一个标量，我们对这个变量进行.rr操作相当于构建了一个二维矢量，这个二维矢量每个分量的值都是这个标量值，由此得到一个二维采样坐标。这个操作是shader中常见的<a href="https://en.wikipedia.org/wiki/Swizzling_(computer_graphics">swizzling</a>)操作</p>
+<h1 id="效果图"><a href="#效果图" class="headerlink" title="效果图"></a>效果图</h1><h2 id="NormalMap-Tangent-space"><a href="#NormalMap-Tangent-space" class="headerlink" title="NormalMap Tangent space"></a>NormalMap Tangent space</h2><p><img src="https://i.loli.net/2021/01/30/BcDrypZK2oRQHF1.png" alt="31NEIM9_TLMU~_C6E_0PJ_G.png"></p>
+<h2 id="RampMap"><a href="#RampMap" class="headerlink" title="RampMap"></a>RampMap</h2><p><img src="https://i.loli.net/2021/01/30/QL8EuS7XnGtyIpH.png" alt="~V3VRCPP_FE3_5OL~4N4S57.png"></p>
+<h2 id="Specular-Mask-Texture"><a href="#Specular-Mask-Texture" class="headerlink" title="Specular Mask Texture"></a>Specular Mask Texture</h2><p><img src="https://i.loli.net/2021/01/30/QZsEnxfdCoSpG9H.png" alt="4_YR3~W_~_A`634H06_H5D6.png"></p>
+<h2 id="Alpha-Test"><a href="#Alpha-Test" class="headerlink" title="Alpha Test"></a>Alpha Test</h2><p><img src="https://i.loli.net/2021/01/30/m3zLNjW4caH6CkI.png" alt="GQJ~_ACS_G_P75YWC~NTLM5.png"></p>
+<h2 id="Alpha-Blend"><a href="#Alpha-Blend" class="headerlink" title="Alpha Blend"></a>Alpha Blend</h2><h3 id="zWrite-off"><a href="#zWrite-off" class="headerlink" title="zWrite off"></a>zWrite off</h3><p><img src="https://i.loli.net/2021/01/30/YosGVT2RlBFS7DJ.png" alt="HYR2@5V_WTTFRFGOA@ZJO0V.png"></p>
+<h3 id="2-pass-zWrite-on"><a href="#2-pass-zWrite-on" class="headerlink" title="2 pass zWrite on"></a>2 pass zWrite on</h3><p><img src="https://i.loli.net/2021/01/30/GSUT35H1dIea8su.png" alt="F`_N_9R_6K_@OXJ4R_S15`3.png"></p>
+<h3 id="back-face-culling-off"><a href="#back-face-culling-off" class="headerlink" title="back face culling off"></a>back face culling off</h3><p><img src="https://i.loli.net/2021/01/30/Ndue24AEBjCUrVS.png" alt="L04Z@0EAMU3UPVUM_0T@L1P.png"></p>
+]]></content>
+      <categories>
+        <category>Shader</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>unity Shader</title>
+    <url>/2021/02/20/Shader%E6%95%88%E6%9E%9C/</url>
+    <content><![CDATA[<p>一些shader实现的效果</p>
+<a id="more"></a>
+<p>NormalMap：</p>
+<p><img src="https://i.loli.net/2021/01/30/BcDrypZK2oRQHF1.png" alt="31NEIM9_TLMU~_C6E_0PJ_G.png"></p>
+<p>RampMap：</p>
+<p><img src="https://i.loli.net/2021/01/30/QL8EuS7XnGtyIpH.png" alt="~V3VRCPP_FE3_5OL~4N4S57.png"></p>
+<p>Specular Mask Texture：</p>
+<p><img src="https://i.loli.net/2021/01/30/QZsEnxfdCoSpG9H.png" alt="4_YR3~W_~_A`634H06_H5D6.png"></p>
+<p>Alpha Test：</p>
+<p><img src="https://i.loli.net/2021/01/30/m3zLNjW4caH6CkI.png" alt="GQJ~_ACS_G_P75YWC~NTLM5.png"></p>
+<p>Alpha Blend：</p>
+<p><img src="https://i.loli.net/2021/01/30/YosGVT2RlBFS7DJ.png" alt="HYR2@5V_WTTFRFGOA@ZJO0V.png"></p>
+<p><img src="https://i.loli.net/2021/01/30/GSUT35H1dIea8su.png" alt="F`_N_9R_6K_@OXJ4R_S15`3.png"></p>
+<p><img src="https://i.loli.net/2021/01/30/Ndue24AEBjCUrVS.png" alt="L04Z@0EAMU3UPVUM_0T@L1P.png"></p>
+<p>ShadowMap：</p>
+<p><img src="https://i.loli.net/2021/02/20/5BNkogY8XrhfjU4.png" alt="9___Z9DXRE5_2JSRAY_@_MY_1_.png"></p>
+<p>屏幕后处理描边：</p>
+<p><img src="https://i.loli.net/2021/02/20/Vn2YfspDJGrviqm.png" alt="NI260N___LVY~SF__O@C@SO_1_.png"></p>
+<p>全局雾效：</p>
+<p><img src="https://i.loli.net/2021/02/20/rLDnUS7bXjxFOaG.png" alt="TVV_OQXT_K_LZPB_VT_E5F4_1_.png"></p>
+<p>NPR：</p>
+<p><img src="https://i.loli.net/2021/02/20/LgBEeR1fXKcaJUV.png" alt="QU_____MQ@JKN__C@CZ__H8_1_.png"></p>
+<p><img src="https://i.loli.net/2021/02/20/2n7eQtUKkdRT8CI.png" alt="H`O__I@_@6VIE@FNU6__4_0_1_.png"></p>
+<p>利用噪声纹理实现水波效果：</p>
+<p><img src="https://i.loli.net/2021/02/20/AF6Lz31JSa2w7tM.gif" alt="water1_1_.gif"></p>
+]]></content>
+      <categories>
+        <category>CG</category>
+      </categories>
+  </entry>
+</search>

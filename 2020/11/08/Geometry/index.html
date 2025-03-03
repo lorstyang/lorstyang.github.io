@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="几何的表示方法">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Geometry">
+<meta property="og:url" content="http://example.com/2020/11/08/Geometry/index.html">
+<meta property="og:site_name" content="lorstyang">
+<meta property="og:description" content="几何的表示方法">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://i.loli.net/2020/11/08/cPVrQnBwTvol8DH.png">
+<meta property="og:image" content="https://i.loli.net/2020/11/08/WsUFcthNPuKEn9l.png">
+<meta property="og:image" content="https://i.loli.net/2020/11/08/vz4o6heUdqAXwYJ.png">
+<meta property="og:image" content="https://i.loli.net/2020/11/08/VlDPp9yRxiTen5c.png">
+<meta property="article:published_time" content="2020-11-08T07:36:09.000Z">
+<meta property="article:modified_time" content="2020-11-08T11:56:20.055Z">
+<meta property="article:author" content="lorstyang">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.loli.net/2020/11/08/cPVrQnBwTvol8DH.png">
+
+<link rel="canonical" href="http://example.com/2020/11/08/Geometry/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Geometry | lorstyang</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">lorstyang</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/11/08/Geometry/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpg">
+      <meta itemprop="name" content="lorstyang">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="lorstyang">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Geometry
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+              
+
+              <time title="创建时间：2020-11-08 15:36:09 / 修改时间：19:56:20" itemprop="dateCreated datePublished" datetime="2020-11-08T15:36:09+08:00">2020-11-08</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/CG/" itemprop="url" rel="index"><span itemprop="name">CG</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <h4 id="几何的表示方法"><a href="#几何的表示方法" class="headerlink" title="几何的表示方法"></a>几何的表示方法</h4><a id="more"></a>
+<ul>
+<li><p>隐式曲面</p>
+<p>隐式曲面不会告诉具体点的位置，只会告诉你点的坐标满足的关系，举个栗子：</p>
+<script type="math/tex; mode=display">
+x^{2}+y^{2}+z^{2} = 1</script><p>我们一般将其表示为</p>
+<script type="math/tex; mode=display">
+f(x,y,z)=x^{2}+y^{2}+z^{2}-1</script></li>
+</ul>
+<p>  这个特殊一点，一看就知道是个球，但有些就不太明显，再举个栗子：</p>
+<script type="math/tex; mode=display">
+  f(x,y,z)=(2- \sqrt{x^{2} + y^{2}})^{2} + z^{2} - 1</script><p>  这个就不太明显，它是一个圆环。所以说隐式曲面跟你能不能看出来它是个什么东西一点关系没有，判断隐式还是靠上面说的那种方式，没告诉点的具体位置，只告诉点的位置关系</p>
+<ul>
+<li>缺点：难以采样到曲面上具体的点。就是说要你给我一个在这曲面上的点，如果是复杂一点的曲面或者说不知道长什么样的曲面，你对着函数表达式想破脑袋估计也难想出一个点来</li>
+<li>优点：容易判断某个点与曲面的关系。反过来就不一样了，你给我一个点，我很容易判断它跟曲面的位置关系，直接带进去看正负就可以了</li>
+</ul>
+<ul>
+<li><p>显式曲面</p>
+<p>显式曲面的点都被直接给出，或者可以通过映射关系直接得到</p>
+<p>二维到三维的映射 (u, v) —&gt; (x, y, z)</p>
+<p><img src="https://i.loli.net/2020/11/08/cPVrQnBwTvol8DH.png" width="70%" height="70%"></p>
+<p>这个(2+cosu)cosv是x，后面两个对应y，z。</p>
+<p>咋一看，这个和那个函数表达式很像，但两个并不一样，u,v是曲面在二维图上的坐标，所以带入是直接得到的(x, y, z)。虽说大体上是懂了，但是总感觉充满了违和感，为什么突然蹦出来个u,v，感觉没任何道理啊，单纯是因为 得到显式曲面的点的一种方法是映射吗？</p>
+<ul>
+<li>缺点：没办法判断特定点与曲面的关系</li>
+<li>优点：可以直接采样到曲面上所有的点</li>
+</ul>
+<p>与隐式曲面相反</p>
+</li>
+</ul>
+<ul>
+<li><p>隐式曲面种类</p>
+<ul>
+<li>Algebraic Surface</li>
+<li>最直接的代数表达式</li>
+<li>Constructive Solid Geometry(CSG)<ul>
+<li>对不同的几何体做布尔运算</li>
+<li>通过这些布尔运算可以得到更复杂的几何</li>
+</ul>
+</li>
+<li>Distance Function 距离函数<ul>
+<li>这个东西很有意思，可以实现两个几何体混合的效果</li>
+<li>实现混合效果的方法是找到任意一个点到两个几何体表面最短的距离，然后再减去一个变量作为最终的SDF(Signed Distance Function)</li>
+</ul>
+</li>
+<li>level set 水平集<ul>
+<li>和SDF很像，只不过函数不是以数学表达式的方式显式的表示出来，而是用一个一个格子表示出函数离散的值，然后通过双线性插值算出所有值等于0的点</li>
+</ul>
+</li>
+<li>Fractals 分型几何<ul>
+<li>自相似，递归</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<ul>
+<li>显式曲面种类<ul>
+<li>点云<ul>
+<li>一堆点的表示方法，有所有的点的信息</li>
+</ul>
+</li>
+<li>Polygon Mesh 多边形网格<ul>
+<li>应用的最广泛</li>
+<li>object file(.obj) 和编译出来的.obj不是一回事，注意区分。其实就是一个文本文件，里面给出了所有的顶点，法线，纹理信息，然后加上它们的组织方式</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+<h4 id="贝塞尔曲线-Bezier-Curves-amp-贝塞尔曲面-Bezier-Surfaces"><a href="#贝塞尔曲线-Bezier-Curves-amp-贝塞尔曲面-Bezier-Surfaces" class="headerlink" title="贝塞尔曲线(Bézier Curves) &amp; 贝塞尔曲面(Bézier Surfaces)"></a>贝塞尔曲线(Bézier Curves) &amp; 贝塞尔曲面(Bézier Surfaces)</h4><ul>
+<li><p>曲线</p>
+<ul>
+<li><p>其实就是不停做线性插值，插值到只剩一个点，下图中的b(3,0)，时间t∈[0, 1]，这个点的轨迹就是贝塞尔曲线，实际上就是一个关于t的函数</p>
+<p><img src="https://i.loli.net/2020/11/08/WsUFcthNPuKEn9l.png" width="60%" height="60%"></p>
+</li>
+<li><p>这个关于t的函数挺好求的，三个控制点的贝塞尔曲线：</p>
+<script type="math/tex; mode=display">
+\textbf{b}^{2}_{0}(t) = (1-t)^{2}\textbf{b}_{0} + 2t(1-t)\textbf{b}_{1} + t^{2}\textbf{b}_{2}</script><p>可以看到，最高项指数为2，所以说n个控制点的贝塞尔曲线为n-1次</p>
+</li>
+<li><p>这个系数可以看出来有规律，所以有了n+1个控制点的贝塞尔曲线的公式</p>
+<p><img src="https://i.loli.net/2020/11/08/vz4o6heUdqAXwYJ.png" width="70%" height="70%"></p>
+<p>图中下面那个伯恩斯坦多项式(Bernstein polynomials)跟多项式展开差不多</p>
+</li>
+<li><p>性质</p>
+<ul>
+<li>必定经过起点和终点，并与这两个点相切</li>
+<li>具有仿射变换性质，可以通过移动控制点移动整条曲线</li>
+<li>凸包性质，曲线一定不会超出所有控制点构成的多边形范围</li>
+</ul>
+</li>
+<li><p>分段贝塞尔曲线</p>
+<ul>
+<li>原因：控制点太多时，局部的曲线形状会出问题</li>
+</ul>
+</li>
+<li><p>further：B样条，NURBS</p>
+</li>
+</ul>
+</li>
+<li><p>曲面</p>
+<ul>
+<li><p>贝塞尔曲面与曲线类似，只是从2维到了3维。原来只有一个参数t，现在有两个u，v，范围都是[0, 1]</p>
+<p><img src="https://i.loli.net/2020/11/08/VlDPp9yRxiTen5c.png" width="70%" height="70%"></p>
+</li>
+<li><p>1、用参数u，先根据4列（每列4个点，这4个点形成折线段）用算贝塞尔曲线的方式算出4个蓝色的点，灰色的线即为生成的贝塞尔曲线（底下的方格即为点的位置，但没表示出点的高度信息）</p>
+<p>2、再用参数中，根据4个蓝色的点用同样的方法算出最终贝塞尔曲面上的一点</p>
+<p>3、遍历所有的u，v，得到的所有点贝塞尔曲面，即点在u，v上的轨迹</p>
+</li>
+<li><p>其实可以看出来，所有的蓝色线条就组成了贝塞尔曲面，灰色线条是不在曲面上的</p>
+</li>
+</ul>
+</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/11/07/Shading-3/" rel="prev" title="Applications of textures">
+      <i class="fa fa-chevron-left"></i> Applications of textures
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/11/20/Geometry-2/" rel="next" title="曲面细分与曲面简化">
+      曲面细分与曲面简化 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%87%A0%E4%BD%95%E7%9A%84%E8%A1%A8%E7%A4%BA%E6%96%B9%E6%B3%95"><span class="nav-number">1.</span> <span class="nav-text">几何的表示方法</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E8%B4%9D%E5%A1%9E%E5%B0%94%E6%9B%B2%E7%BA%BF-Bezier-Curves-amp-%E8%B4%9D%E5%A1%9E%E5%B0%94%E6%9B%B2%E9%9D%A2-Bezier-Surfaces"><span class="nav-number">2.</span> <span class="nav-text">贝塞尔曲线(Bézier Curves) &amp; 贝塞尔曲面(Bézier Surfaces)</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="lorstyang"
+      src="/images/header.jpg">
+  <p class="site-author-name" itemprop="name">lorstyang</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">17</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="mailto:lorstyang@163.com" title="E-Mail → mailto:lorstyang@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="http://www.myangswhitehat.cn/" title="http:&#x2F;&#x2F;www.myangswhitehat.cn" rel="noopener" target="_blank">My0n9s</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">lorstyang</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+</body>
+</html>

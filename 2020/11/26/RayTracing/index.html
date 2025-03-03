@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="光栅化不好处理全局的效果，比如有些地方光源无法直接打到，但是经过多次反射，光线会打到有些地方形成一块比较亮的地方，也许有些奇技淫巧可以处理这种东西，但是总归不是那么好。所以为了全局光照的效果，就有了光线追踪。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Ray Tracing">
+<meta property="og:url" content="http://example.com/2020/11/26/RayTracing/index.html">
+<meta property="og:site_name" content="lorstyang">
+<meta property="og:description" content="光栅化不好处理全局的效果，比如有些地方光源无法直接打到，但是经过多次反射，光线会打到有些地方形成一块比较亮的地方，也许有些奇技淫巧可以处理这种东西，但是总归不是那么好。所以为了全局光照的效果，就有了光线追踪。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://i.loli.net/2020/11/27/3B1rw2d97haJoxK.png">
+<meta property="og:image" content="https://i.loli.net/2020/11/27/B3uiTnlVbtDX1OY.png">
+<meta property="og:image" content="https://i.loli.net/2020/11/27/7Fj5TAd8Zg2WkMq.png">
+<meta property="og:image" content="https://i.loli.net/2020/11/27/z2RpviudjEs9PMC.png">
+<meta property="og:image" content="https://i.loli.net/2020/11/27/1f7TLSaEVACjtUP.png">
+<meta property="og:image" content="https://i.loli.net/2020/12/01/qC1z2joS6sk8Tlp.png">
+<meta property="og:image" content="https://i.loli.net/2020/12/01/7ojhrfaHR8JvcZW.png">
+<meta property="og:image" content="https://i.loli.net/2020/12/01/UNupxPlYaVO8cR9.png">
+<meta property="article:published_time" content="2020-11-26T04:15:29.000Z">
+<meta property="article:modified_time" content="2020-12-01T03:36:30.193Z">
+<meta property="article:author" content="lorstyang">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://i.loli.net/2020/11/27/3B1rw2d97haJoxK.png">
+
+<link rel="canonical" href="http://example.com/2020/11/26/RayTracing/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
+
+  <title>Ray Tracing | lorstyang</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">lorstyang</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>搜索
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="搜索..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2020/11/26/RayTracing/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpg">
+      <meta itemprop="name" content="lorstyang">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="lorstyang">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Ray Tracing
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2020-11-26 12:15:29" itemprop="dateCreated datePublished" datetime="2020-11-26T12:15:29+08:00">2020-11-26</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2020-12-01 11:36:30" itemprop="dateModified" datetime="2020-12-01T11:36:30+08:00">2020-12-01</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/CG/" itemprop="url" rel="index"><span itemprop="name">CG</span></a>
+                </span>
+            </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>光栅化不好处理全局的效果，比如有些地方光源无法直接打到，但是经过多次反射，光线会打到有些地方形成一块比较亮的地方，也许有些奇技淫巧可以处理这种东西，但是总归不是那么好。所以为了全局光照的效果，就有了光线追踪。</p>
+<a id="more"></a>
+<p>关于ray tracing这个概念，由于现在牛逼的东西越来越多，它所代表的东西与原来已经大有不同了，引用闫老师的定义，ray tracing是所有光线传播方法的一个大集合，像whitted-style ray tracing，path tracing，photon mapping等等都是其中的一部分，这一小节说的其实是whitted-style ray tracing，以前说ray tracing的时候，一般默认的都是这个。</p>
+<h3 id="Whitted-Style-Ray-Tracing"><a href="#Whitted-Style-Ray-Tracing" class="headerlink" title="Whitted-Style Ray Tracing"></a>Whitted-Style Ray Tracing</h3><h4 id="原理"><a href="#原理" class="headerlink" title="原理"></a>原理</h4><ul>
+<li><p>首先对我们考虑的光线进行几个假定</p>
+<p>1.光线沿着直线传播（不考虑它的波动性）</p>
+<p>2.光线之间无法碰撞</p>
+<p>3.光路可逆（这个算是光线本身的性质）</p>
+<p>通过第三点可以还原出光路，我们反过来从视点出发，从视点向近投影平面上的每一个像素发射一条光线，然后判断光线与场景中物体的交点。</p>
+<p>其实从眼睛出发的线与其说是光路，不如说我们的“视线路径”，我们的视线路径打到的点（反射也好，折射也好），如果没有被遮挡的话，可以用blinn-phong里面算shading point的方法，算出那一点的光照信息，然后从那一点开始，光线沿着我们的视线路径回到相应的像素，所有被打到的点上的光照信息合起来就是应该被显示到那个像素上的信息了。</p>
+</li>
+<li><p>操作过程</p>
+<p>从视点向每一个像素发射一条光线（下图是其中一条），找光线与物体最近的的交点，用光照模型（eg.blinn-phong）可以对这一点计算，得到对应像素的颜色。看光源与交点的连线有没有被物体挡住也可以判断阴影。</p>
+<p><img src="https://i.loli.net/2020/11/27/3B1rw2d97haJoxK.png" width="60%" height="60%"></p>
+<p>如果只停在这一步的话，效果和光栅化是一样的，都只算了一次直接光照，所以为了全局效果whitted-style ray tracing还会算其他间接光照，折射，反射这些。因为光路可逆，所以除了从光源一次反射到达视点的光线可以贡献颜色给相应的像素，同一条光路上后面的交点上出来的光线也可以沿着光路到达同样的像素，也可以提供一定的颜色信息。</p>
+<p><img src="https://i.loli.net/2020/11/27/B3uiTnlVbtDX1OY.png" width="70%" height="70%"></p>
+<p>一些点：</p>
+<p>这是一个递归的过程，会设置递归的终止条件，最大弹射次数这种。</p>
+<p>光线弹射能量肯定会损失，不然最后结果会过曝，用的方法很简单，就是每次损失百分之多少。</p>
+<p>视点出去的光线没有打到物体的话，返回背景色。</p>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/144403005">https://zhuanlan.zhihu.com/p/144403005</a> （还有伪代码）</p>
+</li>
+</ul>
+<h4 id="实现"><a href="#实现" class="headerlink" title="实现"></a>实现</h4><p>上面是大致的操作方法，具体实现的时候又有很多技术难点</p>
+<ul>
+<li><p>光线的表示方法</p>
+<p>ray is defined by its origin and a direction vector</p>
+<p>光线算是一条射线</p>
+<script type="math/tex; mode=display">
+\mathbf{r}(t)=\mathbf{o}+t \mathbf{d} \quad 0 \leq t<\infty</script><p><strong>o</strong> : origin</p>
+<p>t : “time”</p>
+<p><strong>d</strong> : direction</p>
+<p>说t是time其实大体上代表了，假设光线从原点射出去，与物体的那些交点的先后顺序，并不是平常所说的时间。</p>
+<p>对于某个确定的t来说，<strong>r</strong>其实就是一个点，但是在定义域内，所有的点就构成了线，求交点也相当于求某个t时的点。</p>
+</li>
+<li><p>光线与物体的求交</p>
+<p>一种简单的情况，与球体的求交</p>
+<script type="math/tex; mode=display">
+(\mathbf{o}+t \mathbf{d}-\mathbf{c})^{2}-R^{2}=0</script><p><strong>c</strong> : center</p>
+<p>R : 半径</p>
+<p>展开化简后就是一个关于t的一元二次方程，就可以解出t，得到相应的交点</p>
+<ul>
+<li><p>与隐式曲面求交</p>
+<script type="math/tex; mode=display">
+\begin{aligned} &\mathbf{p}: f(\mathbf{p})=0\\ &f(\mathbf{o}+t \mathbf{d})=0 \end{aligned}</script><p>一般隐式曲面都可以表示成：f(<strong>p</strong>)=0（<strong>p</strong>代表曲面上的一点），把光线的方程带进去，得到下面那个式子，解就行了，至于怎么把曲面的表达式转换成f(<strong>p</strong>)=0这种形式，目前没什么头绪？</p>
+<p>还有一个就是，这些式子里，点和向量都是加粗表示的，以往是向量和标量用加粗区分开来，点的表示也是一样要加粗吗，不过点的维度和向量是一样的，从这个角度好像还是挺说得通的。</p>
+</li>
+<li><p>与显式曲面求交</p>
+<p>图形学中，显示曲面其实才是常态，毕竟三角形的顶点数据是都有的。</p>
+<p>判断光线与显示曲面的交点，其实就是判断光线与三角形面的交点。那么就可以分为两步，第一步算出光线与三角形所在平面的交点，然后判断该电是否在三角形内（这个方法在光栅化里有说过）。</p>
+<p>显式平面表示：</p>
+<script type="math/tex; mode=display">
+\begin{aligned} &\mathbf{p}: (\mathbf{p} - \mathbf{p'}) \cdot \mathbf{N} = 0 \end{aligned}</script><p><strong>N</strong> : 法线</p>
+<p><strong>p’</strong> : 平面上一点</p>
+<p>同样的求出点以后，看点是否在三角形里面就可以判断光线是否与物体相交了。</p>
+<p>这样需要两步，有人想了个办法把它一步搞出来</p>
+<ul>
+<li><p>Moller Trumbore Algorithm</p>
+<p>把点用重心坐标的方式表示出来，然后把重心坐标和t解出来</p>
+<p><img src="https://i.loli.net/2020/11/27/7Fj5TAd8Zg2WkMq.png" width="70%" height="70%"></p>
+<p>因为<strong>O</strong>、<strong>D</strong>、<strong>P<sub>0</sub></strong>、<strong>P<sub>1</sub></strong>、<strong>P<sub>2</sub></strong>都有三个坐标，相当于可以列出来三个方程，那三个未知数t，b1，b2也很好求出来了</p>
+<p>结果判断：</p>
+<p>​    t为正—&gt;这很河里，没算反</p>
+<p>​    重心坐标都为正—&gt;点在三角形内</p>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li><p>加速光线求交</p>
+<p>隐式曲面不管他，就看显式曲面（原因前面有），虽然一步判断交点是否在三角形内的样子很靓仔，但是去遍历场景内所有三角形面的时候真的很狼狈。有时候一个场景成百上千万的三角形，再加上每个像素都要射出一支光线，用脚想都知道这样不太行，需要加速。</p>
+<p>最简单的方法跟之前光栅化的思想是一样的，搞个包围盒，先算光线与包围盒有没有交点，然后再看要不要与物体求交，当然这个包围盒是三维的，把它想象成三对平面其实会更好一点，因为算光线与包围盒的交点时，算的其实是光线与包围盒面所在平面的相交时的t。这样算有助于判断光线有没有穿过包围盒。</p>
+<p>先看二维的情况，三维无非就是二维的拓展</p>
+<p><img src="https://i.loli.net/2020/11/27/z2RpviudjEs9PMC.png" width="60%" height="60%"></p>
+<p>将面分为两对，x和y，每对 面 都会求出来两个值tmin，tmax，分别表示进入这对平面和出这对平面的t，t是有可能小于零的，就是射线反向延长与平面的交点，负的虽然没有实际意义，但是可以用来判断交点的先后进出顺序。</p>
+<p>这里其实可以得到一个东西，先只看光线进入包围盒面的情况，当光线经过了进入的最大点时（也就是tmin里最大的），才进入了盒子（即使包括t为负的那些“交点”），再看光线出包围盒的情况，当光线经过了出去的最小点时（也就是tmax里最小的），就出了包围盒。直观上来讲确实是这样，但是不太知道怎么解释？</p>
+<p>出入包围盒的t：t<sub>enter</sub> = max{tmin}, t<sub>exit</sub> = min{tmax}</p>
+</li>
+</ul>
+<p>  所以上面图中下方的问题：</p>
+<p>  t<sub>enter</sub> &lt; t<sub>exit</sub> &amp;&amp; t<sub>exit</sub> &gt; 0—&gt; 光线与包围盒相交</p>
+<p>  只有 t<sub>enter</sub> &lt; t<sub>exit</sub> 的话，盒子可能在光线原点后面</p>
+<p>  t<sub>enter</sub> &lt; 0 &amp;&amp; t<sub>exit</sub> &gt;= 0 —&gt;光线原点在盒子中间</p>
+<p>  t<sub>enter</sub> &gt; t<sub>exit</sub> —&gt; 光线与包围盒没有交点</p>
+<p>  总（有交点）：t<sub>enter</sub> &lt; t<sub>exit</sub> &amp;&amp; t<sub>exit</sub> &gt; 0</p>
+<p>  PS：与平面的求交可以根据前面的显示平面表达方式来</p>
+<script type="math/tex; mode=display">
+  \begin{aligned} &\mathbf{p}: (\mathbf{p} - \mathbf{p'}) \cdot \mathbf{N} = 0 \end{aligned}</script><p>  把p带进去解方程就行了。</p>
+<p>  不过上这种对物体做包围盒的加速方式有些问题</p>
+<p>  一个是场景中只有一个物体时，就是只搞一个盒子，对加速没有任何效果</p>
+<p>  另一个是场景中充斥着大量模型时，花花草草什么的，包围盒多了，加速效果有限</p>
+<p>  于是有了一些新的划分AABB的方法</p>
+<ul>
+<li><p>均匀空间划分 Uniform Spatial Partitions</p>
+<p>首先先找到整个场景的bounding box</p>
+<p>然后把它均匀的分成很多grids</p>
+<p>把有物体的格子标记出来</p>
+<p><img src="https://i.loli.net/2020/11/27/1f7TLSaEVACjtUP.png" width="60%" height="60%"></p>
+<p>再根据射出的光线找出所有与其相交的方格（如何光栅化一条线，虎书，bresenham算法），倘若方格中存储有物体，再进一步与方格中的物体求交。</p>
+<p>划分出来的格子太多或太少都不太好，在实际中效果不错的格子数量：</p>
+<p>​    cells ≈ C * objs</p>
+<p>​    C ≈ 27 in 3D</p>
+<p>场景中无效的格子越少，越适合这种方法</p>
+</li>
+<li><p>Spatial Partition</p>
+<p>上面是均匀的划分，这里其实就是非均匀的划分</p>
+<p>Oct-Tree （八叉树） 每次沿着三个维度划分，形成八个子块，直到某一块足够小或者空间内三角形很少。维度变高的时候，这种方法会变成2<sup>n</sup>叉的树。</p>
+<p>就光追加速这一块来讲，为什么会出现比3维高的情况？</p>
+<p>KD-Tree 每次只沿一个维度划分，顺序是按xyz来。最后形成的结构类似二叉树。</p>
+<p>BSP-Tree 跟KD-Tree类似，但是切分方向不是平行于轴的，这样作为包围盒来讲，计算会相对复杂。至于老师说的维度高了需要超平面划分，KD-Tree感觉上也有这个问题。</p>
+<ul>
+<li><p>KD-Tree</p>
+<p>划分终止条件跟Oct-Tree类似</p>
+<p>叶子节点存储对应空间的三角形面，非叶子节点指向它的子节点（三角形面只会储存在叶子节点中）</p>
+<p>遍历是一个递归的过程</p>
+<p>1 对一个节点（包围盒）求交</p>
+<p>2 如果有交点，判断是不是叶子节点，是叶子节点就与其中的物体求交，如果不是就与它的子节点（包围盒）求交，也就是回到第一步</p>
+<p>具体过程可以看PPT和视频回顾一下</p>
+<p><img src="https://i.loli.net/2020/12/01/qC1z2joS6sk8Tlp.png" width="50%" height="50%"></p>
+<p>优点：</p>
+<p>1 KD-Tree结构的AABB可以不用判断所有包围盒，光线没与非叶子节点相交就可以直接排除掉其下所有节点。</p>
+<p>2 对比均匀划分，没什么物体的空间里不会划分很多盒子。</p>
+<p>缺点：</p>
+<p>1 判断包围盒和三角形有没有交集并不简单（我们认为只要有交集就算这个三角形在包围盒内），正常情况下有交集三角形都会有顶点在包围盒内，但有些极端情况下三角形三个顶点都不在包围盒内，也会有交集。</p>
+<p>2 有些三角形可能同时在几个叶子节点内，这样的性质并不好。</p>
+</li>
+</ul>
+</li>
+<li><p>BVH （Bounding Volume Hierarchy）</p>
+<p>KD-Tree还是不太能让人满意，就再想新的办法喽。之前那么多办法都有这样那样的问题，既然这样，换个角度出发，<del>おれは人间をやめるぞ！　ジョジョ──ッ！！</del>不划分空间了，划分物体，本质上AABB的目的就是排除掉那些完全没可能相交，差的十万八千里的物体，这样的想话，划分物体也没什么问题，无非就是包围盒有重合的地方，影响不大。</p>
+<p><img src="https://i.loli.net/2020/12/01/7ojhrfaHR8JvcZW.png" width="60%" height="60%"></p>
+<p><img src="https://i.loli.net/2020/12/01/UNupxPlYaVO8cR9.png" width="60%" height="60%"></p>
+<p>既然按物体划分，一个三角形就只会被存储在一个包围盒内，这也解决了之前KD-Tree的问题</p>
+<p>为了使树的结构更加平衡（深度更小，搜索效率越高），划分的时候尽量使左右子节点的三角形数量一样多，比如选顶点坐标的中位数，还有xyz轴换着顺序来划分等等。</p>
+<p>与kdtree一样，只有叶子节点存储存储三角形信息。</p>
+<p>伪代码</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">Intersect(Ray ray, BVH node) &#123;</span><br><span class="line">    if(ray misses node.bbox) return;</span><br><span class="line">    </span><br><span class="line">    if(node is a leaf node)</span><br><span class="line">    	test intersection with all objs;</span><br><span class="line">    	return closest intersection;</span><br><span class="line">    </span><br><span class="line">    hit1 &#x3D; intersect(ray, node.child1);</span><br><span class="line">    hit2 &#x3D; intersect(ray, node.child2);</span><br><span class="line">    </span><br><span class="line">    return the closer of hit1, hit2;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/11/20/Geometry-2/" rel="prev" title="曲面细分与曲面简化">
+      <i class="fa fa-chevron-left"></i> 曲面细分与曲面简化
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/12/10/RayTracing-2/" rel="next" title="PBR基础">
+      PBR基础 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#Whitted-Style-Ray-Tracing"><span class="nav-number">1.</span> <span class="nav-text">Whitted-Style Ray Tracing</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%8E%9F%E7%90%86"><span class="nav-number">1.1.</span> <span class="nav-text">原理</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0"><span class="nav-number">1.2.</span> <span class="nav-text">实现</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="lorstyang"
+      src="/images/header.jpg">
+  <p class="site-author-name" itemprop="name">lorstyang</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">17</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">5</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="mailto:lorstyang@163.com" title="E-Mail → mailto:lorstyang@163.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="http://www.myangswhitehat.cn/" title="http:&#x2F;&#x2F;www.myangswhitehat.cn" rel="noopener" target="_blank">My0n9s</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2021</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">lorstyang</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://mist.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Mist</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+      
+
+<script>
+  if (typeof MathJax === 'undefined') {
+    window.MathJax = {
+      loader: {
+        source: {
+          '[tex]/amsCd': '[tex]/amscd',
+          '[tex]/AMScd': '[tex]/amscd'
+        }
+      },
+      tex: {
+        inlineMath: {'[+]': [['$', '$']]},
+        tags: 'ams'
+      },
+      options: {
+        renderActions: {
+          findScript: [10, doc => {
+            document.querySelectorAll('script[type^="math/tex"]').forEach(node => {
+              const display = !!node.type.match(/; *mode=display/);
+              const math = new doc.options.MathItem(node.textContent, doc.inputJax[0], display);
+              const text = document.createTextNode('');
+              node.parentNode.replaceChild(text, node);
+              math.start = {node: text, delim: '', n: 0};
+              math.end = {node: text, delim: '', n: 0};
+              doc.math.push(math);
+            });
+          }, '', false],
+          insertedScript: [200, () => {
+            document.querySelectorAll('mjx-container').forEach(node => {
+              let target = node.parentNode;
+              if (target.nodeName.toLowerCase() === 'li') {
+                target.parentNode.classList.add('has-jax');
+              }
+            });
+          }, '', false]
+        }
+      }
+    };
+    (function () {
+      var script = document.createElement('script');
+      script.src = '//cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js';
+      script.defer = true;
+      document.head.appendChild(script);
+    })();
+  } else {
+    MathJax.startup.document.state(0);
+    MathJax.texReset();
+    MathJax.typeset();
+  }
+</script>
+
+    
+
+  
+
+</body>
+</html>
